@@ -12,9 +12,6 @@ There are three pieces, from broadest to deepest:
 | **Seller focus** | High-level seller discovery, the true 101, and the basis for the PowerPoint | `site/iaas-101-seller-focus.html` | 
 | **Tech focus** | Tech overview of the cloud services in each IaaS offering | `site/iaas-101-tech-focus.html` | 
 
-> A light-only copy of the tech-focus page also exists (https://claude.ai/artifact/Ddxw6ifhtwiasKDCVosvxi).
-> The tech-focus page itself now defaults to light with a dark toggle, so the copy is redundant and can be deleted.
-
 **Service-level edits happen on the tech-focus page.** The seller-focus page is the 101 narrative and the source for the deck. The rest of this README is mostly about the tech-focus page.
 
 ---
