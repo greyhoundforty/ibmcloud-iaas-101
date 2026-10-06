@@ -1,0 +1,46 @@
+# Task runner for the IaaS explorer pages. `mise tasks` lists them.
+
+[tools]
+python = "3.12"
+node = "22"   # only used for `node --check` and `npm pack @carbon/icons`
+
+[tasks.preview]
+description = "Wrap site/*.html with an HTML skeleton into build/ for local viewing"
+run = "python3 scripts/preview.py"
+
+[tasks.serve]
+description = "Build previews and serve them on http://localhost:8000"
+depends = ["preview"]
+run = "python3 -m http.server 8000 -d build"
+
+[tasks.check]
+description = "Parse the script and verify every pill icon exists (default: iaas-101-tech-focus)"
+run = "python3 scripts/check.py ${PAGE:-site/iaas-101-tech-focus.html}"
+
+[tasks.icon]
+description = "Add a Carbon icon to the sprite: mise run icon -- <carbon-name> <i-id>  |  -- --search <term>"
+run = "python3 scripts/add_icon.py"
+
+[tasks.scan-pills]
+description = "Add new tech-page pill labels to site/pill-docs.yaml"
+run = "python3 scripts/scan_pills.py"
+
+[tasks.ingest-docs]
+description = "Copy site/pill-docs.yaml onto every matching pill in the tech-focus page"
+run = "python3 scripts/ingest_docs.py"
+
+[tasks.search-page]
+description = "Rebuild the clickable docs-search page from site/pill-docs.yaml"
+run = "python3 scripts/build_search_page.py"
+
+[tasks.vercel-link]
+description = "Link this clone to a Vercel project"
+run = "vercel link"
+
+[tasks.deploy]
+description = "Preview deploy"
+run = "vercel deploy"
+
+[tasks.deploy-prod]
+description = "Production deploy"
+run = "vercel deploy --prod"

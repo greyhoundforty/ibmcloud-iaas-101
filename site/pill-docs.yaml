@@ -1,0 +1,560 @@
+# Pill docs for site/iaas-101-tech-focus.html.
+# One row per label. The docs URL is copied onto every pill with that label.
+# Leave docs as "" or set an https:// URL. appears is pillar · card, for reference only.
+pills:
+  - label: "Access Groups"
+    docs: "https://cloud.ibm.com/docs/iam?topic=iam-groups&interface=ui"
+    appears:
+      - "Virtual Private Cloud · Identity and Access Management"
+      - "Power Virtual Server · Identity and Access Management"
+      - "Classic Infrastructure · Identity and Access Management"
+
+  - label: "Access Policies"
+    docs: "https://cloud.ibm.com/docs/iam?topic=iam-iamusermanpol&interface=ui"
+    appears:
+      - "Virtual Private Cloud · Identity and Access Management"
+      - "Power Virtual Server · Identity and Access Management"
+      - "Classic Infrastructure · Identity and Access Management"
+
+  - label: "Activity Tracker Event Routing"
+    docs: "https://cloud.ibm.com/docs/atracker?topic=atracker-getting-started"
+    appears:
+      - "Virtual Private Cloud · Observability"
+      - "Power Virtual Server · Observability"
+      - "Classic Infrastructure · Observability"
+
+  - label: "AIX"
+    docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-operating-systems-powervs#aix-public-private"
+    appears:
+      - "Power Virtual Server · Virtual Server Instances"
+
+  - label: "Backup and Recovery Service"
+    docs: "https://cloud.ibm.com/docs/backup-recovery?topic=backup-recovery-about-baas"
+    appears:
+      - "Virtual Private Cloud · Backup and recovery options"
+
+  - label: "Backup for VPC"
+    docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-backup-service-about&interface=ui"
+    appears:
+      - "Virtual Private Cloud · Block storage"
+      - "Virtual Private Cloud · File Shares"
+      - "Virtual Private Cloud · Backup and recovery options"
+
+  - label: "Bare Metal Servers for Classic"
+    docs: "https://cloud.ibm.com/docs/bare-metal?topic=bare-metal-getting-started"
+    appears:
+      - "Classic Infrastructure · Bare Metal Servers"
+
+  - label: "Bare Metal Servers for VPC"
+    docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-about-bare-metal-servers"
+    appears:
+      - "Virtual Private Cloud · Bare Metal Servers"
+
+  - label: "Block Replication"
+    docs: "https://cloud.ibm.com/docs/BlockStorage?topic=BlockStorage-replication"
+    appears:
+      - "Classic Infrastructure · Block Storage"
+
+  - label: "Block Snapshots"
+    docs: "https://cloud.ibm.com/docs/BlockStorage?topic=BlockStorage-snapshots&interface=ui#snapshotbestpractices"
+    appears:
+      - "Classic Infrastructure · Block Storage"
+      - "Classic Infrastructure · Backup and recovery options"
+
+  - label: "Block Storage for VPC"
+    docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-block-storage-about"
+    appears:
+      - "Virtual Private Cloud · Block storage"
+
+  - label: "Block Storage Snapshots"
+    docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-snapshots-vpc-about&interface=ui"
+    appears:
+      - "Virtual Private Cloud · Block storage"
+
+  - label: "Block Volumes"
+    docs: "https://cloud.ibm.com/docs/BlockStorage?topic=BlockStorage-getting-started&interface=ui"
+    appears:
+      - "Classic Infrastructure · Block Storage"
+
+  - label: "Burstable Flex"
+    docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-burstable-virtual-servers&interface=ui"
+    appears:
+      - "Virtual Private Cloud · Burstable and Spot Instances"
+
+  - label: "Classic Infrastructure Permissions"
+    docs: "https://cloud.ibm.com/docs/iam?topic=iam-mngclassicinfra"
+    appears:
+      - "Classic Infrastructure · Identity and Access Management"
+
+  - label: "Cloud Connections"
+    docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-cloud-connections"
+    appears:
+      - "Power Virtual Server · Private connectivity"
+
+  - label: "Cloud Internet Services"
+    docs: "https://cloud.ibm.com/docs/cis?topic=cis-getting-started"
+    appears:
+      - "Classic Infrastructure · External connectivity"
+      - "Virtual Private Cloud · External connectivity"
+
+  - label: "Cloud Load Balancer"
+    docs: "https://cloud.ibm.com/docs/loadbalancer-service?topic=loadbalancer-service-about-ibm-cloud-load-balancer"
+    appears:
+      - "Classic Infrastructure · External connectivity"
+
+  - label: "Cloud Object Storage"
+    docs: "https://cloud.ibm.com/docs/cloud-object-storage?topic=cloud-object-storage-about-cloud-object-storage"
+    appears:
+      - "Virtual Private Cloud · Cloud Object Storage"
+      - "Power Virtual Server · Cloud Object Storage"
+      - "Classic Infrastructure · Cloud Object Storage"
+
+  - label: "Context-Based Restrictions"
+    docs: "https://cloud.ibm.com/docs/iam?topic=iam-context-restrictions-whatis"
+    appears:
+      - "Virtual Private Cloud · Identity and Access Management"
+
+  - label: "Custom Bare Metal"
+    docs: "https://cloud.ibm.com/docs/bare-metal?topic=bare-metal-ordering-baremetal-server"
+    appears:
+      - "Classic Infrastructure · Bare Metal Servers"
+
+  - label: "Dedicated Cores"
+    docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-powervs-faqs#faq-processors-vsi"
+    appears:
+      - "Power Virtual Server · Shared Processor Pools and Core Types"
+
+  - label: "Dedicated Hosts"
+    docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-creating-dedicated-hosts-instances&interface=ui#about-dedicated-hosts"
+    appears:
+      - "Virtual Private Cloud · Dedicated Hosts"
+
+  - label: "Dedicated Hosts for Classic"
+    docs: "https://cloud.ibm.com/docs/virtual-servers?topic=virtual-servers-dedicated-hosts-and-dedicated-instances"
+    appears:
+      - "Classic Infrastructure · Dedicated Hosts"
+
+  - label: "Dedicated Instances"
+    docs: "https://cloud.ibm.com/docs/virtual-servers?topic=virtual-servers-dedicated-virtual-servers"
+    appears:
+      - "Classic Infrastructure · Dedicated Hosts"
+
+  - label: "Direct Link"
+    docs: "https://cloud.ibm.com/docs/dl?topic=dl-get-started-with-ibm-cloud-dl"
+    appears:
+      - "Classic Infrastructure · Private connectivity"
+      - "Virtual Private Cloud · Private connectivity"
+      - "Power Virtual Server · Private connectivity"
+
+  - label: "FalconStor StorSafe VTL"
+    docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-manage-vtl"
+    appears:
+      - "Power Virtual Server · Backup and recovery options"
+
+  - label: "Fast-Provisioned Bare Metal"
+    docs: "https://cloud.ibm.com/docs/bare-metal?topic=bare-metal-bm-select-popular-servers"
+    appears:
+      - "Classic Infrastructure · Bare Metal Servers"
+
+  - label: "File Replication"
+    docs: "https://cloud.ibm.com/docs/FileStorage?topic=FileStorage-replication&interface=ui"
+    appears:
+      - "Classic Infrastructure · File Storage"
+
+  - label: "File Share Replication"
+    docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-file-storage-replication"
+    appears:
+      - "Virtual Private Cloud · File Shares"
+
+  - label: "File Share Snapshots"
+    docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-fs-snapshots-about&interface=ui"
+    appears:
+      - "Virtual Private Cloud · File Shares"
+
+  - label: "File Snapshots"
+    docs: "https://cloud.ibm.com/docs/FileStorage?topic=FileStorage-snapshots"
+    appears:
+      - "Classic Infrastructure · File Storage"
+      - "Classic Infrastructure · Backup and recovery options"
+
+  - label: "File Storage for VPC"
+    docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-file-storage-vpc-about&interface=ui"
+    appears:
+      - "Virtual Private Cloud · File Shares"
+
+  - label: "File Volumes"
+    docs: "https://cloud.ibm.com/docs/FileStorage?topic=FileStorage-getting-started"
+    appears:
+      - "Classic Infrastructure · File Storage"
+
+  - label: "Fixed · 5,000 IOPS"
+    docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-on-cloud-architecture#storage-tiers"
+    appears:
+      - "Power Virtual Server · Fixed IOPS"
+
+  - label: "Floating IPs"
+    docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-fip-about"
+    appears:
+      - "Virtual Private Cloud · External connectivity"
+
+  - label: "Flow Logs for VPC"
+    docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-flow-logs"
+    appears:
+      - "Virtual Private Cloud · Security and compliance"
+
+  - label: "Global IPs"
+    docs: "https://cloud.ibm.com/docs/subnets?topic=subnets-work-with-global-ip-addresses"
+    appears:
+      - "Classic Infrastructure · External connectivity"
+
+  - label: "Global Replication Service"
+    docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-getting-started-GRS"
+    appears:
+      - "Power Virtual Server · Backup and recovery options"
+
+  - label: "Hyper Protect Crypto Services"
+    docs: "https://cloud.ibm.com/docs/hs-crypto?topic=hs-crypto-deprecation"
+    appears:
+      - "Virtual Private Cloud · Security and compliance"
+      - "Power Virtual Server · Security and compliance"
+      - "Classic Infrastructure · Security and compliance"
+
+  - label: "IAM"
+    docs: "https://cloud.ibm.com/docs/iam?topic=iam-iamoverview"
+    appears:
+      - "Virtual Private Cloud · Identity and Access Management"
+      - "Power Virtual Server · Identity and Access Management"
+      - "Classic Infrastructure · Identity and Access Management"
+
+  - label: "IBM Cloud Backup for Classic"
+    docs: "https://cloud.ibm.com/docs/Backup?topic=Backup-getting-started"
+    appears:
+      - "Classic Infrastructure · Backup and recovery options"
+
+  - label: "IBM Cloud Logs"
+    docs: "https://cloud.ibm.com/docs/cloud-logs?topic=cloud-logs-about-cl"
+    appears:
+      - "Virtual Private Cloud · Observability"
+      - "Power Virtual Server · Observability"
+      - "Classic Infrastructure · Observability"
+
+  - label: "IBM Cloud Monitoring"
+    docs: "https://cloud.ibm.com/docs/monitoring?topic=monitoring-about-monitor"
+    appears:
+      - "Virtual Private Cloud · Observability"
+      - "Power Virtual Server · Observability"
+      - "Classic Infrastructure · Observability"
+
+  - label: "IBM i"
+    docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-operating-systems-powervs#ibmi-os"
+    appears:
+      - "Power Virtual Server · Virtual Server Instances"
+
+  - label: "IBM i Backups (BRMS + ICC)"
+    docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-backup-ibmi#brms-icc"
+    appears:
+      - "Power Virtual Server · Cloud Object Storage"
+
+  - label: "Image Import & Export"
+    docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-deploy-custom-image"
+    appears:
+      - "Power Virtual Server · Cloud Object Storage"
+
+  - label: "Instance Storage"
+    docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-instance-storage"
+    appears:
+      - "Virtual Private Cloud · Instance storage"
+
+  - label: "Key Protect"
+    docs: "https://cloud.ibm.com/docs/key-protect?topic=key-protect-about"
+    appears:
+      - "Virtual Private Cloud · Security and compliance"
+      - "Power Virtual Server · Security and compliance"
+      - "Classic Infrastructure · Security and compliance"
+
+  - label: "Linux"
+    docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-operating-systems-powervs#linux-os"
+    appears:
+      - "Power Virtual Server · Virtual Server Instances"
+
+  - label: "Load Balancers"
+    docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-nlb-vs-elb&interface=ui"
+    appears:
+      - "Virtual Private Cloud · External connectivity"
+
+  - label: "Network ACLs"
+    docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-using-acls"
+    appears:
+      - "Virtual Private Cloud · Internal connectivity"
+
+  - label: "Network Address Groups"
+    docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-nsg#nag"
+    appears:
+      - "Power Virtual Server · Internal connectivity"
+
+  - label: "Network Gateway Appliance"
+    docs: "https://cloud.ibm.com/docs/gateway-appliance?topic=gateway-appliance-getting-started-ga"
+    appears:
+      - "Classic Infrastructure · Private connectivity"
+      - "Classic Infrastructure · External connectivity"
+
+  - label: "Network Security Groups"
+    docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-nsg"
+    appears:
+      - "Power Virtual Server · Internal connectivity"
+      - "Power Virtual Server · Security and compliance"
+
+  - label: "Platform Metrics"
+    docs: "https://cloud.ibm.com/docs/monitoring?topic=monitoring-platform_metrics_working"
+    appears:
+      - "Virtual Private Cloud · Observability"
+
+  - label: "Portable SAN Storage"
+    docs: "https://cloud.ibm.com/docs/virtual-servers?topic=virtual-servers-storage-options#portable-san-storage"
+    appears:
+      - "Classic Infrastructure · SAN Storage"
+
+  - label: "Power Edge Router"
+    docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-per"
+    appears:
+      - "Power Virtual Server · Private connectivity"
+
+  - label: "Power S1022"
+    docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-on-cloud-architecture#hardware-specifications-on-cloud"
+    appears:
+      - "Power Virtual Server · Dedicated Hosts"
+
+  - label: "Power S1122"
+    docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-on-cloud-architecture#hardware-specifications-on-cloud"
+    appears:
+      - "Power Virtual Server · Dedicated Hosts"
+
+  - label: "Power10"
+    docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-on-cloud-architecture#hardware-specifications-on-cloud"
+    appears:
+      - "Power Virtual Server · Hardware Generations"
+
+  - label: "Power11"
+    docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-on-cloud-architecture#hardware-specifications-on-cloud"
+    appears:
+      - "Power Virtual Server · Hardware Generations"
+
+  - label: "PowerHA SystemMirror"
+    docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-ha-dr-on-cloud#ha-dr-ha-standard"
+    appears:
+      - "Power Virtual Server · Backup and recovery options"
+
+  - label: "Private Cloud Load Balancer"
+    docs: "https://cloud.ibm.com/docs/loadbalancer-service?topic=loadbalancer-service-about-ibm-cloud-load-balancer"
+    appears:
+      - "Classic Infrastructure · Private connectivity"
+
+  - label: "Private Load Balancers"
+    docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-nlb-vs-elb&interface=ui#lb-comparison-chart"
+    appears:
+      - "Virtual Private Cloud · Private connectivity"
+
+  - label: "Private Path"
+    docs: "https://cloud.ibm.com/docs/private-path?topic=private-path-overview"
+    appears:
+      - "Virtual Private Cloud · Private connectivity"
+
+  - label: "Private Subnets"
+    docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-configuring-subnet"
+    appears:
+      - "Power Virtual Server · Internal connectivity"
+
+  - label: "Public Address Ranges"
+    docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-about-par"
+    appears:
+      - "Virtual Private Cloud · External connectivity"
+      - "Power Virtual Server · External connectivity"
+
+  - label: "Public Gateways"
+    docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-about-public-gateways"
+    appears:
+      - "Virtual Private Cloud · External connectivity"
+      - "Power Virtual Server · External connectivity"
+
+  - label: "Public Networks"
+    docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-network-security"
+    appears:
+      - "Power Virtual Server · External connectivity"
+
+  - label: "Public Virtual Servers"
+    docs: "https://cloud.ibm.com/docs/virtual-servers?topic=virtual-servers-about-public-virtual-servers"
+    appears:
+      - "Classic Infrastructure · Public Virtual Servers"
+
+  - label: "Resource Groups"
+    docs: "https://cloud.ibm.com/docs/account?topic=account-account_setup"
+    appears:
+      - "Virtual Private Cloud · Identity and Access Management"
+      - "Power Virtual Server · Identity and Access Management"
+
+  - label: "Routing Tables"
+    docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-about-custom-routes"
+    appears:
+      - "Virtual Private Cloud · Internal connectivity"
+
+  - label: "SAP HANA & NetWeaver"
+    docs: "https://cloud.ibm.com/docs/sap?topic=sap-hana-iaas-offerings-profiles-power-vs"
+    appears:
+      - "Power Virtual Server · Virtual Server Instances"
+
+  - label: "SAP-Certified Infrastructure"
+    docs: "https://cloud.ibm.com/docs/bare-metal?topic=bare-metal-sap-cert-infrastructure"
+    appears:
+      - "Classic Infrastructure · Bare Metal Servers"
+
+  - label: "SCC"
+    docs: "https://cloud.ibm.com/docs/workload-protection?topic=workload-protection-about"
+    appears:
+      - "Virtual Private Cloud · Security and compliance"
+
+  - label: "SCC Workload Protection"
+    docs: "https://cloud.ibm.com/docs/workload-protection?topic=workload-protection-about"
+    appears:
+      - "Power Virtual Server · Security and compliance"
+      - "Virtual Private Cloud · Security and compliance"
+      - "Classic Infrastructure · Security and compliance"
+
+  - label: "Secrets Manager"
+    docs: "https://cloud.ibm.com/docs/secrets-manager?topic=secrets-manager-feature-overview"
+    appears:
+      - "Virtual Private Cloud · Security and compliance"
+      - "Classic Infrastructure · Security and compliance"
+
+  - label: "Secure Automated Backup with Compass"
+    docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-backup-strategies#baas"
+    appears:
+      - "Virtual Private Cloud · Backup and recovery options"
+      - "Power Virtual Server · Backup and recovery options"
+      - "Classic Infrastructure · Backup and recovery options"
+
+  - label: "Transient Virtual Servers"
+    docs: "https://cloud.ibm.com/docs/virtual-servers?topic=virtual-servers-about-vs-transient"
+    appears:
+      - "Classic Infrastructure · Transient Virtual Servers"
+
+  - label: "VPC Security Groups"
+    docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-using-security-groups"
+    appears:
+      - "Virtual Private Cloud · Internal connectivity"
+      - "Power Virtual Server · External connectivity"
+
+  - label: "Classic Security Groups"
+    docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-using-security-groups"
+    appears:
+      - "Classic Infrastructure · Internal connectivity"
+      - "Classic Infrastructure · Private connectivity"
+      - "Classic Infrastructure · Security and compliance"
+
+  - label: "Service Endpoints"
+    docs: "https://cloud.ibm.com/docs/account?topic=account-vrf-service-endpoint&interface=ui#service-endpoint"
+    appears:
+      - "Power Virtual Server · Private connectivity"
+
+  - label: "Shared Capped"
+    docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-powervs-faqs#faq-processors-vsi"
+    appears:
+      - "Power Virtual Server · Shared Processor Pools and Core Types"
+
+  - label: "Shared Processor Pools"
+    docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-manage-SPP"
+    appears:
+      - "Power Virtual Server · Shared Processor Pools and Core Types"
+
+  - label: "Shared Uncapped"
+    docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-powervs-faqs#faq-processors-vsi"
+    appears:
+      - "Power Virtual Server · Shared Processor Pools and Core Types"
+
+  - label: "Snapshots & Clones"
+    docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-additional-backup-strategies#backup-image-capture"
+    appears:
+      - "Power Virtual Server · Backup and recovery options"
+
+  - label: "Spot Instances"
+    docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-spot-instances-virtual-servers"
+    appears:
+      - "Virtual Private Cloud · Burstable and Spot Instances"
+
+  - label: "Static Routes"
+    docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-routes"
+    appears:
+      - "Power Virtual Server · Internal connectivity"
+
+  - label: "Classic Subnets"
+    docs: "https://cloud.ibm.com/docs/subnets?topic=subnets-getting-started"
+    appears:
+      - "Classic Infrastructure · Internal connectivity"
+      - "Classic Infrastructure · Private connectivity"
+      - "Classic Infrastructure · External connectivity"
+
+  - label: "VPC Subnets"
+    docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-about-subnets-vpc"
+    appears:
+      - "Virtual Private Cloud · Private connectivity"
+
+  - label: "Tier 0 · 25 IOPS/GB"
+    docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-on-cloud-architecture#storage-tiers"
+    appears:
+      - "Power Virtual Server · Tiered storage"
+
+  - label: "Tier 1 · 10 IOPS/GB"
+    docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-on-cloud-architecture#storage-tiers"
+    appears:
+      - "Power Virtual Server · Tiered storage"
+
+  - label: "Tier 3 · 3 IOPS/GB"
+    docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-on-cloud-architecture#storage-tiers"
+    appears:
+      - "Power Virtual Server · Tiered storage"
+
+  - label: "Transit Gateway"
+    docs: "https://cloud.ibm.com/docs/transit-gateway?topic=transit-gateway-about"
+    appears:
+      - "Classic Infrastructure · Private connectivity"
+      - "Virtual Private Cloud · Private connectivity"
+      - "Power Virtual Server · Private connectivity"
+      - "Power Virtual Server · External connectivity"
+
+  - label: "Virtual Network Interfaces"
+    docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-vni-about"
+    appears:
+      - "Virtual Private Cloud · Internal connectivity"
+
+  - label: "Virtual Servers for VPC"
+    docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-about-advanced-virtual-servers"
+    appears:
+      - "Virtual Private Cloud · Virtual Servers"
+
+  - label: "VLANs"
+    docs: "https://cloud.ibm.com/docs/vlans?topic=vlans-getting-started"
+    appears:
+      - "Classic Infrastructure · Internal connectivity"
+      - "Classic Infrastructure · Private connectivity"
+      - "Classic Infrastructure · External connectivity"
+
+  - label: "VPC Network Load Balancer"
+    docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-network-load-balancers"
+    appears:
+      - "Power Virtual Server · External connectivity"
+
+  - label: "VPEs"
+    docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-about-vpe"
+    appears:
+      - "Virtual Private Cloud · Private connectivity"
+      - "Power Virtual Server · Private connectivity"
+
+  - label: "VPN for VPC"
+    docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-vpn-overview"
+    appears:
+      - "Virtual Private Cloud · Private connectivity"
+      - "Power Virtual Server · Private connectivity"
+
+  - label: "VRF"
+    docs: "https://cloud.ibm.com/docs/dl?topic=dl-overview-of-virtual-routing-and-forwarding-vrf-on-ibm-cloud"
+    appears:
+      - "Classic Infrastructure · Internal connectivity"

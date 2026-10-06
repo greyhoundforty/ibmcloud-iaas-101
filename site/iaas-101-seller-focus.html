@@ -1,0 +1,419 @@
+<title>IBM Cloud IaaS Explorer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&family=IBM+Plex+Sans:wght@300;400;600&display=swap">
+<style>
+/* Layout: a "stage" row (intro or the selected pillar's lines) over a 4-column pillar grid,
+   resting on a full-width foundation bar. Carbon White theme in light, Gray 100 in dark. */
+:root {
+  --bg: #ffffff;          /* Carbon background */
+  --layer: #f4f4f4;       /* layer-01 */
+  --layer-2: #e0e0e0;     /* layer-accent-01: foundation bar, tags */
+  --hover: #e8e8e8;       /* layer-hover-01 */
+  --text: #161616;        /* text-primary */
+  --text-2: #525252;      /* text-secondary */
+  --label: #0f62fe;       /* eyebrow labels */
+  --accent: #0f62fe;      /* Blue 60: selection */
+  --on-accent: #ffffff;
+  --on-accent-2: #d0e2ff; /* Blue 20 */
+  --focus: #0f62fe;
+  --font-sans: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'IBM Plex Mono', Menlo, 'Courier New', monospace;
+  --gap: 16px;
+  --ease: cubic-bezier(0.2, 0, 0.38, 0.9); /* Carbon productive easing */
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #161616; --layer: #262626; --layer-2: #393939; --hover: #333333;
+    --text: #f4f4f4; --text-2: #c6c6c6; --label: #78a9ff;
+    --accent: #0f62fe; --on-accent: #ffffff; --on-accent-2: #d0e2ff; --focus: #ffffff;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #161616; --layer: #262626; --layer-2: #393939; --hover: #333333;
+  --text: #f4f4f4; --text-2: #c6c6c6; --label: #78a9ff;
+  --accent: #0f62fe; --on-accent: #ffffff; --on-accent-2: #d0e2ff; --focus: #ffffff;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.5;
+  padding-inline: 16px;
+}
+.wrap {
+  max-width: 1312px;
+  margin-inline: auto;
+  padding-block: 48px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--label);
+}
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
+
+/* ---------- Stage: intro text and the selected pillar's lines share one cell ---------- */
+.stage {
+  display: grid;
+  min-height: 260px;
+  padding-bottom: 8px;
+}
+.intro, .stage-lines { grid-area: 1 / 1; align-self: end; }
+.intro { display: flex; flex-direction: column; gap: 12px; transition: opacity 240ms var(--ease), transform 240ms var(--ease); }
+.intro h1 {
+  margin: 0;
+  font-size: clamp(2.25rem, 5vw, 3.75rem);
+  font-weight: 300;
+  line-height: 1.1;
+  text-wrap: balance;
+}
+.intro p { margin: 0; font-size: 1.25rem; color: var(--text-2); max-width: 40rem; }
+.wrap[data-selected] .intro { opacity: 0; transform: translateY(-8px); pointer-events: none; }
+
+.stage-lines {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--gap);
+}
+/* The line block spans two columns, anchored over the selected pillar */
+.stage-lines .lines { grid-column: 1 / span 2; }
+.stage-lines .lines[data-anchor="vpc"],
+.stage-lines .lines[data-anchor="powervs"] { grid-column: 2 / span 2; }
+.stage-lines .lines[data-anchor="ocpv"] { grid-column: 3 / span 2; }
+
+/* Lines stack upward: item 1 sits closest to the box */
+.lines {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 8px;
+}
+.lines li {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding: 12px 20px;
+  background: var(--layer);
+  border-left: 4px solid var(--accent);
+  font-size: 1.125rem;
+  animation: rise 360ms var(--ease) both;
+  min-width: 0;
+}
+.lines li .num { font-family: var(--font-mono); font-size: 0.875rem; color: var(--label); }
+.lines[data-side="right"] li { flex-direction: row-reverse; border-left: 0; border-right: 4px solid var(--accent); text-align: right; }
+@keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
+/* ---------- Pillars ---------- */
+.pillars {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--gap);
+  align-items: start;
+}
+.tile { min-width: 0; transition: opacity 240ms var(--ease); }
+.wrap[data-selected] .tile:not(.is-active) { opacity: 0.35; }
+.wrap[data-selected] .tile:not(.is-active):hover { opacity: 0.7; }
+
+.tile-head {
+  position: relative;
+  width: 100%;
+  min-height: 248px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 24px;
+  text-align: left;
+  background: var(--layer);
+  border: 0;
+  border-top: 4px solid var(--accent);
+  cursor: pointer;
+  transition: background-color 160ms var(--ease);
+}
+.tile-head:hover { background: var(--hover); }
+.tile-head .icon { width: 48px; height: 48px; color: var(--label); margin-bottom: auto; }
+.tile-head .eyebrow { margin-top: 32px; }
+.tile-title { font-size: 1.75rem; font-weight: 400; line-height: 1.2; text-wrap: balance; padding-right: 32px; }
+.chevron {
+  position: absolute; right: 20px; bottom: 24px;
+  width: 20px; height: 20px; color: var(--text-2);
+  transition: transform 240ms var(--ease);
+}
+.tile.is-active .tile-head { background: var(--accent); color: var(--on-accent); }
+.tile.is-active .tile-head .icon,
+.tile.is-active .tile-head .chevron { color: var(--on-accent); }
+.tile.is-active .tile-head .eyebrow { color: var(--on-accent-2); }
+.tile.is-active .chevron { transform: rotate(180deg); }
+
+/* The panel grows the tile downward (0fr -> 1fr row animates the height) */
+.panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 320ms var(--ease);
+}
+.tile.is-active .panel { grid-template-rows: 1fr; }
+.panel-inner {
+  overflow: hidden;
+  min-height: 0;
+  background: var(--layer);
+  border: 0 solid var(--accent);
+}
+.tile.is-active .panel-inner { border-width: 0 2px 2px; }
+.panel-body { padding: 24px; display: flex; flex-direction: column; gap: 20px; }
+.panel-body p { margin: 0; color: var(--text); }
+.panel-body h3 { margin: 0 0 8px; }
+.panel-body ul { margin: 0; padding-left: 1.1em; color: var(--text-2); display: flex; flex-direction: column; gap: 4px; }
+.tags { list-style: none; padding: 0 !important; flex-direction: row !important; flex-wrap: wrap; gap: 8px !important; }
+.tags li {
+  font-size: 0.875rem;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--layer-2);
+  color: var(--text);
+}
+.panel-lines { display: none; } /* shown inside the tile on narrow screens */
+
+/* ---------- Foundation bar ---------- */
+.foundation .tile-head {
+  min-height: 0;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 24px;
+  padding: 24px 64px 24px 24px;
+  background: var(--layer-2);
+}
+.foundation .tile-head:hover { background: var(--hover); }
+.foundation .tile-head .eyebrow { margin: 0; }
+.foundation .tile-title { padding-right: 0; }
+.foundation .chevron { bottom: auto; top: 50%; margin-top: -10px; }
+.services { display: flex; flex-wrap: wrap; gap: 8px 32px; margin-left: auto; color: var(--text-2); }
+.services span { display: inline-flex; align-items: center; gap: 8px; }
+.services svg { width: 24px; height: 24px; }
+.tile.foundation.is-active .services { color: var(--on-accent); }
+.foundation-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }
+.foundation-grid > div { min-width: 0; }
+.foundation .panel-body > p { max-width: 65ch; }
+
+.hint { margin: 8px 0 0; color: var(--text-2); font-size: 0.875rem; }
+kbd { font-family: var(--font-mono); font-size: 0.8125rem; padding: 1px 6px; background: var(--layer); border: 1px solid var(--layer-2); }
+
+/* ---------- Narrower screens: lines move inside the expanded tile ---------- */
+@media (max-width: 1023px) {
+  .stage { min-height: 0; }
+  .stage-lines { display: none; }
+  .wrap[data-selected] .intro { opacity: 1; transform: none; }
+  .panel-lines { display: flex; }
+  .pillars { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tile-head { min-height: 200px; }
+  .foundation-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 599px) {
+  .wrap { padding-block: 32px 48px; }
+  .pillars { grid-template-columns: minmax(0, 1fr); }
+  .tile-head { min-height: 0; }
+  .tile-head .eyebrow { margin-top: 16px; }
+  .services { margin-left: 0; }
+  .foundation-grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+</style>
+
+<!-- Carbon icons (Apache 2.0), inlined as symbols so each tile can reuse them -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-classic" viewBox="0 0 32 32"><path d="M18 26H30V28H18z"/><path d="M18 21H30V23H18z"/><path d="M18 16H30V18H18z"/><path d="M14,25H9.5A7.4964,7.4964,0,0,1,8.1782,10.124,10,10,0,0,1,28,12H26a7.999,7.999,0,0,0-15.9507-.87l-.09.8335L9.123,12.02A5.4962,5.4962,0,0,0,9.5,23H14Z"/></symbol>
+  <symbol id="i-vpc" viewBox="0 0 32 32"><path d="M20,20V17a4,4,0,0,0-8,0v3a2.0025,2.0025,0,0,0-2,2v6a2.0025,2.0025,0,0,0,2,2h8a2.0025,2.0025,0,0,0,2-2V22A2.0025,2.0025,0,0,0,20,20Zm-6-3a2,2,0,0,1,4,0v3H14ZM12,28V22h8l.0012,6Z"/><path d="M25.8288,10.1152A10.0067,10.0067,0,0,0,17.89,2.1816,10.0025,10.0025,0,0,0,6.17,10.1152,7.502,7.502,0,0,0,7.4912,25H8V23H7.4953a5.5019,5.5019,0,0,1-.9694-10.9165l1.3488-.2441.2591-1.3457a8.0109,8.0109,0,0,1,15.7312,0l.259,1.3457,1.3489.2441A5.5019,5.5019,0,0,1,24.5076,23H24v2h.5076a7.502,7.502,0,0,0,1.3212-14.8848Z"/></symbol>
+  <symbol id="i-powervs" viewBox="0 0 32 32"><path d="M16,25c-2,0-4-0.7-5.6-2l1.3-1.6c1.3,1,2.8,1.5,4.4,1.5c3.9,0,7-3.1,7-7c0-0.3,0-0.7-0.1-1l2-0.3C25,15.1,25,15.6,25,16C25,21,21,25,16,25z"/><path d="M7.1,17.3C7,16.9,7,16.4,7,16c0-5,4-9,9-9c2,0,4,0.7,5.6,2l-1.3,1.6C19.1,9.5,17.6,9,16,9c-3.9,0-7,3.1-7,7c0,0.3,0,0.7,0.1,1L7.1,17.3z"/><circle cx="23" cy="27" r="1"/><circle cx="9" cy="20" r="1"/><circle cx="23" cy="12" r="1"/><circle cx="16" cy="16" r="2"/><circle cx="9" cy="5" r="1"/><path d="M16,30C8.3,30,2,23.7,2,16c0-3.7,1.5-7.3,4.1-9.9l1.4,1.4C5.2,9.8,4,12.8,4,16c0,6.6,5.4,12,12,12c1.4,0,2.8-0.2,4.1-0.7l0.7,1.9C19.3,29.7,17.6,30,16,30z"/><path d="M25.9,25.9l-1.4-1.4c2.3-2.3,3.5-5.3,3.5-8.5c0-6.6-5.4-12-12-12c-1.4,0-2.8,0.2-4.1,0.7l-0.7-1.9C12.7,2.3,14.4,2,16,2c7.7,0,14,6.3,14,14C30,19.7,28.5,23.3,25.9,25.9z"/></symbol>
+  <symbol id="i-ocpv" viewBox="0 0 32 32"><path d="M20,13H12a2.0025,2.0025,0,0,0-2,2V28a2.0025,2.0025,0,0,0,2,2h8a2.0025,2.0025,0,0,0,2-2V15A2.0025,2.0025,0,0,0,20,13Zm0,2,0,3H12V15Zm0,5,0,3H12V20Zm-8,8V25h8v3Z"/><path d="M25.91,10.13a.121.121,0,0,1-.0967-.0952A10.0061,10.0061,0,0,0,17.89,2.1816,10.0025,10.0025,0,0,0,6.1858,10.0347a.1212.1212,0,0,1-.0964.0957A7.5019,7.5019,0,0,0,7.4912,25H8V23H7.4954a5.5108,5.5108,0,0,1-5.4387-6.3,5.6992,5.6992,0,0,1,4.7138-4.6606l1.0166-.1836a.1306.1306,0,0,0,.1045-.1035l.18-.9351a8.28,8.28,0,0,1,6.8469-6.7427,7.957,7.957,0,0,1,2.8471.1245,8.22,8.22,0,0,1,6.1475,6.545l.1941,1.0083a.13.13,0,0,0,.1045.1035l1.0576.1914a5.7819,5.7819,0,0,1,3.1011,1.539A5.5052,5.5052,0,0,1,24.5076,23H24v2h.5076A7.5019,7.5019,0,0,0,25.91,10.13Z"/></symbol>
+  <symbol id="i-compute" viewBox="0 0 32 32"><path d="M11,11V21H21V11Zm8,8H13V13h6Z"/><path d="M30,13V11H26V8a2,2,0,0,0-2-2H21V2H19V6H13V2H11V6H8A2,2,0,0,0,6,8v3H2v2H6v6H2v2H6v3a2,2,0,0,0,2,2h3v4h2V26h6v4h2V26h3a2,2,0,0,0,2-2V21h4V19H26V13ZM24,24H8V8H24Z"/></symbol>
+  <symbol id="i-storage" viewBox="0 0 32 32"><path d="M28,20H26v2h2v6H4V22H14V20H4a2.0023,2.0023,0,0,0-2,2v6a2.0023,2.0023,0,0,0,2,2H28a2.0023,2.0023,0,0,0,2-2V22A2.0023,2.0023,0,0,0,28,20Z"/><circle cx="7" cy="25" r="1"/><path d="M30,8H22v6H16v8h8V16h6ZM22,20H18V16h4Zm6-6H24V10h4Z"/><path d="M18,10H10V2h8ZM12,8h4V4H12Z"/></symbol>
+  <symbol id="i-network" viewBox="0 0 32 32"><path d="M30,30H22V22h8Zm-6-2h4V24H24Z"/><path d="M20,27H8A6,6,0,0,1,8,15h2v2H8a4,4,0,0,0,0,8H20Z"/><path d="M20,20H12V12h8Zm-6-2h4V14H14Z"/><path d="M24,17H22V15h2a4,4,0,0,0,0-8H12V5H24a6,6,0,0,1,0,12Z"/><path d="M10,10H2V2h8ZM4,8H8V4H4Z"/></symbol>
+  <symbol id="i-security" viewBox="0 0 32 32"><path d="M14 16.59 11.41 14 10 15.41 14 19.41 22 11.41 20.59 10 14 16.59z"/><path d="M16,30,9.8242,26.7071A10.9818,10.9818,0,0,1,4,17V4A2.0021,2.0021,0,0,1,6,2H26a2.0021,2.0021,0,0,1,2,2V17a10.9818,10.9818,0,0,1-5.8242,9.7071ZM6,4V17a8.9852,8.9852,0,0,0,4.7656,7.9423L16,27.7333l5.2344-2.791A8.9852,8.9852,0,0,0,26,17V4Z"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 32 32"><path d="M16 22 6 12 7.4 10.6 16 19.2 24.6 10.6 26 12z"/></symbol>
+</svg>
+
+<main class="wrap" id="wrap">
+  <section class="stage" aria-live="polite">
+    <div class="intro">
+      <span class="eyebrow">IBM Cloud</span>
+      <h1>Infrastructure as a Service</h1>
+      <p>One foundation, four ways to run your workloads.</p>
+    </div>
+    <div class="stage-lines"><ol class="lines" id="stage-lines"></ol></div>
+  </section>
+
+  <div class="pillars" id="pillars"></div>
+  <div id="foundation-slot"></div>
+
+  <p class="hint">Select a pillar or the foundation to explore it. Select it again, click outside, or press <kbd>Esc</kbd> to return.</p>
+</main>
+
+<script>
+// ---------------------------------------------------------------------------
+// Content. "lines" are the four headline lines (placeholder text for now);
+// "summary", "fit" and "blocks" fill the panel that grows out of the tile.
+// ---------------------------------------------------------------------------
+const PILLARS = [
+  {
+    id: "classic", icon: "i-classic", eyebrow: "IBM Cloud Classic", title: "Classic Infrastructure",
+    lines: ["Overview", "Compute, Storage, and Network offerings", "Typical customers / use case", "Migration Plays"],
+    summary: "IBM Cloud's original infrastructure platform. Bare metal and virtual servers run on VLAN-based networking you control down to the subnet, with dedicated hardware for workloads that need it.",
+    fit: ["Lift-and-shift of existing x86 workloads", "Single-tenant bare metal and custom builds", "VMware estates on dedicated hosts"],
+    blocks: ["Bare metal servers", "Virtual servers", "Gateway Appliance", "File & block storage", "VLANs & portable subnets"],
+  },
+  {
+    id: "vpc", icon: "i-vpc", eyebrow: "IBM Cloud VPC", title: "Virtual Private Cloud",
+    lines: ["Overview", "Comparison to classic", "Compute, Storage, and Network offerings", "Typical customers / use case"],
+    summary: "Software-defined, logically isolated networks across multizone regions. Provision servers and storage in minutes and secure them with security groups and network ACLs, all through API, CLI or Terraform.",
+    fit: ["Cloud-native and modernized applications", "Highly available, multizone deployments", "Infrastructure-as-code pipelines"],
+    blocks: ["Virtual server instances", "Bare metal for VPC", "Block & file storage", "Load balancers", "VPN gateways", "Security groups"],
+  },
+  {
+    id: "powervs", icon: "i-powervs", eyebrow: "IBM Power", title: "Power Virtual Server",
+    lines: ["Overview", "Compute, Storage, and Network offerings", "Typical customers / use case", "Migration Plays"],
+    summary: "IBM Power servers delivered as a service, running AIX, IBM i and Linux on Power next to your x86 cloud. Move existing Power workloads without re-platforming and connect them to VPC and on-premises networks.",
+    fit: ["Data center exit for Power estates", "Disaster recovery for AIX and IBM i", "SAP on Power"],
+    blocks: ["Power virtual server instances", "Tiered block storage", "Private subnets", "Transit Gateway", "Direct Link"],
+  },
+  {
+    id: "ocpv", icon: "i-ocpv", eyebrow: "Red Hat OpenShift", title: "OpenShift Virtualization",
+    lines: ["Overview", "Compute, Storage, and Network offerings", "Typical customers / use case", "Migration Plays"],
+    summary: "Run virtual machines and containers side by side on Red Hat OpenShift, using bare metal worker nodes in IBM Cloud. VMs use the same Kubernetes tooling as containers, so teams can modernize at their own pace.",
+    fit: ["VMware migrations onto one platform", "Mixed VM and container applications", "Gradual modernization of legacy VMs"],
+    blocks: ["Red Hat OpenShift on IBM Cloud", "Bare metal workers", "OpenShift Data Foundation", "Migration Toolkit for Virtualization"],
+  },
+];
+
+const FOUNDATION = {
+  id: "iaas", eyebrow: "Foundation", title: "Infrastructure as a Service",
+  lines: ["Natus error sit voluptatem", "Accusantium doloremque laudantium", "Totam rem aperiam eaque ipsa", "Quae ab illo inventore veritatis"],
+  summary: "The shared layer under every pillar: compute, storage, networking and security that work the same way whichever platform runs the workload. Transit Gateway ties the pillars together and Direct Link brings in on-premises networks.",
+  groups: [
+    { icon: "i-compute", name: "Compute", items: ["Virtual servers", "Bare metal servers", "Power servers"] },
+    { icon: "i-storage", name: "Storage", items: ["Block storage", "File storage", "Cloud Object Storage"] },
+    { icon: "i-network", name: "Network", items: ["Transit Gateway", "Direct Link", "VPN and load balancers"] },
+    { icon: "i-security", name: "Security", items: ["Key Protect", "Hyper Protect Crypto Services", "Secrets Manager"] },
+  ],
+};
+
+// Pillars in the right half anchor their lines to the right edge
+const RIGHT_SIDE = new Set(["powervs", "ocpv"]);
+
+// --- small helpers ---------------------------------------------------------
+const icon = (id, cls = "icon") => `<svg class="${cls}" aria-hidden="true" fill="currentColor"><use href="#${id}"/></svg>`;
+const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+// Lines markup: numbered 01-04; CSS stacks them upward from the box.
+function linesHTML(lines) {
+  return lines.map((text, i) =>
+    `<li style="animation-delay:${i * 140}ms"><span class="num">0${i + 1}</span><span>${esc(text)}</span></li>`
+  ).join("");
+}
+
+function pillarHTML(p) {
+  return `
+  <article class="tile" data-id="${p.id}">
+    <button class="tile-head" type="button" aria-expanded="false" aria-controls="panel-${p.id}">
+      ${icon(p.icon)}
+      <span class="eyebrow">${esc(p.eyebrow)}</span>
+      <span class="tile-title">${esc(p.title)}</span>
+      ${icon("i-chevron", "chevron")}
+    </button>
+    <div class="panel" id="panel-${p.id}" role="region" aria-label="${esc(p.title)} overview" inert>
+      <div class="panel-inner"><div class="panel-body">
+        <ol class="lines panel-lines"></ol>
+        <p>${esc(p.summary)}</p>
+        <div><h3 class="eyebrow">Good fit for</h3><ul>${p.fit.map((f) => `<li>${esc(f)}</li>`).join("")}</ul></div>
+        <div><h3 class="eyebrow">Building blocks</h3><ul class="tags">${p.blocks.map((b) => `<li>${esc(b)}</li>`).join("")}</ul></div>
+      </div></div>
+    </div>
+  </article>`;
+}
+
+function foundationHTML(f) {
+  return `
+  <article class="tile foundation" data-id="${f.id}">
+    <button class="tile-head" type="button" aria-expanded="false" aria-controls="panel-${f.id}">
+      <span class="eyebrow">${esc(f.eyebrow)}</span>
+      <span class="tile-title">${esc(f.title)}</span>
+      <span class="services">${f.groups.map((g) => `<span>${icon(g.icon, "")}${g.name}</span>`).join("")}</span>
+      ${icon("i-chevron", "chevron")}
+    </button>
+    <div class="panel" id="panel-${f.id}" role="region" aria-label="${esc(f.title)} overview" inert>
+      <div class="panel-inner"><div class="panel-body">
+        <ol class="lines panel-lines"></ol>
+        <p>${esc(f.summary)}</p>
+        <div class="foundation-grid">
+          ${f.groups.map((g) => `<div><h3 class="eyebrow">${g.name}</h3><ul>${g.items.map((i) => `<li>${esc(i)}</li>`).join("")}</ul></div>`).join("")}
+        </div>
+      </div></div>
+    </div>
+  </article>`;
+}
+
+// --- render ----------------------------------------------------------------
+const wrap = document.getElementById("wrap");
+const stageLines = document.getElementById("stage-lines");
+document.getElementById("pillars").innerHTML = PILLARS.map(pillarHTML).join("");
+document.getElementById("foundation-slot").innerHTML = foundationHTML(FOUNDATION);
+const ALL = Object.fromEntries([...PILLARS, FOUNDATION].map((p) => [p.id, p]));
+
+// --- state: which block is open (null = default view) ----------------------
+let selected = null;
+
+function select(id) {
+  selected = id === selected ? null : id; // selecting the open one resets
+
+  if (selected) wrap.dataset.selected = selected;
+  else delete wrap.dataset.selected;
+
+  document.querySelectorAll(".tile").forEach((tile) => {
+    const active = tile.dataset.id === selected;
+    tile.classList.toggle("is-active", active);
+    tile.querySelector(".tile-head").setAttribute("aria-expanded", String(active));
+    const panel = tile.querySelector(".panel");
+    panel.inert = !active;
+    // Refill the in-tile lines (narrow screens) so their animation replays
+    tile.querySelector(".panel-lines").innerHTML = active ? linesHTML(ALL[selected].lines) : "";
+  });
+
+  // Stage lines (wide screens): re-render to replay the staggered rise
+  stageLines.innerHTML = selected ? linesHTML(ALL[selected].lines) : "";
+  stageLines.dataset.anchor = selected || "";
+  stageLines.dataset.side = RIGHT_SIDE.has(selected) ? "right" : "left";
+}
+
+// Click a tile header to open it; click anywhere else (not a tile) to reset
+document.addEventListener("click", (e) => {
+  const head = e.target.closest(".tile-head");
+  if (head) { select(head.closest(".tile").dataset.id); return; }
+  if (selected && !e.target.closest(".tile")) select(selected);
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && selected) {
+    const head = document.querySelector(`.tile[data-id="${selected}"] .tile-head`);
+    select(selected);
+    head && head.focus();
+  }
+});
+
+// Optional deep link: #classic, #vpc, #powervs, #ocpv or #iaas opens that block
+const fromHash = location.hash.slice(1);
+if (ALL[fromHash]) select(fromHash);
+</script>
