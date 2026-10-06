@@ -6,11 +6,11 @@ Everything uses the IBM Carbon Design System: its colors, IBM Plex type and offi
 
 There are three pieces, from broadest to deepest:
 
-| Piece | What it is | Source here | Live artifact (private until shared) |
+| Piece | What it is | Source here | 
 |---|---|---|---|
-| **Slide deck** | Click-through presentation: highlight a pillar, reveal 4 lines, reset | `deck/project/` | https://claude.ai/code/artifact/11916a8f-9546-497b-adf0-0fe0c6f1b39c |
-| **Seller focus** | High-level seller discovery, the true 101, and the basis for the PowerPoint | `site/iaas-101-seller-focus.html` | https://claude.ai/artifact/CmqbzBgu175Y96nmYPFyLc |
-| **Tech focus** | Tech overview of the cloud services in each IaaS offering | `site/iaas-101-tech-focus.html` | https://claude.ai/artifact/KuPPwne87c8MMm1jjswLgq |
+| **Slide deck** | Click-through presentation: highlight a pillar, reveal 4 lines, reset | `deck/project/` | 
+| **Seller focus** | High-level seller discovery, the true 101, and the basis for the PowerPoint | `site/iaas-101-seller-focus.html` | 
+| **Tech focus** | Tech overview of the cloud services in each IaaS offering | `site/iaas-101-tech-focus.html` | 
 
 > A light-only copy of the tech-focus page also exists (https://claude.ai/artifact/Ddxw6ifhtwiasKDCVosvxi).
 > The tech-focus page itself now defaults to light with a dark toggle, so the copy is redundant and can be deleted.
