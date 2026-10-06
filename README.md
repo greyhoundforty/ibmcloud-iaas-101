@@ -6,12 +6,9 @@ Everything uses the IBM Carbon Design System: its colors, IBM Plex type and offi
 
 There are three pieces, from broadest to deepest:
 
-| Piece | What it is | Source here | 
-|---|---|---|---|
-| **Slide deck** | Click-through presentation: highlight a pillar, reveal 4 lines, reset | `deck/project/` | 
-| **Seller focus** | High-level seller discovery, the true 101, and the basis for the PowerPoint | `site/iaas-101-seller-focus.html` | 
-| **Tech focus** | Tech overview of the cloud services in each IaaS offering | `site/iaas-101-tech-focus.html` | 
-
+- **Slide deck**: Click-through presentation: highlight a pillar, reveal 4 lines, reset. Items are in `deck/project/` (**WIP**)
+- **Seller focus**: High-level seller discovery, the true 101, and the basis for the PowerPoint. current version is at `site/iaas-101-seller-focus.html` 
+- **Tech focus**: Tech overview of the cloud services in each IaaS offering. Current version is at `site/iaas-101-tech-focus.html`
 
 **Service-level edits happen on the tech-focus page.** The seller-focus page is the 101 narrative and the source for the deck. The rest of this README is mostly about the tech-focus page.
 
