@@ -8,6 +8,9 @@ pills:
       - "Virtual Private Cloud · Identity and Access Management"
       - "Power Virtual Server · Identity and Access Management"
       - "Classic Infrastructure · Identity and Access Management"
+      - "OpenShift Virtualization · Security and access"
+      - "IBM Kubernetes Service · Identity and Access Management"
+      - "Red Hat OpenShift Service · Identity and Access Management"
 
   - label: "Access Policies"
     docs: "https://cloud.ibm.com/docs/iam?topic=iam-iamusermanpol&interface=ui"
@@ -15,6 +18,14 @@ pills:
       - "Virtual Private Cloud · Identity and Access Management"
       - "Power Virtual Server · Identity and Access Management"
       - "Classic Infrastructure · Identity and Access Management"
+      - "OpenShift Virtualization · Security and access"
+      - "IBM Kubernetes Service · Identity and Access Management"
+      - "Red Hat OpenShift Service · Identity and Access Management"
+
+  - label: "Activity Tracker"
+    docs: "https://cloud.ibm.com/docs/atracker?topic=atracker-getting-started"
+    appears:
+      - "OpenShift Virtualization · Observability"
 
   - label: "Activity Tracker Event Routing"
     docs: "https://cloud.ibm.com/docs/atracker?topic=atracker-getting-started"
@@ -22,6 +33,13 @@ pills:
       - "Virtual Private Cloud · Observability"
       - "Power Virtual Server · Observability"
       - "Classic Infrastructure · Observability"
+      - "IBM Kubernetes Service · Observability"
+
+  - label: "Advanced Cluster Management"
+    docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-acm-about"
+    appears:
+      - "OpenShift Virtualization · Backup and disaster recovery"
+      - "OpenShift Virtualization · Migration and fleet management"
 
   - label: "AIX"
     docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-operating-systems-powervs#aix-public-private"
@@ -40,6 +58,21 @@ pills:
       - "Virtual Private Cloud · File Shares"
       - "Virtual Private Cloud · Backup and recovery options"
 
+  - label: "Backup repository"
+    docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-storage-cos-understand"
+    appears:
+      - "OpenShift Virtualization · Cloud Object Storage"
+
+  - label: "Balanced"
+    docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-virt-overview"
+    appears:
+      - "OpenShift Virtualization · Bare metal worker nodes"
+
+  - label: "Bare metal pool"
+    docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-virt-plan"
+    appears:
+      - "OpenShift Virtualization · Where the VMs run"
+
   - label: "Bare Metal Servers for Classic"
     docs: "https://cloud.ibm.com/docs/bare-metal?topic=bare-metal-getting-started"
     appears:
@@ -49,6 +82,13 @@ pills:
     docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-about-bare-metal-servers"
     appears:
       - "Virtual Private Cloud · Bare Metal Servers"
+      - "OpenShift Virtualization · Bare metal worker nodes"
+      - "Red Hat OpenShift Service · Worker nodes"
+
+  - label: "Block (RBD)"
+    docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-virt-storage-setup"
+    appears:
+      - "OpenShift Virtualization · OpenShift Data Foundation"
 
   - label: "Block Replication"
     docs: "https://cloud.ibm.com/docs/BlockStorage?topic=BlockStorage-replication"
@@ -65,11 +105,14 @@ pills:
     docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-block-storage-about"
     appears:
       - "Virtual Private Cloud · Block storage"
+      - "IBM Kubernetes Service · Block storage"
+      - "Red Hat OpenShift Service · Block storage"
 
   - label: "Block Storage Snapshots"
     docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-snapshots-vpc-about&interface=ui"
     appears:
       - "Virtual Private Cloud · Block storage"
+      - "Red Hat OpenShift Service · Block storage"
 
   - label: "Block Volumes"
     docs: "https://cloud.ibm.com/docs/BlockStorage?topic=BlockStorage-getting-started&interface=ui"
@@ -81,10 +124,26 @@ pills:
     appears:
       - "Virtual Private Cloud · Burstable and Spot Instances"
 
+  - label: "Calico"
+    docs: "https://cloud.ibm.com/docs/containers?topic=containers-network_policies"
+    appears:
+      - "IBM Kubernetes Service · Internal connectivity"
+      - "Red Hat OpenShift Service · Internal connectivity"
+
+  - label: "CIS benchmarks"
+    docs: "https://cloud.ibm.com/docs/containers?topic=containers-cis-benchmark"
+    appears:
+      - "IBM Kubernetes Service · Security and compliance"
+
   - label: "Classic Infrastructure Permissions"
     docs: "https://cloud.ibm.com/docs/iam?topic=iam-mngclassicinfra"
     appears:
       - "Classic Infrastructure · Identity and Access Management"
+
+  - label: "Clones"
+    docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-virt-overview"
+    appears:
+      - "OpenShift Virtualization · OpenShift Data Foundation"
 
   - label: "Cloud Connections"
     docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-cloud-connections"
@@ -108,11 +167,42 @@ pills:
       - "Virtual Private Cloud · Cloud Object Storage"
       - "Power Virtual Server · Cloud Object Storage"
       - "Classic Infrastructure · Cloud Object Storage"
+      - "OpenShift Virtualization · Cloud Object Storage"
+      - "OpenShift Virtualization · Backup and disaster recovery"
+      - "IBM Kubernetes Service · Object storage"
+      - "IBM Kubernetes Service · Backup and recovery"
+      - "Red Hat OpenShift Service · Object and ephemeral"
+      - "Red Hat OpenShift Service · Backup and recovery"
+
+  - label: "Cluster autoscaler"
+    docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-cluster-scaling-install-addon"
+    appears:
+      - "Red Hat OpenShift Service · Worker pools"
+
+  - label: "Cold and warm"
+    docs: "https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization"
+    appears:
+      - "OpenShift Virtualization · Migration and fleet management"
+
+  - label: "Compute"
+    docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-virt-overview"
+    appears:
+      - "OpenShift Virtualization · Bare metal worker nodes"
+
+  - label: "Container Registry"
+    docs: "https://cloud.ibm.com/docs/Registry?topic=Registry-getting-started"
+    appears:
+      - "IBM Kubernetes Service · Images and updates"
+      - "Red Hat OpenShift Service · OpenShift on the workers"
 
   - label: "Context-Based Restrictions"
     docs: "https://cloud.ibm.com/docs/iam?topic=iam-context-restrictions-whatis"
     appears:
       - "Virtual Private Cloud · Identity and Access Management"
+      - "IBM Kubernetes Service · Control plane access"
+      - "IBM Kubernetes Service · Identity and Access Management"
+      - "Red Hat OpenShift Service · Control plane access"
+      - "Red Hat OpenShift Service · Identity and Access Management"
 
   - label: "Custom Bare Metal"
     docs: "https://cloud.ibm.com/docs/bare-metal?topic=bare-metal-ordering-baremetal-server"
@@ -128,6 +218,7 @@ pills:
     docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-creating-dedicated-hosts-instances&interface=ui#about-dedicated-hosts"
     appears:
       - "Virtual Private Cloud · Dedicated Hosts"
+      - "Red Hat OpenShift Service · Worker nodes"
 
   - label: "Dedicated Hosts for Classic"
     docs: "https://cloud.ibm.com/docs/virtual-servers?topic=virtual-servers-dedicated-hosts-and-dedicated-instances"
@@ -145,6 +236,31 @@ pills:
       - "Classic Infrastructure · Private connectivity"
       - "Virtual Private Cloud · Private connectivity"
       - "Power Virtual Server · Private connectivity"
+      - "OpenShift Virtualization · Private connectivity"
+      - "IBM Kubernetes Service · Private connectivity"
+      - "Red Hat OpenShift Service · Private connectivity"
+
+  - label: "Disk image import"
+    docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-virt-overview"
+    appears:
+      - "OpenShift Virtualization · Cloud Object Storage"
+
+  - label: "emptyDir"
+    docs: "https://cloud.ibm.com/docs/containers/container_volumes_ov.html"
+    appears:
+      - "IBM Kubernetes Service · Ephemeral storage"
+      - "Red Hat OpenShift Service · Object and ephemeral"
+
+  - label: "Encrypted worker disk"
+    docs: "https://cloud.ibm.com/docs/containers?topic=containers-plan_vpc_basics#workernodes"
+    appears:
+      - "IBM Kubernetes Service · Worker nodes"
+
+  - label: "etcd"
+    docs: "https://cloud.ibm.com/docs/containers?topic=containers-encryption"
+    appears:
+      - "IBM Kubernetes Service · Control plane"
+      - "Red Hat OpenShift Service · Control plane"
 
   - label: "FalconStor StorSafe VTL"
     docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-manage-vtl"
@@ -155,6 +271,11 @@ pills:
     docs: "https://cloud.ibm.com/docs/bare-metal?topic=bare-metal-bm-select-popular-servers"
     appears:
       - "Classic Infrastructure · Bare Metal Servers"
+
+  - label: "File (CephFS)"
+    docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-ocs-storage-prep"
+    appears:
+      - "OpenShift Virtualization · OpenShift Data Foundation"
 
   - label: "File Replication"
     docs: "https://cloud.ibm.com/docs/FileStorage?topic=FileStorage-replication&interface=ui"
@@ -181,6 +302,9 @@ pills:
     docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-file-storage-vpc-about&interface=ui"
     appears:
       - "Virtual Private Cloud · File Shares"
+      - "OpenShift Virtualization · VPC File Storage"
+      - "IBM Kubernetes Service · File storage"
+      - "Red Hat OpenShift Service · File storage"
 
   - label: "File Volumes"
     docs: "https://cloud.ibm.com/docs/FileStorage?topic=FileStorage-getting-started"
@@ -196,6 +320,7 @@ pills:
     docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-fip-about"
     appears:
       - "Virtual Private Cloud · External connectivity"
+      - "OpenShift Virtualization · External connectivity"
 
   - label: "Flow Logs for VPC"
     docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-flow-logs"
@@ -212,6 +337,12 @@ pills:
     appears:
       - "Power Virtual Server · Backup and recovery options"
 
+  - label: "hostPath"
+    docs: "https://cloud.ibm.com/docs/containers/container_volumes_ov.html"
+    appears:
+      - "IBM Kubernetes Service · Ephemeral storage"
+      - "Red Hat OpenShift Service · Object and ephemeral"
+
   - label: "Hyper Protect Crypto Services"
     docs: "https://cloud.ibm.com/docs/hs-crypto?topic=hs-crypto-deprecation"
     appears:
@@ -225,6 +356,9 @@ pills:
       - "Virtual Private Cloud · Identity and Access Management"
       - "Power Virtual Server · Identity and Access Management"
       - "Classic Infrastructure · Identity and Access Management"
+      - "OpenShift Virtualization · Security and access"
+      - "IBM Kubernetes Service · Identity and Access Management"
+      - "Red Hat OpenShift Service · Identity and Access Management"
 
   - label: "IBM Cloud Backup for Classic"
     docs: "https://cloud.ibm.com/docs/Backup?topic=Backup-getting-started"
@@ -237,6 +371,9 @@ pills:
       - "Virtual Private Cloud · Observability"
       - "Power Virtual Server · Observability"
       - "Classic Infrastructure · Observability"
+      - "OpenShift Virtualization · Observability"
+      - "IBM Kubernetes Service · Observability"
+      - "Red Hat OpenShift Service · Observability"
 
   - label: "IBM Cloud Monitoring"
     docs: "https://cloud.ibm.com/docs/monitoring?topic=monitoring-about-monitor"
@@ -244,6 +381,9 @@ pills:
       - "Virtual Private Cloud · Observability"
       - "Power Virtual Server · Observability"
       - "Classic Infrastructure · Observability"
+      - "OpenShift Virtualization · Observability"
+      - "IBM Kubernetes Service · Observability"
+      - "Red Hat OpenShift Service · Observability"
 
   - label: "IBM i"
     docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-operating-systems-powervs#ibmi-os"
@@ -260,10 +400,20 @@ pills:
     appears:
       - "Power Virtual Server · Cloud Object Storage"
 
+  - label: "Ingress ALB"
+    docs: "https://cloud.ibm.com/docs/containers?topic=containers-cs_network_planning#pattern_public_vpc"
+    appears:
+      - "IBM Kubernetes Service · External connectivity"
+
   - label: "Instance Storage"
     docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-instance-storage"
     appears:
       - "Virtual Private Cloud · Instance storage"
+
+  - label: "Internal registry"
+    docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-registry"
+    appears:
+      - "Red Hat OpenShift Service · OpenShift on the workers"
 
   - label: "Key Protect"
     docs: "https://cloud.ibm.com/docs/key-protect?topic=key-protect-about"
@@ -271,21 +421,59 @@ pills:
       - "Virtual Private Cloud · Security and compliance"
       - "Power Virtual Server · Security and compliance"
       - "Classic Infrastructure · Security and compliance"
+      - "OpenShift Virtualization · Security and access"
+      - "IBM Kubernetes Service · Control plane"
+      - "IBM Kubernetes Service · Block storage"
+      - "IBM Kubernetes Service · Security and compliance"
+      - "Red Hat OpenShift Service · Block storage"
+      - "Red Hat OpenShift Service · Security and compliance"
+
+  - label: "Kubernetes master"
+    docs: "https://cloud.ibm.com/docs/containers?topic=containers-service-arch#architecture_vpc"
+    appears:
+      - "IBM Kubernetes Service · Control plane"
 
   - label: "Linux"
     docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-operating-systems-powervs#linux-os"
     appears:
       - "Power Virtual Server · Virtual Server Instances"
+      - "OpenShift Virtualization · Virtual machines"
+
+  - label: "Live migration"
+    docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-virt-overview"
+    appears:
+      - "OpenShift Virtualization · Where the VMs run"
 
   - label: "Load Balancers"
     docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-nlb-vs-elb&interface=ui"
     appears:
       - "Virtual Private Cloud · External connectivity"
+      - "OpenShift Virtualization · External connectivity"
+      - "IBM Kubernetes Service · External connectivity"
+      - "Red Hat OpenShift Service · External connectivity"
+
+  - label: "Local NVMe"
+    docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-virt-plan"
+    appears:
+      - "OpenShift Virtualization · Bare metal worker nodes"
+
+  - label: "Memory"
+    docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-virt-overview"
+    appears:
+      - "OpenShift Virtualization · Bare metal worker nodes"
+
+  - label: "Migration Toolkit"
+    docs: "https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization"
+    appears:
+      - "OpenShift Virtualization · Migration and fleet management"
 
   - label: "Network ACLs"
     docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-using-acls"
     appears:
       - "Virtual Private Cloud · Internal connectivity"
+      - "OpenShift Virtualization · Internal connectivity"
+      - "IBM Kubernetes Service · Internal connectivity"
+      - "Red Hat OpenShift Service · Internal connectivity"
 
   - label: "Network Address Groups"
     docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-nsg#nag"
@@ -304,15 +492,67 @@ pills:
       - "Power Virtual Server · Internal connectivity"
       - "Power Virtual Server · Security and compliance"
 
+  - label: "Object (RGW)"
+    docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-ocs-storage-prep"
+    appears:
+      - "OpenShift Virtualization · OpenShift Data Foundation"
+
+  - label: "OpenShift console"
+    docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-openshift_tutorial#openshift_oc_console"
+    appears:
+      - "Red Hat OpenShift Service · Control plane"
+
+  - label: "OpenShift Data Foundation"
+    docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-ocs-storage-prep"
+    appears:
+      - "Red Hat OpenShift Service · Software-defined storage"
+
+  - label: "OpenShift master"
+    docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-service-architecture"
+    appears:
+      - "Red Hat OpenShift Service · Control plane"
+
+  - label: "OpenShift monitoring"
+    docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-service-architecture"
+    appears:
+      - "OpenShift Virtualization · Observability"
+      - "Red Hat OpenShift Service · Observability"
+
+  - label: "OpenShift router"
+    docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-ingress-about-roks4"
+    appears:
+      - "Red Hat OpenShift Service · External connectivity"
+
+  - label: "OperatorHub"
+    docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-operators"
+    appears:
+      - "Red Hat OpenShift Service · OpenShift on the workers"
+
   - label: "Platform Metrics"
     docs: "https://cloud.ibm.com/docs/monitoring?topic=monitoring-platform_metrics_working"
     appears:
       - "Virtual Private Cloud · Observability"
 
+  - label: "Pod network"
+    docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-virt-overview"
+    appears:
+      - "OpenShift Virtualization · Internal connectivity"
+
   - label: "Portable SAN Storage"
     docs: "https://cloud.ibm.com/docs/virtual-servers?topic=virtual-servers-storage-options#portable-san-storage"
     appears:
       - "Classic Infrastructure · SAN Storage"
+
+  - label: "Portworx"
+    docs: "https://cloud.ibm.com/docs/containers?topic=containers-storage_portworx_about"
+    appears:
+      - "IBM Kubernetes Service · File storage"
+      - "Red Hat OpenShift Service · Software-defined storage"
+
+  - label: "Portworx Backup"
+    docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-storage_portworx_about"
+    appears:
+      - "Red Hat OpenShift Service · Backup and recovery"
 
   - label: "Power Edge Router"
     docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-per"
@@ -353,11 +593,20 @@ pills:
     docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-nlb-vs-elb&interface=ui#lb-comparison-chart"
     appears:
       - "Virtual Private Cloud · Private connectivity"
+      - "OpenShift Virtualization · Private connectivity"
+      - "IBM Kubernetes Service · Private connectivity"
+      - "Red Hat OpenShift Service · Private connectivity"
 
   - label: "Private Path"
     docs: "https://cloud.ibm.com/docs/private-path?topic=private-path-overview"
     appears:
       - "Virtual Private Cloud · Private connectivity"
+
+  - label: "Private service endpoint"
+    docs: "https://cloud.ibm.com/docs/containers?topic=containers-plan_vpc_basics#vpc-workeruser-master"
+    appears:
+      - "IBM Kubernetes Service · Control plane access"
+      - "Red Hat OpenShift Service · Control plane access"
 
   - label: "Private Subnets"
     docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-configuring-subnet"
@@ -375,22 +624,38 @@ pills:
     appears:
       - "Virtual Private Cloud · External connectivity"
       - "Power Virtual Server · External connectivity"
+      - "OpenShift Virtualization · External connectivity"
+      - "IBM Kubernetes Service · External connectivity"
+      - "Red Hat OpenShift Service · External connectivity"
 
   - label: "Public Networks"
     docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-network-security"
     appears:
       - "Power Virtual Server · External connectivity"
 
+  - label: "Public service endpoint"
+    docs: "https://cloud.ibm.com/docs/containers?topic=containers-plan_vpc_basics#vpc-workeruser-master"
+    appears:
+      - "IBM Kubernetes Service · Control plane access"
+      - "Red Hat OpenShift Service · Control plane access"
+
   - label: "Public Virtual Servers"
     docs: "https://cloud.ibm.com/docs/virtual-servers?topic=virtual-servers-about-public-virtual-servers"
     appears:
       - "Classic Infrastructure · Public Virtual Servers"
+
+  - label: "Regional disaster recovery"
+    docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-openshift_odf_rdr_roks"
+    appears:
+      - "OpenShift Virtualization · Backup and disaster recovery"
 
   - label: "Resource Groups"
     docs: "https://cloud.ibm.com/docs/account?topic=account-account_setup"
     appears:
       - "Virtual Private Cloud · Identity and Access Management"
       - "Power Virtual Server · Identity and Access Management"
+      - "IBM Kubernetes Service · Identity and Access Management"
+      - "Red Hat OpenShift Service · Identity and Access Management"
 
   - label: "Routing Tables"
     docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-about-custom-routes"
@@ -419,11 +684,18 @@ pills:
       - "Virtual Private Cloud · Security and compliance"
       - "Classic Infrastructure · Security and compliance"
 
+  - label: "Secondary storage"
+    docs: "https://cloud.ibm.com/docs/containers/container_volumes_ov.html"
+    appears:
+      - "IBM Kubernetes Service · Worker pools"
+
   - label: "Secrets Manager"
     docs: "https://cloud.ibm.com/docs/secrets-manager?topic=secrets-manager-feature-overview"
     appears:
       - "Virtual Private Cloud · Security and compliance"
       - "Classic Infrastructure · Security and compliance"
+      - "IBM Kubernetes Service · Security and compliance"
+      - "Red Hat OpenShift Service · Security and compliance"
 
   - label: "Secure Automated Backup with Compass"
     docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-backup-strategies#baas"
@@ -432,16 +704,54 @@ pills:
       - "Power Virtual Server · Backup and recovery options"
       - "Classic Infrastructure · Backup and recovery options"
 
+  - label: "Snapshots"
+    docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-virt-overview"
+    appears:
+      - "OpenShift Virtualization · OpenShift Data Foundation"
+
+  - label: "Snapshots and clones"
+    docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-virt-overview"
+    appears:
+      - "OpenShift Virtualization · Backup and disaster recovery"
+
   - label: "Transient Virtual Servers"
     docs: "https://cloud.ibm.com/docs/virtual-servers?topic=virtual-servers-about-vs-transient"
     appears:
       - "Classic Infrastructure · Transient Virtual Servers"
+
+  - label: "Velero"
+    docs: "https://github.com/velero-io/velero"
+    appears:
+      - "IBM Kubernetes Service · Backup and recovery"
+
+  - label: "Virtual machine disks"
+    docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-virt-vpc-file-vm-create"
+    appears:
+      - "OpenShift Virtualization · VPC File Storage"
+
+  - label: "Virtual machines"
+    docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-virt-overview"
+    appears:
+      - "OpenShift Virtualization · Virtual machines"
+
+  - label: "Virtual servers"
+    docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-virt-plan"
+    appears:
+      - "OpenShift Virtualization · Where the VMs run"
+
+  - label: "VM templates"
+    docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-virt-overview"
+    appears:
+      - "OpenShift Virtualization · Virtual machines"
 
   - label: "VPC Security Groups"
     docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-using-security-groups"
     appears:
       - "Virtual Private Cloud · Internal connectivity"
       - "Power Virtual Server · External connectivity"
+      - "OpenShift Virtualization · Internal connectivity"
+      - "IBM Kubernetes Service · Internal connectivity"
+      - "Red Hat OpenShift Service · Internal connectivity"
 
   - label: "Classic Security Groups"
     docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-using-security-groups"
@@ -496,6 +806,10 @@ pills:
     docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-about-subnets-vpc"
     appears:
       - "Virtual Private Cloud · Private connectivity"
+      - "OpenShift Virtualization · Internal connectivity"
+      - "IBM Kubernetes Service · Internal connectivity"
+      - "IBM Kubernetes Service · Worker pools"
+      - "Red Hat OpenShift Service · Internal connectivity"
 
   - label: "Tier 0 · 25 IOPS/GB"
     docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-on-cloud-architecture#storage-tiers"
@@ -519,16 +833,21 @@ pills:
       - "Virtual Private Cloud · Private connectivity"
       - "Power Virtual Server · Private connectivity"
       - "Power Virtual Server · External connectivity"
+      - "OpenShift Virtualization · Private connectivity"
+      - "IBM Kubernetes Service · Private connectivity"
+      - "Red Hat OpenShift Service · Private connectivity"
 
   - label: "Virtual Network Interfaces"
     docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-vni-about"
     appears:
       - "Virtual Private Cloud · Internal connectivity"
+      - "OpenShift Virtualization · Internal connectivity"
 
   - label: "Virtual Servers for VPC"
     docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-about-advanced-virtual-servers"
     appears:
       - "Virtual Private Cloud · Virtual Servers"
+      - "Red Hat OpenShift Service · Worker nodes"
 
   - label: "VLANs"
     docs: "https://cloud.ibm.com/docs/vlans?topic=vlans-getting-started"
@@ -542,19 +861,57 @@ pills:
     appears:
       - "Power Virtual Server · External connectivity"
 
+  - label: "VPC worker nodes"
+    docs: "https://cloud.ibm.com/docs/containers?topic=containers-service-arch#architecture_vpc"
+    appears:
+      - "IBM Kubernetes Service · Worker nodes"
+
   - label: "VPEs"
     docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-about-vpe"
     appears:
       - "Virtual Private Cloud · Private connectivity"
       - "Power Virtual Server · Private connectivity"
+      - "OpenShift Virtualization · Private connectivity"
+      - "IBM Kubernetes Service · Control plane access"
+      - "Red Hat OpenShift Service · Control plane access"
 
   - label: "VPN for VPC"
     docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-vpn-overview"
     appears:
       - "Virtual Private Cloud · Private connectivity"
       - "Power Virtual Server · Private connectivity"
+      - "OpenShift Virtualization · Private connectivity"
+      - "IBM Kubernetes Service · Private connectivity"
+      - "Red Hat OpenShift Service · Private connectivity"
 
   - label: "VRF"
     docs: "https://cloud.ibm.com/docs/dl?topic=dl-overview-of-virtual-routing-and-forwarding-vrf-on-ibm-cloud"
     appears:
       - "Classic Infrastructure · Internal connectivity"
+
+  - label: "Vulnerability Advisor"
+    docs: "https://cloud.ibm.com/docs/Registry?topic=Registry-va_index"
+    appears:
+      - "Red Hat OpenShift Service · Security and compliance"
+
+  - label: "Windows"
+    docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-virt-overview"
+    appears:
+      - "OpenShift Virtualization · Virtual machines"
+
+  - label: "Worker pools"
+    docs: "https://cloud.ibm.com/docs/containers?topic=containers-clusters"
+    appears:
+      - "IBM Kubernetes Service · Worker pools"
+      - "Red Hat OpenShift Service · Worker pools"
+
+  - label: "Worker updates"
+    docs: "https://cloud.ibm.com/docs/containers?topic=containers-responsibilities_iks"
+    appears:
+      - "IBM Kubernetes Service · Images and updates"
+      - "Red Hat OpenShift Service · Worker pools"
+
+  - label: "Workload Protection"
+    docs: "https://cloud.ibm.com/docs/workload-protection?topic=workload-protection-about"
+    appears:
+      - "OpenShift Virtualization · Security and access"

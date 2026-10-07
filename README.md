@@ -44,10 +44,18 @@ Integrations = magenta**.
 | VPC | ✅ | ✅ | ✅ | ✅ |
 | Power Virtual Server (IBM data centers only) | ✅ | ✅ | ✅ | ✅ |
 | Classic Infrastructure | ✅ | ✅ | ✅ | ✅ |
-| OpenShift Virtualization | ⬜ | ⬜ | ⬜ | ⬜ ("Coming soon") |
+| OpenShift Virtualization | ✅ | ✅ | ✅ | ✅ |
 
-A pillar with `lines: []` shows a "Coming soon" tag and can't be opened. It becomes clickable as soon as
-it has one line.
+The CaaS row above the pillars uses the same four layers. **IBM Kubernetes Service** and **Red Hat OpenShift Service** are filled in for VPC clusters (classic clusters still exist; the row notes say where this view stays on VPC).
+
+| Offering | Networking | Compute | Storage | Integrations |
+|---|---|---|---|---|
+| IBM Kubernetes Service | ✅ | ✅ | ✅ | ✅ |
+| Red Hat OpenShift Service | ✅ | ✅ | ✅ | ✅ |
+| Code Engine | ⬜ | ⬜ | ⬜ | ⬜ |
+
+An IaaS pillar with `lines: []` shows a "Coming soon" tag and can't be opened. It becomes clickable as soon as
+it has one line. An empty CaaS tile stays a box, with no tag, until it has a line.
 
 ---
 
@@ -60,7 +68,7 @@ Everything lives in one file, `site/iaas-101-tech-focus.html`, in three parts:
    mode and 100/80/40 in dark (`--cyan-bg`, `--cyan-edge`, `--cyan-ink`, …).
 2. **The icon sprite**: a hidden `<svg>` with one `<symbol id="i-…">` per icon, copied from the official
    `@carbon/icons` package. Nothing loads from the network except Google Fonts (IBM Plex).
-3. **`<script>`**: the content (`PILLARS`) plus the rendering code. **Most edits only touch `PILLARS`.**
+3. **`<script>`**: the content (`PILLARS` for IaaS, `CAAS` for the row above) plus the rendering code. **Most edits only touch `PILLARS` or `CAAS`.** `CAAS` uses the same `lines` shape as a pillar.
 
 ### The content model
 
@@ -107,11 +115,13 @@ keep the row order Networking → Compute → Storage → Integrations.
 ### Behavior worth knowing
 
 - **Clicking a pillar** opens its rows in a full-width panel below the four pillars. A blue tab links the
-  panel to the selected pillar. Click it again, click outside, or press Esc to close.
-- **Below 1024px** the rows open inside the tile instead. Pillars stack 2-up, then 1-up below 600px.
+  panel to the selected pillar. Clicking a CaaS offering opens the same kind of panel between the CaaS row
+  and the rule, with the tab under that tile. Opening one closes the other. Click it again, click outside,
+  or press Esc to close.
+- **Below 1024px** the rows open inside the tile instead, and the panels are hidden. Pillars stack 2-up, then 1-up below 600px.
 - **Theme:** light by default for everyone. The toggle saves each viewer's choice in `localStorage`. The key
   is still `iaas102-mode` after the file rename, so a saved theme is not reset.
-- **Direct links:** `#vpc`, `#powervs`, `#classic` open that pillar on load.
+- **Direct links:** `#vpc`, `#powervs`, `#classic`, `#ocpv`, `#iks`, and `#roks` open that service on load. A hash only opens a tile that has lines.
 
 ---
 
@@ -129,7 +139,7 @@ This is the loop used for every row so far:
 4. **Add icons** that aren't in the sprite yet: `mise run icon -- <carbon-name> <i-id>`. Reuse existing
    ids where the service is the same (e.g. `i-tgw`, `i-dl`, `i-sg`, `i-kp`) so icons stay consistent
    across pillars.
-5. **Add the row** to the pillar's `lines` in `PILLARS`, in the standard order.
+5. **Add the row** to that offering's `lines` in `PILLARS` or `CAAS`, in the standard order.
 6. `mise run scan-pills` to add any new labels to `site/pill-docs.yaml`. Existing docs URLs stay.
    Fill the new `docs` values, then `mise run ingest-docs` to copy them onto the pills.
 7. `mise run check`, then `mise run serve` and click through in light and dark at a narrow width.
@@ -143,8 +153,10 @@ devices are not IAM-enabled, so that card uses classic infrastructure permission
 
 - Consider adding VPN pills to the Private card too; only Transit Gateway and Direct Link are there today.
 
-**OpenShift Virtualization**: all four layers. Scope it to Red Hat OpenShift on IBM Cloud (ROKS) with bare
-metal workers + ODF before starting.
+**OpenShift Virtualization** has all four layers, scoped to Red Hat OpenShift on IBM Cloud with bare metal
+workers and OpenShift Data Foundation.
+
+**Code Engine** is the remaining empty CaaS tile.
 
 **Open questions noted along the way:**
 
@@ -160,6 +172,8 @@ metal workers + ODF before starting.
 
 ## Sources
 
+- IBM Cloud docs (Kubernetes Service and Red Hat OpenShift on IBM Cloud): VPC cluster networking,
+  architecture, compute, storage, resiliency, and service management. Both CaaS views follow the VPC path.
 - IBM Cloud docs (VPC): networking overview, block/file storage, instance storage, virtual servers,
   dedicated hosts, burstable, spot, bare metal, Activity Tracker Event Routing.
 - *Power Virtual Server product guide* PDF from IBM Cloud docs (created 2026-10-01): networking,

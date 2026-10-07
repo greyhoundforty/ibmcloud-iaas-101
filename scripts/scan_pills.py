@@ -25,19 +25,28 @@ ROOT = Path(__file__).resolve().parent.parent
 PAGE = ROOT / "site" / "iaas-101-tech-focus.html"
 SPEC = ROOT / "site" / "pill-docs.yaml"
 
-# Eval the PILLARS array. process.argv[1] is the HTML path (node -e keeps it).
+# Eval the PILLARS array, and CAAS when the page has one.
+# process.argv[1] is the HTML path (node -e keeps it).
 EXTRACT = r"""
 const fs = require("fs");
 const html = fs.readFileSync(process.argv[1], "utf8");
-const start = html.indexOf("const PILLARS = ");
-const end = html.indexOf("\n];", start);
-if (start < 0 || end < 0) {
+function load(source) {
+  const start = html.indexOf(source);
+  if (start < 0) return [];
+  const end = html.indexOf("\n];", start);
+  if (end < 0) {
+    console.error("could not find the end of " + source);
+    process.exit(1);
+  }
+  return new Function(html.slice(start, end + 3) + "\nreturn " + source.slice(6, -3) + ";")();
+}
+const groups = [...load("const PILLARS = "), ...load("const CAAS = ")];
+if (!groups.length) {
   console.error("could not find const PILLARS");
   process.exit(1);
 }
-const PILLARS = new Function(html.slice(start, end + 3) + "\nreturn PILLARS;")();
 const found = [];
-for (const pillar of PILLARS) {
+for (const pillar of groups) {
   for (const line of pillar.lines || []) {
     for (const item of line.items || []) {
       for (const pill of item.pills || []) {
