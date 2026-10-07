@@ -35,9 +35,9 @@ locally so the browser doesn't fall back to quirks mode.
 
 ## Status of `site/iaas-101-tech-focus.html`
 
-The page stacks the technology. **PaaS** (Databases, Platform Automation, Observability, Security, AI) is a full-width shelf above everything else.
+The page stacks the technology. The PaaS shelf (Databases, Platform Automation, Observability, Security, AI) is defined in `PAAS` and is not drawn.
 
-**Virtual Private Cloud** is a frame under that shelf. Inside it, top to bottom:
+**Virtual Private Cloud** is the frame under the title. Inside it, top to bottom:
 
 - **Serverless** — Code Engine, the function-deployment layer
 - **CaaS** — IBM Kubernetes Service (IKS) and Red Hat OpenShift Service (ROKS)
@@ -75,7 +75,7 @@ Everything lives in one file, `site/iaas-101-tech-focus.html`, in three parts:
    mode and 100/80/40 in dark (`--cyan-bg`, `--cyan-edge`, `--cyan-ink`, …).
 2. **The icon sprite**: a hidden `<svg>` with one `<symbol id="i-…">` per icon, copied from the official
    `@carbon/icons` package. Nothing loads from the network except Google Fonts (IBM Plex).
-3. **`<script>`**: the content (`PILLARS` for the IaaS services, `CAAS` for IKS and ROKS, `SERVERLESS` for Code Engine, `PAAS` for the shelf) plus the rendering code. **Most edits only touch those lists.** Render places VPC Native IaaS inside the Virtual Private Cloud frame, and leaves Classic, PowerVS, and OpenShift Virtualization outside it. `CAAS` and `SERVERLESS` use the same `lines` shape as a pillar.
+3. **`<script>`**: the content (`PILLARS` for the IaaS services, `CAAS` for IKS and ROKS, `SERVERLESS` for Code Engine, `PAAS` for the parked shelf) plus the rendering code. **Most edits only touch those lists.** Render places VPC Native IaaS inside the Virtual Private Cloud frame, and leaves Classic, PowerVS, and OpenShift Virtualization outside it. `PAAS` is not drawn. `CAAS` and `SERVERLESS` use the same `lines` shape as a pillar.
 
 ### The content model
 

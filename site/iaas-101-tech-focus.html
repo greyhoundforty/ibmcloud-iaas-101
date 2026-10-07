@@ -3,7 +3,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&family=IBM+Plex+Sans:wght@300;400;600&display=swap">
 <style>
-/* Layout: intro, then the PaaS shelf, then a stage. Virtual Private Cloud is a
+/* Layout: intro, then the stage. The PaaS shelf is defined but not drawn.
+   Virtual Private Cloud is a
    frame holding Serverless (Code Engine), CaaS (IKS, ROKS), and VPC Native
    IaaS. Classic, PowerVS, and OpenShift Virtualization sit outside that frame, on the IaaS row. A selected
    service's lines open under its row (IaaS opens under the whole stage).
@@ -545,15 +546,6 @@ kbd { font-family: var(--font-mono); font-size: 0.8125rem; padding: 1px 6px; bac
     </div>
     <h1>The Layers of IBM Cloud</h1>
   </header>
-
-  <div class="layers">
-    <div class="layer">
-      <p class="layer-label eyebrow">PaaS</p>
-      <section class="paas" id="paas" aria-label="Platform as a Service"></section>
-    </div>
-  </div>
-
-  <hr class="layer-rule">
 
   <div class="stage">
     <div class="vpc-frame" aria-hidden="true"></div>
@@ -1335,7 +1327,7 @@ function pillarHTML(p) {
   </article>`;
 }
 
-// PaaS shelf preview. Static boxes only: no lines, so nothing opens.
+// PaaS shelf. Parked off the page for now: nothing reads this list.
 // Catalog hubs that are not already the CaaS or IaaS shelves, plus AI.
 const PAAS = [
   { icon: "i-icd", eyebrow: "IBM Cloud", title: "Databases" },
@@ -1736,13 +1728,12 @@ function caasHTML(item) {
 // --- render ----------------------------------------------------------------
 // Virtual Private Cloud holds the services that deploy on VPC, stacked
 // Serverless → CaaS → IaaS. Classic, PowerVS, and OpenShift Virtualization
-// stay on the IaaS layer outside that frame. PaaS stays above both.
+// stay on the IaaS layer outside that frame.
 const caasItems = CAAS;
 const vpcIaaSItems = [PILLARS.find((p) => p.id === "vpc")];
 const outsideItems = PILLARS.filter((p) => p.id === "classic" || p.id === "powervs" || p.id === "ocpv");
 
 const wrap = document.getElementById("wrap");
-document.getElementById("paas").innerHTML = PAAS.map(boxHTML).join("");
 document.getElementById("serverless").innerHTML = SERVERLESS.map((item) => caasHTML({ ...item, band: "serverless" })).join("");
 document.getElementById("caas").innerHTML = caasItems.map((item) => caasHTML({ ...item, band: "caas" })).join("");
 document.getElementById("vpc-iaas").innerHTML = vpcIaaSItems.map((item) => pillarHTML({ ...item, band: "iaas" })).join("");
