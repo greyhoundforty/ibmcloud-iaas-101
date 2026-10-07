@@ -1,0 +1,1003 @@
+<title>IBM Cloud 101 — Layer studies</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&family=IBM+Plex+Sans:wght@300;400;600&display=swap">
+<style>
+/* Three studies of the same services as the stack page.
+   Cross-section: where a layer sits.
+   Workload path: which layers a deployment crosses.
+   Connections: VPC grouping, VPC workers, bare metal workers, Transit Gateway.
+   Carbon White by default; Gray 100 when data-mode="dark". */
+:root {
+  color-scheme: light;
+  --bg: #ffffff;
+  --layer: #f4f4f4;
+  --hover: #e8e8e8;
+  --line: #c6c6c6;
+  --text: #161616;
+  --text-2: #525252;
+  --label: #0f62fe;
+  --accent: #0f62fe;
+  --focus: #0f62fe;
+  --cyan-bg: #e5f6ff; --cyan-ink: #0072c3;
+  --purple-bg: #f6f2ff; --purple-ink: #8a3ffc;
+  --teal-bg: #d9fbfb; --teal-ink: #007d79;
+  --magenta-bg: #fff0f7; --magenta-edge: #ffd6e8; --magenta-ink: #d02670;
+  --font-sans: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'IBM Plex Mono', Menlo, 'Courier New', monospace;
+  --ease: cubic-bezier(0.2, 0, 0.38, 0.9);
+}
+:root[data-mode="dark"] {
+  color-scheme: dark;
+  --bg: #161616;
+  --layer: #262626;
+  --hover: #333333;
+  --line: #525252;
+  --text: #f4f4f4;
+  --text-2: #c6c6c6;
+  --label: #78a9ff;
+  --accent: #0f62fe;
+  --focus: #ffffff;
+  --cyan-bg: #061727; --cyan-ink: #33b1ff;
+  --purple-bg: #1c0f30; --purple-ink: #be95ff;
+  --teal-bg: #081a1c; --teal-ink: #08bdba;
+  --magenta-bg: #2a0a18; --magenta-edge: #740937; --magenta-ink: #ff7eb6;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.5;
+}
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.wrap {
+  max-width: 1312px;
+  margin-inline: auto;
+  padding: 48px 16px 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.eyebrow {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--label);
+}
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.top-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.studies-link { font-size: 0.875rem; color: var(--label); text-underline-offset: 3px; }
+.studies-link:hover { text-decoration: none; }
+.mode-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 16px;
+  background: transparent;
+  border: 1px solid var(--line);
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+.mode-toggle:hover { background: var(--hover); }
+.mode-toggle svg { width: 16px; height: 16px; }
+h1 { margin: 0; font-size: clamp(2.25rem, 5vw, 3.5rem); font-weight: 300; line-height: 1.1; text-wrap: balance; }
+.intro-copy { margin: 0; max-width: 68ch; color: var(--text-2); }
+
+.switcher {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  border-bottom: 1px solid var(--line);
+}
+.switcher button {
+  flex: 0 0 auto;
+  background: none;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  padding: 12px 16px;
+  color: var(--text-2);
+  cursor: pointer;
+}
+.switcher button[aria-selected="true"] {
+  color: var(--text);
+  border-bottom-color: var(--accent);
+  font-weight: 600;
+}
+.switcher button:hover { background: var(--hover); }
+
+.study { display: flex; flex-direction: column; gap: 16px; }
+.study-head h2 { margin: 4px 0 0; font-size: 1.75rem; font-weight: 400; }
+.study-head p { margin: 8px 0 0; max-width: 70ch; color: var(--text-2); }
+
+.icon { width: 32px; height: 32px; flex: 0 0 auto; color: var(--label); }
+.node {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  min-height: 72px;
+  padding: 12px;
+  text-align: left;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--tone, var(--accent));
+  cursor: pointer;
+  transition: background-color 160ms var(--ease), opacity 160ms var(--ease);
+}
+.node:hover { background: var(--hover); }
+.node-copy { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.node-layer {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--tone, var(--text-2));
+}
+.node-name { font-size: 0.9375rem; font-weight: 600; text-wrap: balance; }
+.node[data-layer="PaaS"] { --tone: var(--magenta-ink); }
+.node[data-layer="Serverless"] { --tone: var(--cyan-ink); }
+.node[data-layer="CaaS"] { --tone: var(--purple-ink); }
+.node[data-layer="IaaS"] { --tone: var(--teal-ink); }
+.node[data-layer="Link"] { --tone: var(--text-2); }
+.has-pick .node { opacity: 0.42; }
+.has-pick .node.is-on,
+.has-pick .node.is-touch { opacity: 1; }
+.node.is-on,
+.node.is-touch { box-shadow: inset 0 0 0 1px var(--accent); }
+
+.story {
+  min-height: 7.5rem;
+  padding: 16px 20px;
+  background: var(--layer);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.story-kicker { margin: 0; font-weight: 600; }
+.story p { margin: 0; max-width: 78ch; }
+.touches { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.touches li {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px;
+  background: var(--bg);
+  border-left: 3px solid var(--accent);
+  min-width: 12rem;
+}
+.touches .via {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--label);
+}
+
+/* ---------- 1. Cross-section ---------- */
+.cut { border: 1px solid var(--line); }
+.sky {
+  display: grid;
+  grid-template-columns: 7.5rem minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  background: var(--magenta-bg);
+  border-bottom: 1px solid var(--magenta-edge);
+}
+.band-name {
+  margin: 0;
+  align-self: center;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.sky .band-name { color: var(--magenta-ink); }
+.sky-nodes, .shaft-nodes, .out { display: flex; flex-wrap: wrap; gap: 8px; }
+.sky-nodes .node, .shaft-nodes .node, .out .node { flex: 1 1 9.5rem; }
+.stratum {
+  display: grid;
+  grid-template-columns: 7.5rem minmax(0, 1fr) minmax(0, 1.15fr);
+  gap: 12px;
+  align-items: stretch;
+  padding-inline: 12px;
+}
+.stratum[data-band="serverless"] .band-name { color: var(--cyan-ink); }
+.stratum[data-band="caas"] .band-name { color: var(--purple-ink); }
+.stratum[data-band="iaas"] .band-name { color: var(--teal-ink); }
+.stratum[data-band="iaas"] { background: var(--teal-bg); padding: 0 12px 12px; }
+.stratum[data-band="iaas"] .band-name,
+.stratum[data-band="iaas"] .out { padding-top: 12px; }
+.cut.is-sky .sky { box-shadow: inset 0 0 0 1px var(--magenta-ink); }
+.shaft {
+  background: var(--layer);
+  border-inline: 1px solid var(--line);
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+.stratum[data-band="serverless"] .shaft { border-top: 3px solid var(--accent); margin-top: 12px; }
+.stratum[data-band="caas"] .shaft { padding-block: 14px; }
+.stratum[data-band="iaas"] .shaft {
+  border-bottom: 1px solid var(--line);
+  background: var(--bg);
+}
+.well-label {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--label);
+  font-size: 0.875rem;
+}
+.well-label .icon { width: 16px; height: 16px; }
+.quiet {
+  margin: 0;
+  align-self: center;
+  color: var(--text-2);
+  font-size: 0.875rem;
+  max-width: 36ch;
+}
+.stratum[data-band="serverless"] .quiet,
+.stratum[data-band="caas"] .quiet { padding-block: 16px; }
+
+/* ---------- 2. Workload path ---------- */
+.path-layout {
+  display: grid;
+  grid-template-columns: minmax(220px, 300px) minmax(0, 1fr);
+  border: 1px solid var(--line);
+  min-height: 28rem;
+}
+.asks { display: flex; flex-direction: column; border-right: 1px solid var(--line); }
+.ask {
+  padding: 16px 18px;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  font-weight: 300;
+  font-size: 1.125rem;
+}
+.ask:last-child { border-bottom: 0; }
+.ask:hover { background: var(--hover); }
+.ask.is-on { background: var(--layer); box-shadow: inset 3px 0 0 var(--accent); font-weight: 400; }
+.path-stage { padding: 28px 24px 24px; display: flex; flex-direction: column; gap: 20px; }
+.path-sentence { margin: 0; font-size: clamp(1.35rem, 2vw, 1.75rem); font-weight: 300; line-height: 1.3; text-wrap: balance; }
+.path-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; align-items: start; }
+.path-body.has-clip { grid-template-columns: minmax(0, 1fr) minmax(160px, 220px); }
+.rail { list-style: none; margin: 0; padding: 4px 0 4px 28px; position: relative; }
+.rail::before {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 18px;
+  bottom: 18px;
+  width: 2px;
+  background: var(--accent);
+}
+.stop { position: relative; padding: 0 0 22px 8px; }
+.stop:last-child { padding-bottom: 0; }
+.stop::before {
+  content: "";
+  position: absolute;
+  left: -27px;
+  top: 8px;
+  width: 12px;
+  height: 12px;
+  background: var(--accent);
+  border: 2px solid var(--bg);
+}
+.stop[data-layer="Link"]::before { background: var(--bg); box-shadow: inset 0 0 0 2px var(--text-2); }
+.stop-layer {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+.stop[data-layer="Serverless"] .stop-layer { color: var(--cyan-ink); }
+.stop[data-layer="CaaS"] .stop-layer { color: var(--purple-ink); }
+.stop[data-layer="IaaS"] .stop-layer { color: var(--teal-ink); }
+.stop-name { margin: 2px 0 0; font-size: 1.125rem; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.stop-name .icon { width: 20px; height: 20px; }
+.stop-note { margin: 4px 0 0; color: var(--text-2); font-size: 0.875rem; }
+.hubs-label { margin: 0 0 8px; color: var(--text-2); font-size: 0.875rem; }
+.hub-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.hub {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--magenta-ink);
+  background: var(--bg);
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+.hub:hover { background: var(--hover); }
+.hub[aria-pressed="true"] { background: var(--magenta-bg); border-color: var(--magenta-ink); }
+.hub .icon { width: 16px; height: 16px; color: var(--magenta-ink); }
+.clipped { border-left: 2px solid var(--magenta-ink); padding-left: 16px; }
+.clipped-label {
+  margin: 0 0 8px;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--magenta-ink);
+}
+.clipped ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.clipped li { font-weight: 600; }
+
+/* ---------- 3. Connections ---------- */
+.web {
+  position: relative;
+  background: var(--layer);
+  border: 1px solid var(--line);
+  padding: 20px 20px 72px;
+}
+.web-svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; z-index: 1; }
+.web-grid { position: relative; display: flex; flex-direction: column; gap: 36px; }
+.web-hubs { display: flex; flex-wrap: wrap; gap: 8px; }
+.web-hubs.is-reach { outline: 1px dashed var(--magenta-ink); outline-offset: 8px; }
+.web .node { position: relative; z-index: 2; min-height: 56px; padding: 8px 10px; background: var(--bg); }
+.web .node .icon { width: 24px; height: 24px; }
+.web .node-layer { display: none; }
+.web-hubs .node { flex: 1 1 8.5rem; }
+.web-lower {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: 36px;
+  align-items: stretch;
+}
+.web-lower.is-under { outline: 1px dashed var(--magenta-ink); outline-offset: 8px; }
+.web-vpc {
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--accent);
+  background: transparent;
+  padding: 14px 14px 0 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.web .well-label { position: relative; z-index: 2; }
+.web-slot { display: flex; flex-direction: column; gap: 8px; }
+.web-slot.pair { display: flex; flex-direction: column; gap: 8px; }
+.web-out {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 12px;
+  min-width: 0;
+}
+.web-out .quiet { margin-bottom: auto; align-self: start; padding-top: 8px; }
+.web-slot.peers { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.legend { display: flex; flex-wrap: wrap; gap: 16px 24px; margin: 0; padding: 0; list-style: none; color: var(--text-2); font-size: 0.875rem; }
+.legend li { display: flex; align-items: center; gap: 8px; }
+.swatch { display: inline-block; width: 2rem; height: 2px; background: var(--accent); }
+.swatch.host { background: repeating-linear-gradient(90deg, var(--teal-ink) 0 6px, transparent 6px 10px); }
+.swatch.tgw { background: repeating-linear-gradient(90deg, var(--text-2) 0 6px, transparent 6px 10px); }
+.swatch.hub { background: repeating-linear-gradient(90deg, var(--magenta-ink) 0 6px, transparent 6px 10px); }
+.diagram-note { margin: 0; color: var(--text-2); font-size: 0.875rem; }
+
+@media (max-width: 800px) {
+  .sky, .stratum { grid-template-columns: 1fr; }
+  .stratum[data-band="serverless"] .shaft { margin-top: 0; }
+  .path-layout, .path-body.has-clip, .web-lower { grid-template-columns: 1fr; }
+  .asks { border-right: 0; border-bottom: 1px solid var(--line); }
+  .web-slot.peers { grid-template-columns: 1fr; }
+  .web-out .quiet { margin-bottom: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .node { transition: none; }
+}
+</style>
+
+<svg width="0" height="0" aria-hidden="true" fill="currentColor">
+<symbol id="i-classic" viewBox="0 0 32 32"><path d="M18 26H30V28H18z"/><path d="M18 21H30V23H18z"/><path d="M18 16H30V18H18z"/><path d="M14,25H9.5A7.4964,7.4964,0,0,1,8.1782,10.124,10,10,0,0,1,28,12H26a7.999,7.999,0,0,0-15.9507-.87l-.09.8335L9.123,12.02A5.4962,5.4962,0,0,0,9.5,23H14Z"/></symbol>
+<symbol id="i-vpc" viewBox="0 0 32 32"><path d="M20,20V17a4,4,0,0,0-8,0v3a2.0025,2.0025,0,0,0-2,2v6a2.0025,2.0025,0,0,0,2,2h8a2.0025,2.0025,0,0,0,2-2V22A2.0025,2.0025,0,0,0,20,20Zm-6-3a2,2,0,0,1,4,0v3H14ZM12,28V22h8l.0012,6Z"/><path d="M25.8288,10.1152A10.0067,10.0067,0,0,0,17.89,2.1816,10.0025,10.0025,0,0,0,6.17,10.1152,7.502,7.502,0,0,0,7.4912,25H8V23H7.4953a5.5019,5.5019,0,0,1-.9694-10.9165l1.3488-.2441.2591-1.3457a8.0109,8.0109,0,0,1,15.7312,0l.259,1.3457,1.3489.2441A5.5019,5.5019,0,0,1,24.5076,23H24v2h.5076a7.502,7.502,0,0,0,1.3212-14.8848Z"/></symbol>
+<symbol id="i-powervs" viewBox="0 0 32 32"><path d="M16,25c-2,0-4-0.7-5.6-2l1.3-1.6c1.3,1,2.8,1.5,4.4,1.5c3.9,0,7-3.1,7-7c0-0.3,0-0.7-0.1-1l2-0.3C25,15.1,25,15.6,25,16C25,21,21,25,16,25z"/><path d="M7.1,17.3C7,16.9,7,16.4,7,16c0-5,4-9,9-9c2,0,4,0.7,5.6,2l-1.3,1.6C19.1,9.5,17.6,9,16,9c-3.9,0-7,3.1-7,7c0,0.3,0,0.7,0.1,1L7.1,17.3z"/><circle cx="23" cy="27" r="1"/><circle cx="9" cy="20" r="1"/><circle cx="23" cy="12" r="1"/><circle cx="16" cy="16" r="2"/><circle cx="9" cy="5" r="1"/><path d="M16,30C8.3,30,2,23.7,2,16c0-3.7,1.5-7.3,4.1-9.9l1.4,1.4C5.2,9.8,4,12.8,4,16c0,6.6,5.4,12,12,12c1.4,0,2.8-0.2,4.1-0.7l0.7,1.9C19.3,29.7,17.6,30,16,30z"/><path d="M25.9,25.9l-1.4-1.4c2.3-2.3,3.5-5.3,3.5-8.5c0-6.6-5.4-12-12-12c-1.4,0-2.8,0.2-4.1,0.7l-0.7-1.9C12.7,2.3,14.4,2,16,2c7.7,0,14,6.3,14,14C30,19.7,28.5,23.3,25.9,25.9z"/></symbol>
+<symbol id="i-ocpv" viewBox="0 0 32 32"><path d="M20,13H12a2.0025,2.0025,0,0,0-2,2V28a2.0025,2.0025,0,0,0,2,2h8a2.0025,2.0025,0,0,0,2-2V15A2.0025,2.0025,0,0,0,20,13Zm0,2,0,3H12V15Zm0,5,0,3H12V20Zm-8,8V25h8v3Z"/><path d="M25.91,10.13a.121.121,0,0,1-.0967-.0952A10.0061,10.0061,0,0,0,17.89,2.1816,10.0025,10.0025,0,0,0,6.1858,10.0347a.1212.1212,0,0,1-.0964.0957A7.5019,7.5019,0,0,0,7.4912,25H8V23H7.4954a5.5108,5.5108,0,0,1-5.4387-6.3,5.6992,5.6992,0,0,1,4.7138-4.6606l1.0166-.1836a.1306.1306,0,0,0,.1045-.1035l.18-.9351a8.28,8.28,0,0,1,6.8469-6.7427,7.957,7.957,0,0,1,2.8471.1245,8.22,8.22,0,0,1,6.1475,6.545l.1941,1.0083a.13.13,0,0,0,.1045.1035l1.0576.1914a5.7819,5.7819,0,0,1,3.1011,1.539A5.5052,5.5052,0,0,1,24.5076,23H24v2h.5076A7.5019,7.5019,0,0,0,25.91,10.13Z"/></symbol>
+<symbol id="i-iks" viewBox="0 0 32 32"><path d="M16,23c-0.2,0-0.4,0-0.5-0.1l-5-3C10.2,19.7,10,19.4,10,19v-6c0-0.4,0.2-0.7,0.5-0.9l5-3C15.6,9,15.8,9,16,9	c0.2,0,0.4,0,0.5,0.1l5,3c0.3,0.2,0.5,0.5,0.5,0.9v6c0,0.4-0.2,0.7-0.5,0.9l-5,3C16.4,23,16.2,23,16,23z M12,18.4l4,2.4l4-2.4v-4.9	l-4-2.4l-4,2.4V18.4z"/><path d="M16,31c-0.2,0-0.3,0-0.5-0.1l-12-7C3.2,23.7,3,23.4,3,23V9c0-0.4,0.2-0.7,0.5-0.9l12-7C15.7,1,15.8,1,16,1	c0.2,0,0.3,0,0.5,0.1l12,7l-1,1.7L16,3.2L5,9.6v12.9l11,6.4l11-6.4V15h2v8c0,0.4-0.2,0.7-0.5,0.9l-12,7C16.3,31,16.2,31,16,31z"/></symbol>
+<symbol id="i-roks" viewBox="0 0 32 32"><path d="M27,22V17a2.0023,2.0023,0,0,0-2-2H17V10h3a2.0023,2.0023,0,0,0,2-2V4a2.0023,2.0023,0,0,0-2-2H12a2.0023,2.0023,0,0,0-2,2V8a2.0023,2.0023,0,0,0,2,2h3v5H7a2.0023,2.0023,0,0,0-2,2v5H2v8h8V22H7V17h8v5H12v8h8V22H17V17h8v5H22v8h8V22ZM12,4h8V8H12ZM8,28H4V24H8Zm10,0H14V24h4Zm10,0H24V24h4Z"/></symbol>
+<symbol id="i-code-engine" viewBox="0 0 32 32"><path d="M22,20v7.923c0,.595-.482,1.077-1.077,1.077h-11.846c-.595,0-1.077-.482-1.077-1.077v-4.923H2v-2h6v-4.923c0-.595.482-1.077,1.077-1.077h3.923v2h-3v10h10v-7h2ZM13,8H2v2h11v-2ZM29,17c.553,0,1-.447,1-1V4c0-.552-.447-1-1-1h-12c-.553,0-1,.448-1,1v12c0,.553.447,1,1,1h12M18,5h10v10h-10V5Z"/></symbol>
+<symbol id="i-icd" viewBox="0 0 32 32"><path d="M21,3h-10c-1.1,0-2,.9-2,2v22c0,1.1.9,2,2,2h10c1.1,0,2-.9,2-2V5c0-1.1-.9-2-2-2ZM11,5h10v6h-10v-6ZM11,13h10v6h-10v-6ZM11,27v-6h10v6h-10ZM2,10v16c0,1.1.9,2,2,2h3v-2h-3v-4h3v-2h-3v-4h3v-2h-3v-4h3v-2h-3c-1.1,0-2,.9-2,2ZM28,8h-3v2h3v4h-3v2h3v4h-3v2h3v4h-3v2h3c1.1,0,2-.9,2-2V10c0-1.1-.9-2-2-2ZM14,9c-.55,0-1-.45-1-1s.45-1,1-1,1,.45,1,1-.45,1-1,1ZM14,17c-.55,0-1-.45-1-1s.45-1,1-1,1,.45,1,1-.45,1-1,1ZM14,25c-.55,0-1-.45-1-1s.45-1,1-1,1,.45,1,1-.45,1-1,1Z"/></symbol>
+<symbol id="i-platform-automation" viewBox="0 0 32 32"><path d="M5,25V15.8281l-3.5859,3.586L0,18l6-6,6,6-1.4141,1.4141L7,15.8281V25H19v2H7A2.0024,2.0024,0,0,1,5,25Z"/><path d="M24,22h4a2.002,2.002,0,0,1,2,2v4a2.002,2.002,0,0,1-2,2H24a2.002,2.002,0,0,1-2-2V24A2.002,2.002,0,0,1,24,22Zm4,6V24H23.9985L24,28Z"/><path d="M27,6v9.1719l3.5859-3.586L32,13l-6,6-6-6,1.4141-1.4141L25,15.1719V6H13V4H25A2.0024,2.0024,0,0,1,27,6Z"/><path d="M2 6H8V8H2z"/><path d="M2 2H10V4H2z"/></symbol>
+<symbol id="i-observability" viewBox="0 0 32 32"><path d="M26,15h5v2h-5v-2ZM26,23h5v2h-5v-2ZM18,17.18l-2.59-2.59-1.41,1.41,4,4,6-6-1.41-1.41-4.59,4.59ZM18,25.18l-2.59-2.59-1.41,1.41,4,4,6-6-1.41-1.41-4.59,4.59ZM11,25h-2.5c-3.0327,0-5.5-2.4678-5.5-5.5,0-2.8779,2.25-5.2852,5.1231-5.4795l.8769-.0205.0493-.8701c.4395-4.0645,3.8579-7.1299,7.9507-7.1299,3.0596,0,5.8066,1.7031,7.169,4.4448l1.791-.8906c-1.7031-3.4258-5.1358-5.5542-8.96-5.5542-4.8477,0-8.938,3.4399-9.8218,8.124-3.5234.6294-6.1782,3.7246-6.1782,7.376,0,4.1357,3.3643,7.5,7.5,7.5h2.5v-2Z"/></symbol>
+<symbol id="i-security" viewBox="0 0 32 32"><path d="M14 16.59 11.41 14 10 15.41 14 19.41 22 11.41 20.59 10 14 16.59z"/><path d="M16,30,9.8242,26.7071A10.9818,10.9818,0,0,1,4,17V4A2.0021,2.0021,0,0,1,6,2H26a2.0021,2.0021,0,0,1,2,2V17a10.9818,10.9818,0,0,1-5.8242,9.7071ZM6,4V17a8.9852,8.9852,0,0,0,4.7656,7.9423L16,27.7333l5.2344-2.791A8.9852,8.9852,0,0,0,26,17V4Z"/></symbol>
+<symbol id="i-ai" viewBox="0 0 32 32"><path stroke-width="0" d="m29.312,22.9189c1.1042-2.1201,1.688-4.5127,1.688-6.9189C31,7.729,24.271,1,16,1c-3.3738,0-6.5815,1.1191-9.2046,3.1665-.2441-.106-.5125-.1665-.7954-.1665-1.1045,0-2,.8955-2,2s.8955,2,2,2,2-.8955,2-2c0-.0762-.0142-.1489-.0225-.2227,2.2812-1.7964,5.0793-2.7773,8.0225-2.7773.9727,0,1.9172.1157,2.8293.3193-3.3938.9258-5.8994,4.0273-5.8994,7.7109,0,.7891.1167,1.5503.332,2.27-.6985-.2021-1.4285-.3306-2.1919-.3306-3.7039,0-6.8191,2.5342-7.7256,5.957-.218-.9424-.3445-1.9189-.3445-2.9268,0-2.1162.4919-4.1328,1.4619-5.9951l-1.7739-.9238c-1.1042,2.1201-1.688,4.5127-1.688,6.9189,0,8.271,6.729,15,15,15,3.3738,0,6.5815-1.1191,9.2046-3.1665.2441.106.5125.1665.7954.1665,1.1045,0,2-.8955,2-2s-.8955-2-2-2-2,.8955-2,2c0,.0762.0142.1489.0225.2231-1.0796.8496-2.2776,1.5098-3.5493,1.9771.3315-.6641.5269-1.4072.5269-2.2002,0-1.6304-.7959-3.0669-2.0068-3.9805.0457-.3472.0769-.6978.0769-1.0498,0-.7856-.1257-1.54-.3381-2.2573.6995.2012,1.4346.3179,2.198.3179,3.7039,0,6.8191-2.5342,7.7256-5.957.218.9424.3445,1.9189.3445,2.9268,0,2.1162-.4919,4.1328-1.4619,5.9951l1.7739.9238Zm-17.7935,5.2646c-1.8389-.6807-3.49-1.7529-4.8325-3.1338-1.0366-1.1143-1.616-2.5527-1.616-4.0801,0-3.3081,2.6917-6,6-6s6,2.6919,6,6c0,.0498-.0125.0977-.0134.1475-.3413-.0737-.6936-.1172-1.0566-.1172-2.7571,0-5,2.2432-5,5,0,.7861.1924,1.5234.5186,2.1836Zm7.4814-2.1836c0,1.6543-1.3457,3-3,3s-3-1.3457-3-3,1.3457-3,3-3,3,1.3457,3,3Zm1.9299-8.9697c-3.3083,0-6-2.6919-6-6s2.6917-6,6-6c1.4294,0,2.7422.5039,3.7742,1.3418.3027.2739.5918.561.8677.8618.8479,1.0352,1.3582,2.3569,1.3582,3.7964,0,3.3081-2.6917,6-6,6Z"/></symbol>
+<symbol id="i-tgw" viewBox="0 0 32 32"><path d="m12.5,7.5l-1.4-1.4,3.5-3.5c.8-.8,2.1-.8,2.8,0l3.5,3.5-1.4,1.4-3.5-3.5-3.5,3.5Z"/><path d="m19.5,24.5l1.4,1.4-3.5,3.5c-.8.8-2.1.8-2.8,0l-3.5-3.5,1.4-1.4,3.5,3.5,3.5-3.5Z"/><path d="m24.5,12.5l1.4-1.4,3.5,3.5c.8.8.8,2.1,0,2.8l-3.5,3.5-1.4-1.4,3.5-3.5-3.5-3.5Z"/><path d="m7.5,19.5l-1.4,1.4-3.5-3.5c-.8-.8-.8-2.1,0-2.8l3.5-3.5,1.4,1.4-3.5,3.5,3.5,3.5Z"/><path d="m26,24c-.2,0-.3,0-.5.1l-6.1-6.1c.8-1.2.8-2.8,0-4l6.1-6.1c.2.1.3.1.5.1,1.1,0,2-.9,2-2s-.9-2-2-2-2,.9-2,2c0,.2,0,.3.1.5l-6.1,6.1c-1.2-.8-2.8-.8-4,0l-6.1-6.1c.1-.2.1-.3.1-.5,0-1.1-.9-2-2-2s-2,.9-2,2,.9,2,2,2c.2,0,.3,0,.5-.1l6.1,6.1c-.8,1.2-.8,2.8,0,4l-6.1,6.1c-.2-.1-.3-.1-.5-.1-1.1,0-2,.9-2,2s.9,2,2,2,2-.9,2-2c0-.2,0-.3-.1-.5l6.1-6.1c1.2.8,2.8.8,4,0l6.1,6.1c0,.2-.1.3-.1.5,0,1.1.9,2,2,2s2-.9,2-2-.9-2-2-2Zm-10-6c-1.1,0-2-.9-2-2s.9-2,2-2,2,.9,2,2-.9,2-2,2Z"/></symbol>
+<symbol id="i-light" viewBox="0 0 32 32"><path d="M15 2H17V7H15z"/><path d="M21.668 6.854H26.626V8.854H21.668z" transform="rotate(-45 24.147 7.853)"/><path d="M25 15H30V17H25z"/><path d="M23.147 21.668H25.147V26.626H23.147z" transform="rotate(-45 24.147 24.146)"/><path d="M15 25H17V30H15z"/><path d="M5.375 23.147H10.333V25.147H5.375z" transform="rotate(-45 7.853 24.146)"/><path d="M2 15H7V17H2z"/><path d="M6.854 5.375H8.854V10.333H6.854z" transform="rotate(-45 7.854 7.853)"/><path d="M16,12a4,4,0,1,1-4,4,4.0045,4.0045,0,0,1,4-4m0-2a6,6,0,1,0,6,6,6,6,0,0,0-6-6Z"/></symbol>
+<symbol id="i-asleep" viewBox="0 0 32 32"><path d="M13.5025,5.4136A15.0755,15.0755,0,0,0,25.096,23.6082a11.1134,11.1134,0,0,1-7.9749,3.3893c-.1385,0-.2782.0051-.4178,0A11.0944,11.0944,0,0,1,13.5025,5.4136M14.98,3a1.0024,1.0024,0,0,0-.1746.0156A13.0959,13.0959,0,0,0,16.63,28.9973c.1641.006.3282,0,.4909,0a13.0724,13.0724,0,0,0,10.702-5.5556,1.0094,1.0094,0,0,0-.7833-1.5644A13.08,13.08,0,0,1,15.8892,4.38,1.0149,1.0149,0,0,0,14.98,3Z"/></symbol>
+</svg>
+
+<main class="wrap">
+  <header class="intro">
+    <div class="topbar">
+      <span class="eyebrow">IBM Cloud 101</span>
+      <div class="top-actions">
+        <a class="studies-link" href="iaas-101-tech-focus.html">Back to the stack</a>
+        <button class="mode-toggle" id="mode-toggle" type="button" aria-pressed="false">
+          <svg aria-hidden="true" fill="currentColor"><use id="mode-icon" href="#i-asleep"/></svg>
+          <span id="mode-label">Dark mode</span>
+        </button>
+      </div>
+    </div>
+    <h1>Three ways to see the layers</h1>
+    <p class="intro-copy">Same services as the stack page. Each study asks something different: where a layer sits, which layers a deployment crosses, and what reaches what. The PaaS hubs are included here. They stay off the stack page.</p>
+  </header>
+
+  <div class="switcher" id="switcher" role="tablist" aria-label="Layer studies">
+    <button type="button" role="tab" id="tab-cross-section" data-tab="cross-section" aria-controls="panel-cross-section" aria-selected="true">Cross-section</button>
+    <button type="button" role="tab" id="tab-workload-path" data-tab="workload-path" aria-controls="panel-workload-path" aria-selected="false" tabindex="-1">Workload path</button>
+    <button type="button" role="tab" id="tab-connections" data-tab="connections" aria-controls="panel-connections" aria-selected="false" tabindex="-1">Connections</button>
+  </div>
+
+  <section class="study" id="panel-cross-section" data-study="cross-section" role="tabpanel" aria-labelledby="tab-cross-section">
+    <header class="study-head">
+      <p class="eyebrow">01 — Where it sits</p>
+      <h2>Cross-section</h2>
+      <p>Bands are the kind of service. The blue shaft is Virtual Private Cloud. The teal band is IaaS, and it continues outside the shaft.</p>
+    </header>
+    <div class="cut" id="cut">
+      <div class="sky">
+        <p class="band-name">PaaS</p>
+        <div class="sky-nodes" id="slot-sky" role="group" aria-label="PaaS hubs"></div>
+      </div>
+      <div class="stratum" data-band="serverless">
+        <p class="band-name">Serverless</p>
+        <div class="shaft">
+          <p class="well-label"><svg class="icon" aria-hidden="true" fill="currentColor"><use href="#i-vpc"/></svg> Virtual Private Cloud</p>
+          <div class="shaft-nodes" id="slot-serverless"></div>
+        </div>
+        <p class="quiet">Function deployment in this project stays inside Virtual Private Cloud.</p>
+      </div>
+      <div class="stratum" data-band="caas">
+        <p class="band-name">CaaS</p>
+        <div class="shaft">
+          <div class="shaft-nodes" id="slot-caas"></div>
+        </div>
+        <p class="quiet">Container services in this project run on VPC workers.</p>
+      </div>
+      <div class="stratum" data-band="iaas">
+        <p class="band-name">IaaS</p>
+        <div class="shaft">
+          <div class="shaft-nodes" id="slot-iaas-vpc"></div>
+        </div>
+        <div class="out" id="slot-iaas-out"></div>
+      </div>
+    </div>
+    <div class="story" id="cut-story" aria-live="polite"></div>
+  </section>
+
+  <section class="study" id="panel-workload-path" data-study="workload-path" role="tabpanel" aria-labelledby="tab-workload-path" hidden>
+    <header class="study-head">
+      <p class="eyebrow">02 — What a deployment crosses</p>
+      <h2>Workload path</h2>
+      <p>Pick what you are running. The path is the layers it crosses. A platform hub can travel above the path without being built into the service.</p>
+    </header>
+    <div class="path-layout" id="path">
+      <div class="asks" id="asks" role="group" aria-label="Workloads"></div>
+      <div class="path-stage">
+        <p class="path-sentence" id="path-sentence"></p>
+        <div class="path-body" id="path-body">
+          <ol class="rail" id="rail"></ol>
+          <div class="clipped" id="clipped" hidden>
+            <p class="clipped-label">Above this path</p>
+            <ul id="clipped-list"></ul>
+          </div>
+        </div>
+        <div>
+          <p class="hubs-label">Platform hubs sit above every path. Turn one on to carry it with this deployment.</p>
+          <div class="hub-row" id="hub-row"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="study" id="panel-connections" data-study="connections" role="tabpanel" aria-labelledby="tab-connections" hidden>
+    <header class="study-head">
+      <p class="eyebrow">03 — What reaches what</p>
+      <h2>Connections</h2>
+      <p>Lines are relationships already in this project. Solid blue stays inside the Virtual Private Cloud grouping. Teal is bare metal in a VPC. Gray is Transit Gateway. Select a service and the magenta frame marks the platform hubs above it, or the substrates below a hub.</p>
+    </header>
+    <div class="web" id="web">
+      <svg class="web-svg" id="web-svg" aria-hidden="true"></svg>
+      <div class="web-grid">
+        <div class="web-hubs" id="web-hubs" role="group" aria-label="PaaS hubs"></div>
+        <div class="web-lower" id="web-lower">
+          <section class="web-vpc" aria-label="Virtual Private Cloud">
+            <p class="well-label"><svg class="icon" aria-hidden="true" fill="currentColor"><use href="#i-vpc"/></svg> Virtual Private Cloud</p>
+            <div class="web-slot" id="web-code"></div>
+            <div class="web-slot pair" id="web-caas"></div>
+            <div class="web-slot" id="web-ground"></div>
+          </section>
+          <section class="web-out" aria-label="IaaS outside Virtual Private Cloud">
+            <div class="web-slot peers" id="web-peers"></div>
+          </section>
+        </div>
+      </div>
+    </div>
+    <p class="diagram-note">Serverless and containers in this project stay inside the grouping. Classic, PowerVS, and OpenShift Virtualization sit at the same IaaS depth, outside it.</p>
+    <ul class="legend">
+      <li><span class="swatch" aria-hidden="true"></span> VPC grouping or VPC workers</li>
+      <li><span class="swatch host" aria-hidden="true"></span> Bare metal workers in a VPC</li>
+      <li><span class="swatch tgw" aria-hidden="true"></span> Transit Gateway</li>
+      <li><span class="swatch hub" aria-hidden="true"></span> Platform hub, shown on selection</li>
+    </ul>
+    <div class="story" id="web-story" aria-live="polite"></div>
+  </section>
+</main>
+
+<script>
+const ITEMS = [
+  { id: "db", icon: "i-icd", name: "Databases", layer: "PaaS", slot: "sky" },
+  { id: "auto", icon: "i-platform-automation", name: "Platform Automation", layer: "PaaS", slot: "sky" },
+  { id: "obs", icon: "i-observability", name: "Observability", layer: "PaaS", slot: "sky" },
+  { id: "sec", icon: "i-security", name: "Security", layer: "PaaS", slot: "sky" },
+  { id: "ai", icon: "i-ai", name: "AI", layer: "PaaS", slot: "sky" },
+  { id: "code", icon: "i-code-engine", name: "Code Engine", layer: "Serverless", slot: "serverless" },
+  { id: "iks", icon: "i-iks", name: "IBM Kubernetes Service", short: "IKS", layer: "CaaS", slot: "caas" },
+  { id: "roks", icon: "i-roks", name: "Red Hat OpenShift Service", short: "ROKS", layer: "CaaS", slot: "caas" },
+  { id: "vpc", icon: "i-vpc", name: "VPC Native IaaS", layer: "IaaS", slot: "iaas-vpc" },
+  { id: "classic", icon: "i-classic", name: "Classic Infrastructure", short: "Classic", layer: "IaaS", slot: "iaas-out" },
+  { id: "power", icon: "i-powervs", name: "Power Virtual Server", short: "PowerVS", layer: "IaaS", slot: "iaas-out" },
+  { id: "ocpv", icon: "i-ocpv", name: "OpenShift Virtualization", short: "OpenShift Virt", layer: "IaaS", slot: "iaas-out" },
+];
+
+const TGW = { id: "tgw", icon: "i-tgw", name: "Transit Gateway", layer: "Link" };
+const BY_ID = Object.fromEntries(ITEMS.map((item) => [item.id, item]));
+BY_ID.tgw = TGW;
+
+// Relationships already established on the stack page.
+const LINKS = [
+  { a: "code", b: "vpc", kind: "stack", label: "VPC grouping" },
+  { a: "iks", b: "vpc", kind: "stack", label: "VPC workers" },
+  { a: "roks", b: "vpc", kind: "stack", label: "VPC workers" },
+  { a: "ocpv", b: "vpc", kind: "host", label: "Bare metal workers" },
+  { a: "classic", b: "vpc", kind: "tgw", label: "Transit Gateway" },
+  { a: "power", b: "vpc", kind: "tgw", label: "Transit Gateway" },
+  { a: "classic", b: "power", kind: "tgw", label: "Transit Gateway" },
+];
+
+const COPY = {
+  code: "Code Engine is the function-deployment layer. It lives in the Virtual Private Cloud grouping, above VPC Native IaaS.",
+  iks: "IBM Kubernetes Service is the Kubernetes container layer. Workers in this view are VPC virtual servers. Classic clusters still exist; this study follows the VPC path.",
+  roks: "Red Hat OpenShift Service is the OpenShift container layer. Workers in this view are VPC virtual servers. Classic clusters still exist; this study follows the VPC path.",
+  vpc: "VPC Native IaaS is the ground of the Virtual Private Cloud grouping. Code Engine, IKS, and ROKS sit above it. OpenShift Virtualization uses its bare metal servers. Transit Gateway reaches Classic Infrastructure and Power Virtual Server.",
+  classic: "Classic Infrastructure is its own IaaS, on the same depth as VPC Native IaaS and outside the VPC grouping. Transit Gateway connects it to VPC and to PowerVS.",
+  power: "Power Virtual Server is the IaaS for AIX, IBM i, and Linux on Power. It sits outside the VPC grouping. Transit Gateway connects it to VPC and to classic.",
+  ocpv: "OpenShift Virtualization runs virtual machines on bare metal workers in a VPC. It is licensed for VMs, so its place is the IaaS band, with Classic and Power.",
+  db: "Databases is a platform hub above the substrates. Any deployment below can use a database. The hub is not tied to one IaaS here.",
+  auto: "Platform Automation is a platform hub above the substrates. It travels with a deployment. It is not tied to one IaaS here.",
+  obs: "Observability is a platform hub above the substrates. It travels with a deployment. It is not tied to one IaaS here.",
+  sec: "Security is a platform hub above the substrates. It travels with a deployment. It is not tied to one IaaS here.",
+  ai: "AI is a platform hub above the substrates. It travels with a deployment. It is not tied to one IaaS here.",
+};
+
+const PATHS = [
+  {
+    id: "fn",
+    ask: "A function",
+    sentence: "A function deploys on Code Engine, inside the Virtual Private Cloud grouping.",
+    stops: [
+      { id: "code", note: "The function runs here." },
+      { id: "vpc", note: "The grouping stands on VPC Native IaaS." },
+    ],
+  },
+  {
+    id: "k8s",
+    ask: "Containers on Kubernetes",
+    sentence: "Containers on Kubernetes deploy on IKS. The workers are VPC virtual servers.",
+    stops: [
+      { id: "iks", note: "The cluster is the deployment." },
+      { id: "vpc", note: "Workers are VPC virtual servers." },
+    ],
+  },
+  {
+    id: "ocp",
+    ask: "Containers on OpenShift",
+    sentence: "Containers on OpenShift deploy on ROKS. The workers are VPC virtual servers.",
+    stops: [
+      { id: "roks", note: "The cluster is the deployment." },
+      { id: "vpc", note: "Workers are VPC virtual servers." },
+    ],
+  },
+  {
+    id: "vm",
+    ask: "A virtual machine on OpenShift",
+    sentence: "A virtual machine on OpenShift deploys on OpenShift Virtualization, on the IaaS band. The workers are bare metal in a VPC.",
+    stops: [
+      { id: "ocpv", note: "Licensed for virtual machines, so this stop is IaaS." },
+      { id: "vpc", note: "Workers are bare metal servers in a VPC." },
+    ],
+  },
+  {
+    id: "vsi",
+    ask: "A server in VPC",
+    sentence: "A server in VPC deploys on VPC Native IaaS. No function or container layer is required.",
+    stops: [
+      { id: "vpc", note: "Virtual servers, dedicated hosts, and bare metal servers live here." },
+    ],
+  },
+  {
+    id: "classic",
+    ask: "Classic infrastructure",
+    sentence: "A classic workload deploys on Classic Infrastructure. Transit Gateway is the private path to VPC and PowerVS.",
+    stops: [
+      { id: "classic", note: "Virtual servers and bare metal on classic networks." },
+      { id: "tgw", note: "Connects classic to VPC and PowerVS." },
+    ],
+  },
+  {
+    id: "power",
+    ask: "AIX, IBM i, or Linux on Power",
+    sentence: "AIX, IBM i, and Linux on Power deploy on Power Virtual Server. Transit Gateway is the private path to VPC.",
+    stops: [
+      { id: "power", note: "Power Virtual Server in an IBM data center." },
+      { id: "tgw", note: "Connects PowerVS to VPC and to classic." },
+    ],
+  },
+];
+
+const HUBS = ITEMS.filter((item) => item.layer === "PaaS");
+const NS = "http://www.w3.org/2000/svg";
+
+function esc(value) {
+  return String(value).replace(/[&<>"']/g, (ch) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+  }[ch]));
+}
+
+function isHub(id) {
+  return HUBS.some((item) => item.id === id);
+}
+
+function nodeHTML(item, compact) {
+  const label = compact && item.short ? item.short : item.name;
+  const named = label === item.name ? "" : ` aria-label="${esc(item.name)}"`;
+  return `<button type="button" class="node" data-id="${item.id}" data-layer="${item.layer}" aria-pressed="false"${named}>
+    <svg class="icon" aria-hidden="true" fill="currentColor"><use href="#${item.icon}"/></svg>
+    <span class="node-copy"><span class="node-layer">${esc(item.layer)}</span><span class="node-name">${esc(label)}</span></span>
+  </button>`;
+}
+
+function linksOf(id) {
+  return LINKS.filter((link) => link.a === id || link.b === id).map((link) => {
+    const other = BY_ID[link.a === id ? link.b : link.a];
+    return { id: other.id, name: other.name, via: link.label };
+  });
+}
+
+function storyHTML(kicker, body, touches) {
+  const list = touches && touches.length
+    ? `<ul class="touches">${touches.map((touch) => `<li><span>${esc(touch.name)}</span><span class="via">${esc(touch.via)}</span></li>`).join("")}</ul>`
+    : "";
+  return `<p class="story-kicker">${esc(kicker)}</p><p>${esc(body)}</p>${list}`;
+}
+
+// --- Cross-section ----------------------------------------------------------
+const cut = document.getElementById("cut");
+let cutId = null;
+
+function mountCut() {
+  const buckets = { sky: [], serverless: [], caas: [], "iaas-vpc": [], "iaas-out": [] };
+  ITEMS.forEach((item) => buckets[item.slot].push(nodeHTML(item, false)));
+  document.getElementById("slot-sky").innerHTML = buckets.sky.join("");
+  document.getElementById("slot-serverless").innerHTML = buckets.serverless.join("");
+  document.getElementById("slot-caas").innerHTML = buckets.caas.join("");
+  document.getElementById("slot-iaas-vpc").innerHTML = buckets["iaas-vpc"].join("");
+  document.getElementById("slot-iaas-out").innerHTML = buckets["iaas-out"].join("");
+  renderCut();
+}
+
+function renderCut() {
+  cut.classList.toggle("has-pick", Boolean(cutId) && !isHub(cutId));
+  cut.classList.toggle("is-sky", Boolean(cutId && isHub(cutId)));
+  cut.querySelectorAll(".node").forEach((node) => {
+    const on = node.dataset.id === cutId;
+    const touch = cutId && !isHub(cutId) && linksOf(cutId).some((link) => link.id === node.dataset.id);
+    node.classList.toggle("is-on", on);
+    node.classList.toggle("is-touch", Boolean(touch));
+    node.setAttribute("aria-pressed", String(on));
+  });
+  const story = document.getElementById("cut-story");
+  if (!cutId) {
+    story.innerHTML = storyHTML("Select a service", "The cross-section shows its band, and the other services it touches.", []);
+    return;
+  }
+  const item = BY_ID[cutId];
+  const touches = isHub(cutId) ? [] : linksOf(cutId);
+  story.innerHTML = storyHTML(`${item.name} · ${item.layer}`, COPY[cutId], touches);
+}
+
+cut.addEventListener("click", (event) => {
+  const node = event.target.closest(".node");
+  if (!node) return;
+  cutId = cutId === node.dataset.id ? null : node.dataset.id;
+  renderCut();
+});
+
+// --- Workload path ----------------------------------------------------------
+const asks = document.getElementById("asks");
+const hubRow = document.getElementById("hub-row");
+let pathId = "fn";
+const clipped = new Set();
+
+function mountPath() {
+  asks.innerHTML = PATHS.map((path) => `<button type="button" class="ask" data-path="${path.id}" aria-pressed="false">${esc(path.ask)}</button>`).join("");
+  hubRow.innerHTML = HUBS.map((item) => `<button type="button" class="hub" data-hub="${item.id}" aria-pressed="false">
+    <svg class="icon" aria-hidden="true" fill="currentColor"><use href="#${item.icon}"/></svg>${esc(item.name)}
+  </button>`).join("");
+  renderPath();
+}
+
+function renderPath() {
+  const path = PATHS.find((item) => item.id === pathId);
+  asks.querySelectorAll(".ask").forEach((button) => {
+    const on = button.dataset.path === pathId;
+    button.classList.toggle("is-on", on);
+    button.setAttribute("aria-pressed", String(on));
+  });
+  document.getElementById("path-sentence").textContent = path.sentence;
+  document.getElementById("rail").innerHTML = path.stops.map((stop) => {
+    const item = BY_ID[stop.id];
+    return `<li class="stop" data-layer="${item.layer}">
+      <p class="stop-layer">${esc(item.layer)}</p>
+      <p class="stop-name"><svg class="icon" aria-hidden="true" fill="currentColor"><use href="#${item.icon}"/></svg>${esc(item.name)}</p>
+      <p class="stop-note">${esc(stop.note)}</p>
+    </li>`;
+  }).join("");
+  hubRow.querySelectorAll(".hub").forEach((button) => {
+    button.setAttribute("aria-pressed", String(clipped.has(button.dataset.hub)));
+  });
+  const box = document.getElementById("clipped");
+  const list = document.getElementById("clipped-list");
+  const names = HUBS.filter((item) => clipped.has(item.id));
+  box.hidden = names.length === 0;
+  document.getElementById("path-body").classList.toggle("has-clip", names.length > 0);
+  list.innerHTML = names.map((item) => `<li>${esc(item.name)}</li>`).join("");
+}
+
+asks.addEventListener("click", (event) => {
+  const button = event.target.closest(".ask");
+  if (!button) return;
+  pathId = button.dataset.path;
+  renderPath();
+});
+hubRow.addEventListener("click", (event) => {
+  const button = event.target.closest(".hub");
+  if (!button) return;
+  if (clipped.has(button.dataset.hub)) clipped.delete(button.dataset.hub);
+  else clipped.add(button.dataset.hub);
+  renderPath();
+});
+
+// --- Connections ------------------------------------------------------------
+const web = document.getElementById("web");
+let webId = null;
+
+function mountWeb() {
+  document.getElementById("web-hubs").innerHTML = HUBS.map((item) => nodeHTML(item, true)).join("");
+  document.getElementById("web-code").innerHTML = nodeHTML(BY_ID.code, true);
+  document.getElementById("web-caas").innerHTML = [BY_ID.iks, BY_ID.roks].map((item) => nodeHTML(item, true)).join("");
+  document.getElementById("web-ground").innerHTML = nodeHTML(BY_ID.vpc, true);
+  document.getElementById("web-peers").innerHTML = ["classic", "power", "ocpv"].map((id) => nodeHTML(BY_ID[id], true)).join("");
+  renderWeb();
+}
+
+function relatedIds(id) {
+  const ids = new Set(id ? [id] : []);
+  if (id && !isHub(id)) linksOf(id).forEach((link) => ids.add(link.id));
+  return ids;
+}
+
+function renderWeb() {
+  const hubs = document.getElementById("web-hubs");
+  web.classList.toggle("has-pick", Boolean(webId));
+  hubs.classList.toggle("is-reach", Boolean(webId && !isHub(webId)));
+  document.getElementById("web-lower").classList.toggle("is-under", Boolean(webId && isHub(webId)));
+  const related = relatedIds(webId);
+  web.querySelectorAll(".node").forEach((node) => {
+    const on = node.dataset.id === webId;
+    const touch = webId && !on && (isHub(webId) ? !isHub(node.dataset.id) : related.has(node.dataset.id) || isHub(node.dataset.id));
+    node.classList.toggle("is-on", on);
+    node.classList.toggle("is-touch", Boolean(touch));
+    node.setAttribute("aria-pressed", String(on));
+  });
+  const story = document.getElementById("web-story");
+  if (!webId) {
+    story.innerHTML = storyHTML("Select a service", "The lines are the structural relationships. A selection names each touch, and the magenta frame marks the platform hubs above a workload, or the substrates below a hub.", []);
+    return;
+  }
+  const item = BY_ID[webId];
+  if (isHub(webId)) {
+    story.innerHTML = storyHTML(`${item.name} · PaaS`, COPY[webId], [{ name: "Every substrate below", via: "Platform hub" }]);
+  } else {
+    const touches = linksOf(webId).concat([{ name: "Databases, Automation, Observability, Security, AI", via: "Platform hubs sit above" }]);
+    story.innerHTML = storyHTML(`${item.name} · ${item.layer}`, COPY[webId], touches);
+  }
+  drawWeb();
+}
+
+web.addEventListener("click", (event) => {
+  const node = event.target.closest(".node");
+  if (!node) return;
+  webId = webId === node.dataset.id ? null : node.dataset.id;
+  renderWeb();
+});
+
+function svgEl(name) {
+  return document.createElementNS(NS, name);
+}
+
+function relRect(el) {
+  const stage = web.getBoundingClientRect();
+  const rect = el.getBoundingClientRect();
+  return {
+    left: rect.left - stage.left,
+    top: rect.top - stage.top,
+    right: rect.right - stage.left,
+    bottom: rect.bottom - stage.top,
+    cx: rect.left - stage.left + rect.width / 2,
+    cy: rect.top - stage.top + rect.height / 2,
+  };
+}
+
+function strokeFor(kind, hot) {
+  const color = {
+    stack: "var(--accent)",
+    host: "var(--teal-ink)",
+    tgw: "var(--text-2)",
+  }[kind];
+  return { color, width: kind === "stack" ? 2 : 1.5, dash: kind === "stack" ? "" : "5 4", opacity: hot ? 1 : 0.28 };
+}
+
+function drawPoly(svg, points, style) {
+  const el = svgEl("polyline");
+  el.setAttribute("points", points.map((p) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" "));
+  el.setAttribute("fill", "none");
+  el.setAttribute("stroke", style.color);
+  el.setAttribute("stroke-width", style.width);
+  el.setAttribute("stroke-dasharray", style.dash);
+  el.setAttribute("stroke-linejoin", "miter");
+  el.setAttribute("opacity", style.opacity);
+  svg.appendChild(el);
+}
+
+// Stack links run in the left gutter of the VPC frame, so they stay visible
+// beside the tiles. Transit Gateway and bare-metal links run in lanes under
+// the IaaS row, so they are not hidden behind the tiles they connect.
+function linkHot(link) {
+  if (!webId || isHub(webId)) return true;
+  return link.a === webId || link.b === webId;
+}
+
+function drawStack(svg, nodes) {
+  const frame = relRect(document.querySelector(".web-vpc"));
+  const spineX = frame.left + 16;
+  const members = ["code", "iks", "roks", "vpc"].filter((id) => nodes[id]).map((id) => ({ id, rect: relRect(nodes[id]) }));
+  if (members.length < 2) return;
+  const spineHot = !webId || isHub(webId) || members.some((member) => member.id === webId);
+  drawPoly(svg, [
+    { x: spineX, y: members[0].rect.cy },
+    { x: spineX, y: members[members.length - 1].rect.cy },
+  ], strokeFor("stack", spineHot));
+  members.forEach(({ id, rect }) => {
+    const inStack = ["code", "iks", "roks", "vpc"].includes(webId);
+    const hot = !webId || isHub(webId) || webId === id || (webId === "vpc" && inStack) || (id === "vpc" && inStack && webId !== "vpc");
+    drawPoly(svg, [{ x: spineX, y: rect.cy }, { x: rect.left - 2, y: rect.cy }], strokeFor("stack", hot));
+  });
+}
+
+function drawBus(svg, aEl, bEl, kind, hot, lane) {
+  const a = relRect(aEl);
+  const b = relRect(bEl);
+  const y = Math.max(a.bottom, b.bottom) + lane;
+  const stem = { ...strokeFor(kind, hot), dash: "" };
+  const run = strokeFor(kind, hot);
+  drawPoly(svg, [{ x: a.cx, y: a.bottom }, { x: a.cx, y }], stem);
+  drawPoly(svg, [{ x: b.cx, y: b.bottom }, { x: b.cx, y }], stem);
+  drawPoly(svg, [{ x: a.cx, y }, { x: b.cx, y }], run);
+}
+
+function drawWeb() {
+  const svg = document.getElementById("web-svg");
+  const box = web.getBoundingClientRect();
+  if (box.width < 20) return;
+  svg.setAttribute("viewBox", `0 0 ${box.width} ${box.height}`);
+  svg.replaceChildren();
+  const nodes = {};
+  web.querySelectorAll(".node").forEach((node) => { nodes[node.dataset.id] = node; });
+  if (!nodes.vpc) return;
+  drawStack(svg, nodes);
+  const lane = { host: 28, tgw: 48 };
+  LINKS.filter((link) => link.kind !== "stack").forEach((link) => {
+    const a = nodes[link.a];
+    const b = nodes[link.b];
+    if (!a || !b) return;
+    drawBus(svg, a, b, link.kind, linkHot(link), lane[link.kind] || 14);
+  });
+}
+
+new ResizeObserver(() => drawWeb()).observe(web);
+
+// --- Studies ----------------------------------------------------------------
+const ORDER = ["cross-section", "workload-path", "connections"];
+
+function showStudy(id) {
+  if (!ORDER.includes(id)) id = ORDER[0];
+  document.querySelectorAll("[data-study]").forEach((panel) => {
+    panel.hidden = panel.dataset.study !== id;
+  });
+  document.querySelectorAll("[data-tab]").forEach((tab) => {
+    const on = tab.dataset.tab === id;
+    tab.setAttribute("aria-selected", String(on));
+    tab.tabIndex = on ? 0 : -1;
+  });
+  if (location.hash !== `#${id}`) history.replaceState(null, "", `#${id}`);
+  if (id === "connections") requestAnimationFrame(drawWeb);
+}
+
+document.getElementById("switcher").addEventListener("click", (event) => {
+  const tab = event.target.closest("[data-tab]");
+  if (tab) showStudy(tab.dataset.tab);
+});
+document.getElementById("switcher").addEventListener("keydown", (event) => {
+  if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
+  const tabs = [...document.querySelectorAll("[data-tab]")];
+  const index = tabs.findIndex((tab) => tab.getAttribute("aria-selected") === "true");
+  const next = event.key === "ArrowRight" ? (index + 1) % tabs.length : (index - 1 + tabs.length) % tabs.length;
+  tabs[next].focus();
+  showStudy(tabs[next].dataset.tab);
+});
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Escape") return;
+  cutId = null;
+  webId = null;
+  renderCut();
+  renderWeb();
+});
+
+mountCut();
+mountPath();
+mountWeb();
+showStudy(ORDER.includes(location.hash.slice(1)) ? location.hash.slice(1) : ORDER[0]);
+if (document.fonts) document.fonts.ready.then(drawWeb);
+
+// --- Light / dark. Shared with the stack page. -----------------------------
+const MODE_KEY = "iaas102-mode";
+const modeBtn = document.getElementById("mode-toggle");
+
+function applyMode(mode) {
+  const dark = mode === "dark";
+  if (dark) document.documentElement.dataset.mode = "dark";
+  else delete document.documentElement.dataset.mode;
+  modeBtn.setAttribute("aria-pressed", String(dark));
+  document.getElementById("mode-label").textContent = dark ? "Light mode" : "Dark mode";
+  document.getElementById("mode-icon").setAttribute("href", dark ? "#i-light" : "#i-asleep");
+  requestAnimationFrame(drawWeb);
+}
+
+let savedMode = "light";
+try { savedMode = localStorage.getItem(MODE_KEY) || "light"; } catch (e) { /* stay light */ }
+applyMode(savedMode);
+modeBtn.addEventListener("click", () => {
+  const next = document.documentElement.dataset.mode === "dark" ? "light" : "dark";
+  try { localStorage.setItem(MODE_KEY, next); } catch (e) { /* ignore */ }
+  applyMode(next);
+});
+</script>

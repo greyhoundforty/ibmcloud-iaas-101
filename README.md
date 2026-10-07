@@ -9,6 +9,7 @@ There are three pieces, from broadest to deepest:
 - **Slide deck**: Click-through presentation: highlight a pillar, reveal 4 lines, reset. Items are in `deck/project/` (**WIP**)
 - **Seller focus**: High-level seller discovery, the true 101, and the basis for the PowerPoint. current version is at `site/iaas-101-seller-focus.html` 
 - **Tech focus**: Tech overview of the cloud services in each IaaS offering. Current version is at `site/iaas-101-tech-focus.html`
+- **Layer studies**: Three other ways to show the same services, focused on how the layers sit and connect. `site/iaas-101-layer-studies.html`
 
 **Service-level edits happen on the tech-focus page.** The seller-focus page is the 101 narrative and the source for the deck. The rest of this README is mostly about the tech-focus page.
 
@@ -44,6 +45,8 @@ The page stacks the technology. The PaaS shelf (Databases, Platform Automation, 
 - **IaaS** — VPC Native IaaS (the former Virtual Private Cloud tile)
 
 **Classic Infrastructure**, **Power Virtual Server**, and **OpenShift Virtualization** sit outside that frame, on the same IaaS row as VPC Native IaaS. OpenShift Virtualization runs virtual machines, so it stays with the other IaaS tiles.
+
+The same services are drawn three other ways on `site/iaas-101-layer-studies.html`: a cross-section of where each layer sits, a workload path of which layers a deployment crosses, and a connection diagram for the VPC grouping, VPC workers, bare metal workers, and Transit Gateway. The PaaS hubs are drawn on that page. They stay off this one.
 
 Each opened service uses the same four **layers** (rows). Each row has its own Carbon color, used for the tint, the
 stripe, the number and the pill icons: **Networking = cyan, Compute = purple, Storage = teal,
