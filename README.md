@@ -40,10 +40,10 @@ The page stacks the technology. **PaaS** (Databases, Platform Automation, Observ
 **Virtual Private Cloud** is a frame under that shelf. Inside it, top to bottom:
 
 - **Serverless** — Code Engine, the function-deployment layer
-- **CaaS** — IBM Kubernetes Service (IKS), Red Hat OpenShift Service (ROKS), and OpenShift Virtualization (ROVS)
+- **CaaS** — IBM Kubernetes Service (IKS) and Red Hat OpenShift Service (ROKS)
 - **IaaS** — VPC Native IaaS (the former Virtual Private Cloud tile)
 
-**Classic Infrastructure** and **Power Virtual Server** sit outside that frame, on the same IaaS row as VPC Native IaaS.
+**Classic Infrastructure**, **Power Virtual Server**, and **OpenShift Virtualization** sit outside that frame, on the same IaaS row as VPC Native IaaS. OpenShift Virtualization runs virtual machines, so it stays with the other IaaS tiles.
 
 Each opened service uses the same four **layers** (rows). Each row has its own Carbon color, used for the tint, the
 stripe, the number and the pill icons: **Networking = cyan, Compute = purple, Storage = teal,
@@ -54,7 +54,7 @@ Integrations = magenta**.
 | VPC Native IaaS | ✅ | ✅ | ✅ | ✅ |
 | Power Virtual Server (IBM data centers only) | ✅ | ✅ | ✅ | ✅ |
 | Classic Infrastructure | ✅ | ✅ | ✅ | ✅ |
-| OpenShift Virtualization (ROVS) | ✅ | ✅ | ✅ | ✅ |
+| OpenShift Virtualization | ✅ | ✅ | ✅ | ✅ |
 | IBM Kubernetes Service | ✅ | ✅ | ✅ | ✅ |
 | Red Hat OpenShift Service | ✅ | ✅ | ✅ | ✅ |
 | Code Engine | ⬜ | ⬜ | ⬜ | ⬜ |
@@ -75,7 +75,7 @@ Everything lives in one file, `site/iaas-101-tech-focus.html`, in three parts:
    mode and 100/80/40 in dark (`--cyan-bg`, `--cyan-edge`, `--cyan-ink`, …).
 2. **The icon sprite**: a hidden `<svg>` with one `<symbol id="i-…">` per icon, copied from the official
    `@carbon/icons` package. Nothing loads from the network except Google Fonts (IBM Plex).
-3. **`<script>`**: the content (`PILLARS` for the IaaS services, `CAAS` for IKS and ROKS, `SERVERLESS` for Code Engine, `PAAS` for the shelf) plus the rendering code. **Most edits only touch those lists.** Render places VPC Native IaaS and ROVS inside the Virtual Private Cloud frame, and leaves Classic and PowerVS outside it. `CAAS` and `SERVERLESS` use the same `lines` shape as a pillar.
+3. **`<script>`**: the content (`PILLARS` for the IaaS services, `CAAS` for IKS and ROKS, `SERVERLESS` for Code Engine, `PAAS` for the shelf) plus the rendering code. **Most edits only touch those lists.** Render places VPC Native IaaS inside the Virtual Private Cloud frame, and leaves Classic, PowerVS, and OpenShift Virtualization outside it. `CAAS` and `SERVERLESS` use the same `lines` shape as a pillar.
 
 ### The content model
 

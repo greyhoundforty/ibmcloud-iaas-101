@@ -4,8 +4,8 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&family=IBM+Plex+Sans:wght@300;400;600&display=swap">
 <style>
 /* Layout: intro, then the PaaS shelf, then a stage. Virtual Private Cloud is a
-   frame holding Serverless (Code Engine), CaaS (IKS, ROKS, ROVS), and VPC Native
-   IaaS. Classic and PowerVS sit outside that frame, on the IaaS row. A selected
+   frame holding Serverless (Code Engine), CaaS (IKS, ROKS), and VPC Native
+   IaaS. Classic, PowerVS, and OpenShift Virtualization sit outside that frame, on the IaaS row. A selected
    service's lines open under its row (IaaS opens under the whole stage).
    Carbon White theme by default; Gray 100 when the viewer switches to dark. */
 :root {
@@ -159,7 +159,7 @@ button { font: inherit; color: inherit; }
    pointer touches the open tile. In-frame panels are already flush. */
 .wrap[data-band="iaas"] .below-iaas { margin-top: calc(-1 * var(--gap)); }
 .below-grid { display: grid; grid-template-columns: minmax(0, 1fr); column-gap: var(--gap); }
-.below-caas .below-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.below-caas .below-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 /* Pointer: a blue tab under the selected tile (its column is set from JS) */
 .pointer { grid-row: 1; height: var(--gap); background: var(--accent); }
 .below-grid .lines {
@@ -306,13 +306,12 @@ button { font: inherit; color: inherit; }
 .paas .tile { display: flex; }
 .paas .tile-head { flex: 1; }
 
-/* ---------- Stage: VPC frame, with Classic and PowerVS on the IaaS row ---------- */
-/* Column 1 is the Virtual Private Cloud group (Serverless, CaaS, VPC Native IaaS).
-   Column 2 is empty beside Serverless and CaaS, then Classic and PowerVS on the
-   IaaS row, outside the frame. */
+/* ---------- Stage: VPC frame, with Classic, PowerVS, and OpenShift Virtualization on the IaaS row ---------- */
+/* Column 1 is two tiles wide: Serverless and VPC Native IaaS match that CaaS row.
+   Column 2 is empty beside Serverless and CaaS, then three IaaS tiles outside the frame. */
 .stage {
   display: grid;
-  grid-template-columns: minmax(0, 1.7fr) minmax(240px, 1fr);
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 1.31fr);
   column-gap: var(--gap);
   grid-template-areas:
     "head ."
@@ -364,7 +363,7 @@ button { font: inherit; color: inherit; }
 #row-vpc-iaas .vpc-row-body,
 #row-vpc-iaas .band,
 .outside-iaas .band { height: 100%; grid-template-rows: 1fr; }
-/* Classic and PowerVS share the IaaS row, outside the frame, at the same height */
+/* Classic, PowerVS, and OpenShift Virtualization share the IaaS row, outside the frame */
 .outside-iaas {
   grid-area: outside;
   align-self: stretch;
@@ -380,8 +379,8 @@ button { font: inherit; color: inherit; }
 .band .tile-head { flex: 1; }
 .serverless,
 .vpc-iaas { grid-template-columns: minmax(0, 1fr); }
-.caas { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.pillars { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.caas { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.pillars { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .paas .tile-head:not(button),
 .band .tile-head:not(button) { cursor: default; }
 .paas .tile-head:not(button):hover,
@@ -1116,7 +1115,7 @@ const PILLARS = [
     ],
   },
   {
-    id: "ocpv", icon: "i-ocpv", eyebrow: "ROVS", title: "OpenShift Virtualization",
+    id: "ocpv", icon: "i-ocpv", eyebrow: "Red Hat OpenShift", title: "OpenShift Virtualization",
     lines: [
       {
         title: "Networking",
@@ -1366,8 +1365,8 @@ function boxHTML(item) {
 // classic block and file). Where the two differ, the card follows VPC and the
 // row note says so. Calico uses i-network: Carbon has no Calico mark.
 // Portworx uses i-storage: it is a third-party product, so no logo.
-// OpenShift Virtualization (ROVS) is drawn with these tiles. Its lines stay on
-// the ocpv entry in PILLARS.
+// OpenShift Virtualization is an IaaS tile beside Classic and PowerVS. It runs
+// virtual machines, so it is not part of this container row.
 const CAAS = [
   {
     id: "iks", icon: "i-iks", eyebrow: "IKS", title: "IBM Kubernetes Service",
@@ -1736,11 +1735,11 @@ function caasHTML(item) {
 
 // --- render ----------------------------------------------------------------
 // Virtual Private Cloud holds the services that deploy on VPC, stacked
-// Serverless → CaaS → IaaS. Classic and PowerVS stay on the IaaS layer
-// outside that frame. PaaS stays above both.
-const caasItems = [...CAAS, PILLARS.find((p) => p.id === "ocpv")];
+// Serverless → CaaS → IaaS. Classic, PowerVS, and OpenShift Virtualization
+// stay on the IaaS layer outside that frame. PaaS stays above both.
+const caasItems = CAAS;
 const vpcIaaSItems = [PILLARS.find((p) => p.id === "vpc")];
-const outsideItems = PILLARS.filter((p) => p.id === "classic" || p.id === "powervs");
+const outsideItems = PILLARS.filter((p) => p.id === "classic" || p.id === "powervs" || p.id === "ocpv");
 
 const wrap = document.getElementById("wrap");
 document.getElementById("paas").innerHTML = PAAS.map(boxHTML).join("");
@@ -1862,7 +1861,7 @@ if (document.fonts && document.fonts.ready) {
   });
 }
 
-// Deep link: #vpc opens VPC Native IaaS, #iks opens Kubernetes Service, #ocpv opens ROVS
+// Deep link: #vpc opens VPC Native IaaS, #iks opens Kubernetes Service, #ocpv opens OpenShift Virtualization
 const fromHash = location.hash.slice(1);
 if (BY_ID[fromHash] && (BY_ID[fromHash].lines || []).length) select(fromHash);
 </script>
