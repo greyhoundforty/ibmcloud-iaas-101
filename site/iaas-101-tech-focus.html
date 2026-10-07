@@ -920,7 +920,164 @@ const PILLARS = [
       },
     ],
   },
-  { id: "ocpv", icon: "i-ocpv", eyebrow: "Red Hat OpenShift", title: "OpenShift Virtualization", lines: [] },
+  {
+    id: "ocpv", icon: "i-ocpv", eyebrow: "Red Hat OpenShift", title: "OpenShift Virtualization",
+    lines: [
+      {
+        title: "Networking",
+        note: "Bare metal workers in a VPC. External and private stay the two ways an app is published.",
+        items: [
+          {
+            name: "Internal connectivity",
+            desc: "Traffic that stays on the cluster and in the VPC the workers belong to. A default VM NIC is a pod on OVN-Kubernetes and leaves the node as the worker. On 4.21 and later, a virtual network interface gives that VM its own VPC address on the same subnet, kept across live migration in the zone.",
+            pills: [
+              { label: "Pod network", icon: "i-network", title: "OVN-Kubernetes. Default VM NIC. Cluster-internal.", docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-virt-overview" },
+              { label: "VPC Subnets", icon: "i-subnets", title: "Zonal subnet that holds the bare metal worker private IPs", docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-plan_vpc_basics" },
+              { label: "Virtual Network Interfaces", icon: "i-vni", title: "OpenShift 4.21+. VM gets a VPC IP, security groups, and an optional floating IP.", docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-virt-overview" },
+              { label: "VPC Security Groups", icon: "i-sg", docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-using-security-groups" },
+              { label: "Network ACLs", icon: "i-acl", docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-using-acls" },
+            ],
+          },
+          {
+            name: "Private connectivity",
+            desc: "Traffic to other private networks and to IBM Cloud services, without the public internet. Transit Gateway reaches other VPCs. Virtual private endpoints and private cloud service endpoints reach IBM Cloud services and the cluster API.",
+            pills: [
+              { label: "Transit Gateway", icon: "i-tgw", title: "Other VPCs in the account, including another region, and classic infrastructure", docs: "https://cloud.ibm.com/docs/transit-gateway?topic=transit-gateway-about" },
+              { label: "VPEs", icon: "i-vpe", title: "Private cloud service endpoints for IBM Cloud services, and the cluster API", docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-plan_vpc_basics" },
+              { label: "Private Load Balancers", icon: "i-lb", title: "Publishes an app on the VPC private network", docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-plan_vpc_basics" },
+              { label: "VPN for VPC", icon: "i-vpn", docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-vpn-overview" },
+              { label: "Direct Link", icon: "i-dl", docs: "https://cloud.ibm.com/docs/dl?topic=dl-get-started-with-ibm-cloud-dl" },
+            ],
+          },
+          {
+            name: "External connectivity",
+            desc: "Traffic to or from the public internet. A public load balancer publishes an app. A public gateway is the outbound path when an IBM Cloud service has no private endpoint. A floating IP can sit on a virtual network interface.",
+            pills: [
+              { label: "Load Balancers", icon: "i-lb", title: "Public VPC load balancer in front of the app", docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-nlb-vs-elb&interface=ui" },
+              { label: "Public Gateways", icon: "i-pgw", title: "Outbound only, for services with no private endpoint", docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-about-public-gateways" },
+              { label: "Floating IPs", icon: "i-floating-ip", title: "Optional, on a VNI. OpenShift 4.21+.", docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-fip-about" },
+            ],
+          },
+        ],
+      },
+      {
+        title: "Compute",
+        note: "Bare metal workers are the host. The virtual machines are the workload on them.",
+        items: [
+          {
+            name: "Bare metal worker nodes",
+            desc: "VPC bare metal running Red Hat CoreOS. A manual install needs OpenShift 4.17 or later. OpenShift Virtualization Service, the prebuilt cluster, needs 4.21 or later. Balanced, compute, and memory flavors are supported. Flavors with local NVMe are the ones to use when the cluster runs OpenShift Data Foundation.",
+            pills: [
+              { label: "Bare Metal Servers for VPC", icon: "i-bm", docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-about-bare-metal-servers" },
+              { label: "Balanced", icon: "i-bm", title: "bx2 and bx3 flavors", docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-virt-overview" },
+              { label: "Compute", icon: "i-bm", title: "cx2 and cx3 flavors", docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-virt-overview" },
+              { label: "Memory", icon: "i-bm", title: "mx2 and mx3 flavors", docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-virt-overview" },
+              { label: "Local NVMe", icon: "i-instance-storage", title: "d and 3d flavors. Local disk for OpenShift Data Foundation.", docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-virt-plan" },
+            ],
+          },
+          {
+            name: "Virtual machines",
+            desc: "OpenShift Virtualization schedules each virtual machine as a pod onto a bare metal worker, next to containers on the same cluster. Templates cover common operating systems, and a Windows guest uses your own license. On a 96 vCPU worker, plan on about 10 vCPU and 32 GB held for the node.",
+            pills: [
+              { label: "Virtual machines", icon: "i-vsi", title: "KubeVirt virtual machines on the bare metal workers", docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-virt-overview" },
+              { label: "VM templates", icon: "i-ocpv", title: "Pre-configured templates for common operating systems", docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-virt-overview" },
+              { label: "Linux", icon: "i-linux", docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-virt-overview" },
+              { label: "Windows", title: "Bring your own license", docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-virt-overview" },
+            ],
+          },
+          {
+            name: "Where the VMs run",
+            desc: "Put the virtual machines on a bare metal worker pool. A second pool of virtual servers can run the virtualization operators and other infrastructure. A running virtual machine can move to another bare metal worker in the same zone.",
+            pills: [
+              { label: "Bare metal pool", icon: "i-bm", title: "VM workloads", docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-virt-plan" },
+              { label: "Virtual servers", icon: "i-vsi", title: "Optional pool for operators, CDI, and controllers", docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-virt-plan" },
+              { label: "Live migration", icon: "i-routes", title: "Same zone only. On 4.21+, a VNI keeps the VM's VPC address.", docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-virt-overview" },
+            ],
+          },
+        ],
+      },
+      {
+        title: "Storage",
+        note: "Virtualization Service asks you to pick one at cluster creation. OpenShift Data Foundation uses the workers' local NVMe.",
+        items: [
+          {
+            name: "OpenShift Data Foundation",
+            desc: "Software-defined storage spread across the bare metal workers, the same shape as a hyperconverged cluster. Each virtual machine sees a block device. Ceph supplies block, file, and in-cluster S3, with replication and self-healing inside the cluster. Snapshots, clones, and live migration use this storage. On Virtualization Service the NVMe capacity is part of the bare metal price.",
+            pills: [
+              { label: "Block (RBD)", icon: "i-block", title: "VM disks use storage class ocs-storagecluster-ceph-rbd-virtualization", docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-virt-storage-setup" },
+              { label: "File (CephFS)", icon: "i-file", docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-ocs-storage-prep" },
+              { label: "Object (RGW)", icon: "i-storage", title: "In-cluster S3 from Ceph RGW and NooBaa", docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-ocs-storage-prep" },
+              { label: "Snapshots", icon: "i-block-snap", docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-virt-overview" },
+              { label: "Clones", icon: "i-replicate", docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-virt-overview" },
+            ],
+          },
+          {
+            name: "VPC File Storage",
+            desc: "NFS shares the bare metal workers mount. On Virtualization Service this is the other storage choice at cluster creation, and it is a beta option. The virtual machine still sees a block device. These volumes suit secondary data disks. Boot disks and high-I/O guests use OpenShift Data Foundation, which also provides the snapshots and clones.",
+            pills: [
+              { label: "File Storage for VPC", icon: "i-file", badge: "Beta", title: "Beta option on OpenShift Virtualization Service", docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-storage-file-vpc-install" },
+              { label: "Virtual machine disks", icon: "i-vsi", docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-virt-vpc-file-vm-create" },
+            ],
+          },
+          {
+            name: "Cloud Object Storage",
+            desc: "Where disk images and backups land outside the cluster. A DataVolume can import a virtual machine disk from an S3 bucket. A backup tool such as Veeam Kasten, through the OpenShift API for Data Protection, writes its copies here.",
+            pills: [
+              { label: "Cloud Object Storage", icon: "i-cos", docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-storage-cos-understand" },
+              { label: "Disk image import", icon: "i-images", title: "DataVolume import from an S3 bucket", docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-virt-overview" },
+              { label: "Backup repository", icon: "i-backup", title: "OpenShift API for Data Protection, for example Veeam Kasten", docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-storage-cos-understand" },
+            ],
+          },
+        ],
+      },
+      {
+        title: "Integrations",
+        note: "IBM runs the control plane. These services sit around the workers and the virtual machines.",
+        items: [
+          {
+            name: "Backup and disaster recovery",
+            desc: "OpenShift Data Foundation takes point-in-time snapshots and clones of a virtual machine. A backup outside the cluster, such as Veeam Kasten through the OpenShift API for Data Protection, stores its data in Cloud Object Storage. Regional disaster recovery pairs OpenShift Data Foundation across two IBM Cloud regions and is orchestrated with Red Hat Advanced Cluster Management.",
+            pills: [
+              { label: "Snapshots and clones", icon: "i-block-snap", docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-virt-overview" },
+              { label: "Cloud Object Storage", icon: "i-cos", docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-storage-cos-understand" },
+              { label: "Regional disaster recovery", icon: "i-replicate", docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-openshift_odf_rdr_roks" },
+              { label: "Advanced Cluster Management", icon: "i-resiliency", docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-acm-about" },
+            ],
+          },
+          {
+            name: "Migration and fleet management",
+            desc: "The Migration Toolkit for Virtualization connects to vCenter, maps clusters, networks, and datastores onto OpenShift, and copies disks with a cold or a warm migration. The virtual machine keeps its CPU, memory, and NICs. Advanced Cluster Management is the single place to see those virtual machines and to govern the clusters. Ansible covers day-2 patching and configuration.",
+            pills: [
+              { label: "Migration Toolkit", icon: "i-replicate", title: "Cold or warm migration from VMware", docs: "https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization" },
+              { label: "Advanced Cluster Management", icon: "i-resiliency", title: "Fleet governance, VM inventory, and lifecycle across clusters", docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-acm-about" },
+              { label: "Cold and warm", icon: "i-routes", title: "Warm copies disks while the source VM keeps running. Cold copies after it is shut down.", docs: "https://docs.redhat.com/en/documentation/migration_toolkit_for_virtualization" },
+            ],
+          },
+          {
+            name: "Observability",
+            desc: "The OpenShift console includes Prometheus, Grafana, and Alertmanager for platform and virtual machine metrics. IBM Cloud Monitoring keeps metrics longer, IBM Cloud Logs collects platform and application logs, and Activity Tracker records who changed the cluster. Activity Tracker is already on for cluster management events.",
+            pills: [
+              { label: "OpenShift monitoring", icon: "i-metrics", title: "Prometheus, Grafana, and Alertmanager in the OpenShift console", docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-service-architecture" },
+              { label: "IBM Cloud Monitoring", icon: "i-monitoring", docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-monitoring" },
+              { label: "IBM Cloud Logs", icon: "i-logs", docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-logging" },
+              { label: "Activity Tracker", icon: "i-atracker", title: "On by default for cluster management events", docs: "https://cloud.ibm.com/docs/atracker?topic=atracker-getting-started" },
+            ],
+          },
+          {
+            name: "Security and access",
+            desc: "Users sign in through IBM Cloud IAM, the identity provider for the cluster. Workload Protection scans images and worker nodes and watches runtime behavior. Key Protect holds customer-managed keys for worker disk encryption and for OpenShift Data Foundation.",
+            pills: [
+              { label: "IAM", icon: "i-iam", title: "Identity and Access Management", docs: "https://cloud.ibm.com/docs/iam?topic=iam-iamoverview" },
+              { label: "Access Groups", icon: "i-access-groups", docs: "https://cloud.ibm.com/docs/iam?topic=iam-groups&interface=ui" },
+              { label: "Access Policies", icon: "i-policy", docs: "https://cloud.ibm.com/docs/iam?topic=iam-iamusermanpol&interface=ui" },
+              { label: "Workload Protection", icon: "i-scc-wp", title: "Image, host, and runtime protection", docs: "https://cloud.ibm.com/docs/workload-protection?topic=workload-protection-about" },
+              { label: "Key Protect", icon: "i-kp", title: "Customer-managed keys for worker disks and ODF", docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-encryption-vpc-worker-disks" },
+            ],
+          },
+        ],
+      },
+    ],
+  },
 ];
 
 // --- small helpers ---------------------------------------------------------
