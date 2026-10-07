@@ -11,6 +11,7 @@ pills:
       - "OpenShift Virtualization · Security and access"
       - "IBM Kubernetes Service · Identity and Access Management"
       - "Red Hat OpenShift Service · Identity and Access Management"
+      - "Code Engine · Identity and Access Management"
 
   - label: "Access Policies"
     docs: "https://cloud.ibm.com/docs/iam?topic=iam-iamusermanpol&interface=ui"
@@ -21,6 +22,7 @@ pills:
       - "OpenShift Virtualization · Security and access"
       - "IBM Kubernetes Service · Identity and Access Management"
       - "Red Hat OpenShift Service · Identity and Access Management"
+      - "Code Engine · Identity and Access Management"
 
   - label: "Activity Tracker"
     docs: "https://cloud.ibm.com/docs/atracker?topic=atracker-getting-started"
@@ -45,6 +47,11 @@ pills:
     docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-operating-systems-powervs#aix-public-private"
     appears:
       - "Power Virtual Server · Virtual Server Instances"
+
+  - label: "Applications"
+    docs: "https://cloud.ibm.com/docs/codeengine?topic=codeengine-application-workloads"
+    appears:
+      - "Code Engine · Apps, jobs, and functions"
 
   - label: "Backup and Recovery Service"
     docs: "https://cloud.ibm.com/docs/backup-recovery?topic=backup-recovery-about-baas"
@@ -155,6 +162,8 @@ pills:
     appears:
       - "Classic Infrastructure · External connectivity"
       - "Virtual Private Cloud · External connectivity"
+      - "Code Engine · External connectivity"
+      - "Code Engine · Security and compliance"
 
   - label: "Cloud Load Balancer"
     docs: "https://cloud.ibm.com/docs/loadbalancer-service?topic=loadbalancer-service-about-ibm-cloud-load-balancer"
@@ -173,6 +182,7 @@ pills:
       - "IBM Kubernetes Service · Backup and recovery"
       - "Red Hat OpenShift Service · Object and ephemeral"
       - "Red Hat OpenShift Service · Backup and recovery"
+      - "Code Engine · Persistent data stores"
 
   - label: "Cluster autoscaler"
     docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-cluster-scaling-install-addon"
@@ -194,6 +204,7 @@ pills:
     appears:
       - "IBM Kubernetes Service · Images and updates"
       - "Red Hat OpenShift Service · OpenShift on the workers"
+      - "Code Engine · Builds and registries"
 
   - label: "Context-Based Restrictions"
     docs: "https://cloud.ibm.com/docs/iam?topic=iam-context-restrictions-whatis"
@@ -203,6 +214,11 @@ pills:
       - "IBM Kubernetes Service · Identity and Access Management"
       - "Red Hat OpenShift Service · Control plane access"
       - "Red Hat OpenShift Service · Identity and Access Management"
+
+  - label: "Continuous Delivery"
+    docs: "https://cloud.ibm.com/docs/ContinuousDelivery?topic=ContinuousDelivery-getting-started"
+    appears:
+      - "Code Engine · Builds and registries"
 
   - label: "Custom Bare Metal"
     docs: "https://cloud.ibm.com/docs/bare-metal?topic=bare-metal-ordering-baremetal-server"
@@ -255,6 +271,11 @@ pills:
     docs: "https://cloud.ibm.com/docs/containers?topic=containers-plan_vpc_basics#workernodes"
     appears:
       - "IBM Kubernetes Service · Worker nodes"
+
+  - label: "Ephemeral storage"
+    docs: "https://cloud.ibm.com/docs/codeengine?topic=codeengine-limits"
+    appears:
+      - "Code Engine · Ephemeral storage"
 
   - label: "etcd"
     docs: "https://cloud.ibm.com/docs/containers?topic=containers-encryption"
@@ -316,6 +337,11 @@ pills:
     appears:
       - "Power Virtual Server · Fixed IOPS"
 
+  - label: "Fleets"
+    docs: "https://cloud.ibm.com/docs/codeengine?topic=codeengine-fleet-run"
+    appears:
+      - "Code Engine · Serverless fleets"
+
   - label: "Floating IPs"
     docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-fip-about"
     appears:
@@ -326,6 +352,11 @@ pills:
     docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-flow-logs"
     appears:
       - "Virtual Private Cloud · Security and compliance"
+
+  - label: "Functions"
+    docs: "https://cloud.ibm.com/docs/codeengine?topic=codeengine-fun-work"
+    appears:
+      - "Code Engine · Apps, jobs, and functions"
 
   - label: "Global IPs"
     docs: "https://cloud.ibm.com/docs/subnets?topic=subnets-work-with-global-ip-addresses"
@@ -359,6 +390,7 @@ pills:
       - "OpenShift Virtualization · Security and access"
       - "IBM Kubernetes Service · Identity and Access Management"
       - "Red Hat OpenShift Service · Identity and Access Management"
+      - "Code Engine · Identity and Access Management"
 
   - label: "IBM Cloud Backup for Classic"
     docs: "https://cloud.ibm.com/docs/Backup?topic=Backup-getting-started"
@@ -374,6 +406,7 @@ pills:
       - "OpenShift Virtualization · Observability"
       - "IBM Kubernetes Service · Observability"
       - "Red Hat OpenShift Service · Observability"
+      - "Code Engine · Observability"
 
   - label: "IBM Cloud Monitoring"
     docs: "https://cloud.ibm.com/docs/monitoring?topic=monitoring-about-monitor"
@@ -384,6 +417,7 @@ pills:
       - "OpenShift Virtualization · Observability"
       - "IBM Kubernetes Service · Observability"
       - "Red Hat OpenShift Service · Observability"
+      - "Code Engine · Observability"
 
   - label: "IBM i"
     docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-operating-systems-powervs#ibmi-os"
@@ -414,6 +448,11 @@ pills:
     docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-registry"
     appears:
       - "Red Hat OpenShift Service · OpenShift on the workers"
+
+  - label: "Jobs"
+    docs: "https://cloud.ibm.com/docs/codeengine?topic=codeengine-job-plan"
+    appears:
+      - "Code Engine · Apps, jobs, and functions"
 
   - label: "Key Protect"
     docs: "https://cloud.ibm.com/docs/key-protect?topic=key-protect-about"
@@ -601,17 +640,24 @@ pills:
     docs: "https://cloud.ibm.com/docs/private-path?topic=private-path-overview"
     appears:
       - "Virtual Private Cloud · Private connectivity"
+      - "Code Engine · Private connectivity"
 
   - label: "Private service endpoint"
     docs: "https://cloud.ibm.com/docs/containers?topic=containers-plan_vpc_basics#vpc-workeruser-master"
     appears:
       - "IBM Kubernetes Service · Control plane access"
       - "Red Hat OpenShift Service · Control plane access"
+      - "Code Engine · Project access"
 
   - label: "Private Subnets"
     docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-configuring-subnet"
     appears:
       - "Power Virtual Server · Internal connectivity"
+
+  - label: "Projects"
+    docs: "https://cloud.ibm.com/docs/codeengine?topic=codeengine-manage-project"
+    appears:
+      - "Code Engine · Projects"
 
   - label: "Public Address Ranges"
     docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-about-par"
@@ -627,6 +673,7 @@ pills:
       - "OpenShift Virtualization · External connectivity"
       - "IBM Kubernetes Service · External connectivity"
       - "Red Hat OpenShift Service · External connectivity"
+      - "Code Engine · External connectivity"
 
   - label: "Public Networks"
     docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-network-security"
@@ -638,6 +685,7 @@ pills:
     appears:
       - "IBM Kubernetes Service · Control plane access"
       - "Red Hat OpenShift Service · Control plane access"
+      - "Code Engine · Project access"
 
   - label: "Public Virtual Servers"
     docs: "https://cloud.ibm.com/docs/virtual-servers?topic=virtual-servers-about-public-virtual-servers"
@@ -656,6 +704,8 @@ pills:
       - "Power Virtual Server · Identity and Access Management"
       - "IBM Kubernetes Service · Identity and Access Management"
       - "Red Hat OpenShift Service · Identity and Access Management"
+      - "Code Engine · Service bindings"
+      - "Code Engine · Identity and Access Management"
 
   - label: "Routing Tables"
     docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-about-custom-routes"
@@ -703,6 +753,11 @@ pills:
       - "Virtual Private Cloud · Backup and recovery options"
       - "Power Virtual Server · Backup and recovery options"
       - "Classic Infrastructure · Backup and recovery options"
+
+  - label: "Service bindings"
+    docs: "https://cloud.ibm.com/docs/codeengine?topic=codeengine-service-binding"
+    appears:
+      - "Code Engine · Service bindings"
 
   - label: "Snapshots"
     docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-virt-overview"
@@ -752,6 +807,7 @@ pills:
       - "OpenShift Virtualization · Internal connectivity"
       - "IBM Kubernetes Service · Internal connectivity"
       - "Red Hat OpenShift Service · Internal connectivity"
+      - "Code Engine · Internal connectivity"
 
   - label: "Classic Security Groups"
     docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-using-security-groups"
@@ -810,6 +866,7 @@ pills:
       - "IBM Kubernetes Service · Internal connectivity"
       - "IBM Kubernetes Service · Worker pools"
       - "Red Hat OpenShift Service · Internal connectivity"
+      - "Code Engine · Internal connectivity"
 
   - label: "Tier 0 · 25 IOPS/GB"
     docs: "https://cloud.ibm.com/docs/power-iaas?topic=power-iaas-on-cloud-architecture#storage-tiers"
@@ -874,6 +931,7 @@ pills:
       - "OpenShift Virtualization · Private connectivity"
       - "IBM Kubernetes Service · Control plane access"
       - "Red Hat OpenShift Service · Control plane access"
+      - "Code Engine · Project access"
 
   - label: "VPN for VPC"
     docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-vpn-overview"
@@ -893,6 +951,8 @@ pills:
     docs: "https://cloud.ibm.com/docs/Registry?topic=Registry-va_index"
     appears:
       - "Red Hat OpenShift Service · Security and compliance"
+      - "Code Engine · Builds and registries"
+      - "Code Engine · Security and compliance"
 
   - label: "Windows"
     docs: "https://cloud.ibm.com/docs/openshift?topic=openshift-virt-overview"

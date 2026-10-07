@@ -46,13 +46,13 @@ Integrations = magenta**.
 | Classic Infrastructure | ✅ | ✅ | ✅ | ✅ |
 | OpenShift Virtualization | ✅ | ✅ | ✅ | ✅ |
 
-The CaaS row above the pillars uses the same four layers. **IBM Kubernetes Service** and **Red Hat OpenShift Service** are filled in for VPC clusters (classic clusters still exist; the row notes say where this view stays on VPC).
+The CaaS row above the pillars uses the same four layers. **IBM Kubernetes Service**, **Red Hat OpenShift Service**, and **Code Engine** are filled in. IKS and ROKS follow the VPC path (classic clusters still exist; the row notes say where that view stays on VPC). Code Engine runs apps, jobs, and functions on IBM-owned infrastructure, and places fleets in your VPC.
 
 | Offering | Networking | Compute | Storage | Integrations |
 |---|---|---|---|---|
 | IBM Kubernetes Service | ✅ | ✅ | ✅ | ✅ |
 | Red Hat OpenShift Service | ✅ | ✅ | ✅ | ✅ |
-| Code Engine | ⬜ | ⬜ | ⬜ | ⬜ |
+| Code Engine | ✅ | ✅ | ✅ | ✅ |
 
 An IaaS pillar with `lines: []` shows a "Coming soon" tag and can't be opened. It becomes clickable as soon as
 it has one line. An empty CaaS tile stays a box, with no tag, until it has a line.
@@ -155,8 +155,6 @@ devices are not IAM-enabled, so that card uses classic infrastructure permission
 
 **OpenShift Virtualization** has all four layers, scoped to Red Hat OpenShift on IBM Cloud with bare metal
 workers and OpenShift Data Foundation.
-
-**Code Engine** is the remaining empty CaaS tile.
 
 **Open questions noted along the way:**
 
