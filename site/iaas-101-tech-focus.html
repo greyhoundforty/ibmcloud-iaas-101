@@ -3,8 +3,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&family=IBM+Plex+Sans:wght@300;400;600&display=swap">
 <style>
-/* Layout: intro, then the 4-column pillar row; a selected pillar's lines open BELOW the row
-   (anchored under that pillar), pushing the foundation bar down.
+/* Layout: intro, then the CaaS tiles, then the 4-column IaaS row; a selected
+   pillar's lines open BELOW the row (anchored under that pillar), pushing the
+   foundation bar down.
    Carbon White theme by default; Gray 100 when the viewer switches to dark. */
 :root {
   color-scheme: light;
@@ -28,6 +29,7 @@
   --font-sans: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
   --font-mono: 'IBM Plex Mono', Menlo, 'Courier New', monospace;
   --gap: 16px;
+  --layer-label: 1.75rem; /* width of the vertical CaaS / IaaS labels */
   --ease: cubic-bezier(0.2, 0, 0.38, 0.9);
 }
 /* Dark mode = Carbon Gray 100 theme. Set by the page's own toggle (data-mode on <html>),
@@ -81,7 +83,6 @@ button { font: inherit; color: inherit; }
 /* ---------- Intro ---------- */
 .intro { display: flex; flex-direction: column; gap: 12px; padding-bottom: 24px; }
 .intro h1 { margin: 0; font-size: clamp(2.25rem, 5vw, 3.75rem); font-weight: 300; line-height: 1.1; text-wrap: balance; }
-.intro p { margin: 0; font-size: 1.25rem; color: var(--text-2); max-width: 40rem; }
 .topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 
 /* Theme switch, styled as a Carbon ghost button with an icon */
@@ -102,14 +103,14 @@ button { font: inherit; color: inherit; }
 .mode-toggle svg { width: 16px; height: 16px; }
 
 /* ---------- Pillars ---------- */
-.pillars { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--gap); align-items: start; }
+.pillars { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--gap); align-items: start; min-width: 0; }
 .tile { min-width: 0; transition: opacity 240ms var(--ease); }
 .wrap[data-selected] .tile:not(.is-active) { opacity: 0.35; }
 
 .tile-head {
   position: relative;
   width: 100%;
-  min-height: 220px;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -123,8 +124,8 @@ button { font: inherit; color: inherit; }
   transition: background-color 160ms var(--ease);
 }
 .tile-head:not([aria-disabled="true"]):hover { background: var(--hover); }
-.tile-head .icon { width: 48px; height: 48px; color: var(--label); margin-bottom: auto; }
-.tile-head .eyebrow { margin-top: 32px; }
+.tile-head .icon { width: 48px; height: 48px; color: var(--label); }
+.tile-head .eyebrow { margin-top: 8px; }
 .tile-title { font-size: 1.75rem; font-weight: 400; line-height: 1.2; text-wrap: balance; padding-right: 32px; }
 .chevron { position: absolute; right: 20px; bottom: 24px; width: 20px; height: 20px; color: var(--text-2); transition: transform 240ms var(--ease); }
 .tile.is-active .tile-head { background: var(--accent); color: var(--on-accent); }
@@ -150,6 +151,8 @@ button { font: inherit; color: inherit; }
 .below-inner { min-height: 0; overflow: hidden; }
 /* Pull the region up into the row gap so the pointer touches the open tile */
 .wrap[data-selected] .below { margin-top: calc(-1 * var(--gap)); }
+/* The open panel lines up with the cards, past the vertical layer label */
+.below { margin-left: calc(var(--layer-label) + var(--gap)); }
 .below-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: var(--gap); }
 /* Pointer: a blue tab under the selected pillar only (its column is set from JS) */
 .pointer { grid-row: 1; height: var(--gap); background: var(--accent); }
@@ -268,17 +271,46 @@ button { font: inherit; color: inherit; }
 
 .tile-lines { display: none; margin-top: 8px; } /* used instead of .below on narrow screens */
 
-/* ---------- Foundation bar (context only in 102) ---------- */
-.foundation {
-  display: flex;
-  flex-wrap: wrap;
+/* ---------- Layer rows: vertical label, then the cards, with a rule between ---------- */
+.layers { display: flex; flex-direction: column; }
+.layer {
+  display: grid;
+  grid-template-columns: var(--layer-label) minmax(0, 1fr);
+  column-gap: var(--gap);
   align-items: center;
-  gap: 16px 24px;
+}
+.layer-label {
+  margin: 0;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  text-align: center;
+}
+.layer-rule {
+  border: 0;
+  height: 1px;
+  margin: var(--gap) 0;
+  background: var(--line);
+}
+/* ---------- CaaS row (same tiles as the IaaS columns, no layers yet) ---------- */
+.caas { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gap); align-items: start; min-width: 0; }
+.caas .tile-head { cursor: default; }
+.caas .tile-head:not([aria-disabled="true"]):hover { background: var(--layer); }
+.caas .tile-title { padding-right: 0; }
+
+/* ---------- Foundation bar ---------- */
+/* The word sits in the center. Two services flank it on each side. */
+.foundation {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 12px 40px;
   padding: 24px;
   background: var(--layer-2);
 }
-.foundation .tile-title { padding-right: 0; }
-.services { display: flex; flex-wrap: wrap; gap: 8px 32px; margin-left: auto; color: var(--text-2); }
+.foundation .eyebrow { font-size: 1.75rem; text-align: center; }
+.services { display: flex; flex-wrap: wrap; gap: 8px 32px; margin: 0; color: var(--text-2); }
+.services.side-start { justify-content: flex-end; }
+.services.side-end { justify-content: flex-start; }
 .services span { display: inline-flex; align-items: center; gap: 8px; }
 .services svg { width: 24px; height: 24px; }
 
@@ -292,14 +324,15 @@ kbd { font-family: var(--font-mono); font-size: 0.8125rem; padding: 1px 6px; bac
   .pillars { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   /* the open tile takes the full row so its lines have room */
   .tile.is-active { grid-column: 1 / -1; }
-  .tile-head { min-height: 180px; }
+  .caas { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 599px) {
   .wrap { padding-block: 32px 48px; }
   .pillars { grid-template-columns: minmax(0, 1fr); }
-  .tile-head { min-height: 0; }
-  .tile-head .eyebrow { margin-top: 16px; }
-  .services { margin-left: 0; }
+  .caas { grid-template-columns: minmax(0, 1fr); }
+  .foundation { grid-template-columns: minmax(0, 1fr); justify-items: center; }
+  .services.side-start,
+  .services.side-end { justify-content: center; }
   .lines > li { padding: 16px; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -386,34 +419,47 @@ kbd { font-family: var(--font-mono); font-size: 0.8125rem; padding: 1px 6px; bac
   <symbol id="i-gw-appliance" viewBox="0 0 32 32"><path d="M28,20V17a4,4,0,0,0-8,0v3a2.0023,2.0023,0,0,0-2,2v6a2.0023,2.0023,0,0,0,2,2h8a2.0023,2.0023,0,0,0,2-2V22A2.0023,2.0023,0,0,0,28,20Zm-6-3a2,2,0,0,1,4,0v3H22Zm6,11H20V22h8Z"/><path d="M15,27H4a2,2,0,0,1-2-2V22a2,2,0,0,1,2-2H15v2H4v3H15Z"/><path d="M17,18H8a2,2,0,0,1-2-2V13a2,2,0,0,1,2-2H19v2H8v3h9Z"/><path d="M22,9H4A2,2,0,0,1,2,7V4A2,2,0,0,1,4,2H22a2,2,0,0,1,2,2V7A2,2,0,0,1,22,9ZM4,7H22V4H4Z"/></symbol>
   <symbol id="i-lb-classic" viewBox="0 0 32 32"><path d="M4 26H8V30H4z"/><path d="M14 26H18V30H14z"/><path d="M24 26H28V30H24z"/><path d="M25,16H17V12H15v4H7a2.0023,2.0023,0,0,0-2,2v6H7V18h8v6h2V18h8v6h2V18A2.0023,2.0023,0,0,0,25,16Z"/><path d="M20,10V2H12v8ZM14,8V4h4V8Z"/></symbol>
   <symbol id="i-global-ip" viewBox="0 0 32 32"><path d="M16,2A14,14,0,1,0,30,16,14.0158,14.0158,0,0,0,16,2Zm5,3.1055a12.0136,12.0136,0,0,1,2.9158,1.8994L23.5034,8H21ZM13.3784,27.7026A11.9761,11.9761,0,0,1,8.1157,6.9761L9.4648,9h3.3423l-1.5,4H7.2793L5.8967,17.1475,8.4648,21h5l1.4319,2.1475ZM16,28c-.2034,0-.4016-.02-.6025-.03l1.3967-4.19a1.9876,1.9876,0,0,0-.2334-1.7412l-1.4319-2.1475A1.9962,1.9962,0,0,0,13.4648,19h-3.93L8.1033,16.8525,8.7207,15H11v2h2V14.1812l2.9363-7.83-1.8726-.7022L13.5571,7H10.5352L9.728,5.7891A11.7941,11.7941,0,0,1,19,4.395V8a2.0025,2.0025,0,0,0,2,2h2.5857A1.9865,1.9865,0,0,0,25,9.4141l.1406-.1407.2818-.68A11.9813,11.9813,0,0,1,27.3,12H22.5986a1.9927,1.9927,0,0,0-1.9719,1.665L20.03,17.1064a1.99,1.99,0,0,0,.991,2.086l2.1647,1.4638,1.4585,3.646A11.9577,11.9577,0,0,1,16,28Zm8.8145-8.6563L22.1,17.5088l-.1-.06L22.5986,14h5.2207a11.743,11.743,0,0,1-1.7441,8.4951Z"/></symbol>
+  <symbol id="i-iks" viewBox="0 0 32 32"><path d="M16,23c-0.2,0-0.4,0-0.5-0.1l-5-3C10.2,19.7,10,19.4,10,19v-6c0-0.4,0.2-0.7,0.5-0.9l5-3C15.6,9,15.8,9,16,9	c0.2,0,0.4,0,0.5,0.1l5,3c0.3,0.2,0.5,0.5,0.5,0.9v6c0,0.4-0.2,0.7-0.5,0.9l-5,3C16.4,23,16.2,23,16,23z M12,18.4l4,2.4l4-2.4v-4.9	l-4-2.4l-4,2.4V18.4z"/><path d="M16,31c-0.2,0-0.3,0-0.5-0.1l-12-7C3.2,23.7,3,23.4,3,23V9c0-0.4,0.2-0.7,0.5-0.9l12-7C15.7,1,15.8,1,16,1	c0.2,0,0.3,0,0.5,0.1l12,7l-1,1.7L16,3.2L5,9.6v12.9l11,6.4l11-6.4V15h2v8c0,0.4-0.2,0.7-0.5,0.9l-12,7C16.3,31,16.2,31,16,31z"/></symbol>
+  <symbol id="i-roks" viewBox="0 0 32 32"><path d="M27,22V17a2.0023,2.0023,0,0,0-2-2H17V10h3a2.0023,2.0023,0,0,0,2-2V4a2.0023,2.0023,0,0,0-2-2H12a2.0023,2.0023,0,0,0-2,2V8a2.0023,2.0023,0,0,0,2,2h3v5H7a2.0023,2.0023,0,0,0-2,2v5H2v8h8V22H7V17h8v5H12v8h8V22H17V17h8v5H22v8h8V22ZM12,4h8V8H12ZM8,28H4V24H8Zm10,0H14V24h4Zm10,0H24V24h4Z"/></symbol>
+  <symbol id="i-code-engine" viewBox="0 0 32 32"><path d="M22,20v7.923c0,.595-.482,1.077-1.077,1.077h-11.846c-.595,0-1.077-.482-1.077-1.077v-4.923H2v-2h6v-4.923c0-.595.482-1.077,1.077-1.077h3.923v2h-3v10h10v-7h2ZM13,8H2v2h11v-2ZM29,17c.553,0,1-.447,1-1V4c0-.552-.447-1-1-1h-12c-.553,0-1,.448-1,1v12c0,.553.447,1,1,1h12M18,5h10v10h-10V5Z"/></symbol>
   <symbol id="i-chevron" viewBox="0 0 32 32"><path d="M16 22 6 12 7.4 10.6 16 19.2 24.6 10.6 26 12z"/></symbol>
 </svg>
 
 <main class="wrap" id="wrap">
   <header class="intro">
     <div class="topbar">
-      <span class="eyebrow">IBM Cloud &middot; IaaS 101</span>
+      <span class="eyebrow">IBM Cloud 101</span>
       <button class="mode-toggle" id="mode-toggle" type="button" aria-pressed="false">
         <svg aria-hidden="true" fill="currentColor"><use id="mode-icon" href="#i-asleep"/></svg>
         <span id="mode-label">Dark mode</span>
       </button>
     </div>
-    <h1>Infrastructure as a Service</h1>
-    <p>A closer look at the building blocks inside each pillar.</p>
+    <h1>The Layers of IBM Cloud</h1>
   </header>
 
-  <div class="pillars" id="pillars"></div>
+  <div class="layers">
+    <div class="layer">
+      <p class="layer-label eyebrow">CaaS</p>
+      <section class="caas" id="caas" aria-label="Containers as a Service"></section>
+    </div>
+    <hr class="layer-rule">
+    <div class="layer">
+      <p class="layer-label eyebrow">IaaS</p>
+      <div class="pillars" id="pillars"></div>
+    </div>
+  </div>
 
   <section class="below" aria-live="polite">
     <div class="below-inner"><div class="below-grid"><div class="pointer" id="below-pointer"></div><ol class="lines" id="below-lines"></ol></div></div>
   </section>
 
   <div class="foundation">
-    <span class="eyebrow">Foundation</span>
-    <span class="tile-title">Infrastructure as a Service</span>
-    <span class="services">
+    <span class="services side-start">
       <span><svg aria-hidden="true" fill="currentColor"><use href="#i-compute"/></svg>Compute</span>
       <span><svg aria-hidden="true" fill="currentColor"><use href="#i-storage"/></svg>Storage</span>
+    </span>
+    <span class="eyebrow">Foundation</span>
+    <span class="services side-end">
       <span><svg aria-hidden="true" fill="currentColor"><use href="#i-network"/></svg>Network</span>
       <span><svg aria-hidden="true" fill="currentColor"><use href="#i-security"/></svg>Security</span>
     </span>
@@ -1140,9 +1186,30 @@ function pillarHTML(p) {
   </article>`;
 }
 
+// CaaS tiles above the four IaaS columns. Boxes only until each offering has
+// layers. i-roks is Carbon's container-services icon: there is no general ROKS
+// mark in the IBM Cloud set, and logo--openshift is a third-party logo.
+const CAAS = [
+  { icon: "i-iks", eyebrow: "IKS", title: "IBM Kubernetes Service" },
+  { icon: "i-roks", eyebrow: "ROKS", title: "Red Hat OpenShift Service" },
+  { icon: "i-code-engine", eyebrow: "IBM Cloud", title: "Code Engine" },
+];
+
+function caasHTML(item) {
+  return `
+  <article class="caas-card">
+    <div class="tile-head">
+      ${icon(item.icon)}
+      <span class="eyebrow">${esc(item.eyebrow)}</span>
+      <span class="tile-title">${esc(item.title)}</span>
+    </div>
+  </article>`;
+}
+
 // --- render ----------------------------------------------------------------
 const wrap = document.getElementById("wrap");
 const belowLines = document.getElementById("below-lines");
+document.getElementById("caas").innerHTML = CAAS.map(caasHTML).join("");
 document.getElementById("pillars").innerHTML = PILLARS.map(pillarHTML).join("");
 const BY_ID = Object.fromEntries(PILLARS.map((p) => [p.id, p]));
 
@@ -1173,8 +1240,9 @@ function select(id) {
 
 document.addEventListener("click", (e) => {
   const head = e.target.closest(".tile-head");
-  if (head) {
-    if (head.getAttribute("aria-disabled") !== "true") select(head.closest(".tile").dataset.id);
+  const tile = head && head.closest(".tile");
+  if (tile) {
+    if (head.getAttribute("aria-disabled") !== "true") select(tile.dataset.id);
     return;
   }
   // a click outside the pillars and their lines closes the open one
