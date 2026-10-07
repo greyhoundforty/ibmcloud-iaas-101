@@ -3,9 +3,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&family=IBM+Plex+Sans:wght@300;400;600&display=swap">
 <style>
-/* Layout: intro, then the CaaS tiles, then the 4-column IaaS row; a selected
-   pillar's lines open BELOW the row (anchored under that pillar), pushing the
-   foundation bar down.
+/* Layout: intro, then the PaaS shelf, then a stage. Virtual Private Cloud is a
+   frame holding Serverless (Code Engine), CaaS (IKS, ROKS, ROVS), and VPC Native
+   IaaS. Classic and PowerVS sit outside that frame, on the IaaS row. A selected
+   service's lines open under its row (IaaS opens under the whole stage).
    Carbon White theme by default; Gray 100 when the viewer switches to dark. */
 :root {
   color-scheme: light;
@@ -102,8 +103,7 @@ button { font: inherit; color: inherit; }
 .mode-toggle:hover { background: var(--hover); }
 .mode-toggle svg { width: 16px; height: 16px; }
 
-/* ---------- Pillars ---------- */
-.pillars { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--gap); align-items: start; min-width: 0; }
+/* ---------- Tiles ---------- */
 .tile { min-width: 0; transition: opacity 240ms var(--ease); }
 .wrap[data-selected] .tile:not(.is-active) { opacity: 0.35; }
 
@@ -144,31 +144,33 @@ button { font: inherit; color: inherit; }
   background: var(--layer-2); color: var(--text-2);
 }
 
-/* ---------- Lines below the pillars ---------- */
-/* The region animates open (0fr -> 1fr) and pushes the foundation bar down.
-   data-band says which row is open, so the CaaS panel and the IaaS panel
-   don't both expand. */
+/* ---------- Lines below a row ---------- */
+/* The region animates open (0fr -> 1fr). data-band says which panel expands,
+   so Serverless, CaaS, and IaaS don't open together. Serverless and CaaS panels
+   sit inside the Virtual Private Cloud frame, under that row. The IaaS panel
+   sits under the whole stage so its pointer can land on VPC Native IaaS,
+   Classic, or PowerVS. */
 .below { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 360ms var(--ease); }
+.wrap[data-band="serverless"] .below-serverless,
+.wrap[data-band="caas"] .below-caas,
 .wrap[data-band="iaas"] .below-iaas { grid-template-rows: 1fr; }
-.wrap[data-band="caas"] .below-caas { grid-template-rows: 1fr; }
 .below-inner { min-height: 0; overflow: hidden; }
-/* IaaS panel sits in the page gap under the IaaS row. Pull it up so the
-   pointer touches the open tile. The CaaS panel is inside the layer stack,
-   so its pointer is already flush with the tiles. */
+/* IaaS panel sits in the page gap under the stage. Pull it up so the
+   pointer touches the open tile. In-frame panels are already flush. */
 .wrap[data-band="iaas"] .below-iaas { margin-top: calc(-1 * var(--gap)); }
-/* The open panel lines up with the cards, past the vertical layer label */
-.below { margin-left: calc(var(--layer-label) + var(--gap)); }
-.below-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: var(--gap); }
+.below-grid { display: grid; grid-template-columns: minmax(0, 1fr); column-gap: var(--gap); }
 .below-caas .below-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-/* Pointer: a blue tab under the selected pillar only (its column is set from JS) */
+/* Pointer: a blue tab under the selected tile (its column is set from JS) */
 .pointer { grid-row: 1; height: var(--gap); background: var(--accent); }
-/* The lines span the full width of all four pillars */
 .below-grid .lines {
   grid-row: 2;
   grid-column: 1 / -1;
   border-left: 0;
   border-top: 2px solid var(--accent);
 }
+/* IaaS tiles sit in two places, so the pointer is measured onto the open tile */
+.below-iaas .below-grid { display: block; }
+.below-iaas .pointer { display: block; }
 
 /* Lines flow downward: line 1 sits right under the box */
 .lines {
@@ -297,17 +299,76 @@ button { font: inherit; color: inherit; }
   margin: var(--gap) 0;
   background: var(--line);
 }
-/* ---------- PaaS and CaaS rows (same tiles as the IaaS columns) ---------- */
+/* The rule between PaaS and the stage is a flex child; the wrap gap is the spacing */
+.wrap > .layer-rule { margin: 0; }
+/* ---------- PaaS shelf, above and outside the Virtual Private Cloud frame ---------- */
 .paas { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--gap); align-items: stretch; min-width: 0; }
 .paas .tile { display: flex; }
 .paas .tile-head { flex: 1; }
-.caas { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gap); align-items: start; min-width: 0; }
+
+/* ---------- Stage: VPC frame, with Classic and PowerVS on the IaaS row ---------- */
+/* Column 1 is the Virtual Private Cloud group (Serverless, CaaS, VPC Native IaaS).
+   Column 2 is empty beside Serverless and CaaS, then Classic and PowerVS on the
+   IaaS row, outside the frame. */
+.stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(240px, 1fr);
+  column-gap: var(--gap);
+  grid-template-areas:
+    "head ."
+    "serverless ."
+    "caas ."
+    "vpciaas outside";
+}
+.vpc-frame {
+  grid-column: 1;
+  grid-row: 1 / 5;
+  border: 1px solid var(--line);
+  border-top: 4px solid var(--accent);
+  background: color-mix(in srgb, var(--label) 5%, var(--bg));
+  pointer-events: none;
+  z-index: 0;
+}
+.vpc-head,
+.vpc-row,
+.outside-iaas { position: relative; z-index: 1; min-width: 0; }
+.vpc-head {
+  grid-area: head;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  padding: 16px 16px 12px;
+  border-bottom: 1px solid var(--line);
+}
+.vpc-head .icon { width: 32px; height: 32px; color: var(--label); flex: none; }
+.vpc-head .eyebrow { margin: 0; }
+.vpc-head h2 { margin: 0; font-size: 1.5rem; font-weight: 400; line-height: 1.2; }
+.vpc-row {
+  display: grid;
+  grid-template-columns: var(--layer-label) minmax(0, 1fr);
+  column-gap: var(--gap);
+  align-items: start;
+  padding: 16px;
+}
+.vpc-row .layer-label { margin-top: 28px; }
+#row-serverless { grid-area: serverless; }
+#row-caas { grid-area: caas; border-top: 1px solid var(--line); }
+#row-vpc-iaas { grid-area: vpciaas; border-top: 1px solid var(--line); }
+.outside-iaas { grid-area: outside; align-self: center; }
+.band { display: grid; gap: var(--gap); align-items: stretch; min-width: 0; }
+.band .tile { display: flex; flex-direction: column; }
+.band .tile-head { flex: 1; }
+.serverless,
+.vpc-iaas { grid-template-columns: minmax(0, 1fr); }
+.caas { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.pillars { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .paas .tile-head:not(button),
-.caas .tile-head:not(button) { cursor: default; }
+.band .tile-head:not(button) { cursor: default; }
 .paas .tile-head:not(button):hover,
-.caas .tile-head:not(button):hover { background: var(--layer); }
+.band .tile-head:not(button):hover { background: var(--layer); }
 .paas .tile-head:not(button) .tile-title,
-.caas .tile-head:not(button) .tile-title { padding-right: 0; }
+.band .tile-head:not(button) .tile-title { padding-right: 0; }
 
 /* ---------- Foundation bar ---------- */
 /* The word sits in the center. Two services flank it on each side. */
@@ -333,15 +394,26 @@ kbd { font-family: var(--font-mono); font-size: 0.8125rem; padding: 1px 6px; bac
 @media (max-width: 1023px) {
   .below { display: none; }
   .tile-lines { display: flex; }
-  .pillars { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stage {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "head"
+      "serverless"
+      "caas"
+      "vpciaas"
+      "outside";
+  }
+  .vpc-frame { grid-column: 1; grid-row: 1 / 5; }
+  .outside-iaas { align-self: stretch; }
   /* the open tile takes the full row so its lines have room */
   .tile.is-active { grid-column: 1 / -1; }
-  .paas, .caas { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .paas, .caas, .pillars { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 599px) {
   .wrap { padding-block: 32px 48px; }
-  .pillars { grid-template-columns: minmax(0, 1fr); }
-  .paas, .caas { grid-template-columns: minmax(0, 1fr); }
+  .paas, .caas, .pillars { grid-template-columns: minmax(0, 1fr); }
+  .vpc-row { grid-template-columns: minmax(0, 1fr); }
+  .vpc-row .layer-label { writing-mode: horizontal-tb; transform: none; text-align: left; margin-top: 0; }
   .foundation { grid-template-columns: minmax(0, 1fr); justify-items: center; }
   .services.side-start,
   .services.side-end { justify-content: center; }
@@ -461,18 +533,49 @@ kbd { font-family: var(--font-mono); font-size: 0.8125rem; padding: 1px 6px; bac
       <p class="layer-label eyebrow">PaaS</p>
       <section class="paas" id="paas" aria-label="Platform as a Service"></section>
     </div>
-    <hr class="layer-rule">
-    <div class="layer">
-      <p class="layer-label eyebrow">CaaS</p>
-      <section class="caas" id="caas" aria-label="Containers as a Service"></section>
+  </div>
+
+  <hr class="layer-rule">
+
+  <div class="stage">
+    <div class="vpc-frame" aria-hidden="true"></div>
+    <header class="vpc-head">
+      <svg class="icon" aria-hidden="true" fill="currentColor"><use href="#i-vpc"/></svg>
+      <div>
+        <p class="eyebrow">IBM Cloud VPC</p>
+        <h2>Virtual Private Cloud</h2>
+      </div>
+    </header>
+
+    <div class="vpc-row" id="row-serverless">
+      <p class="layer-label eyebrow">Serverless</p>
+      <div class="vpc-row-body">
+        <section class="band serverless" id="serverless" aria-label="Serverless"></section>
+        <section class="below below-serverless" aria-live="polite">
+          <div class="below-inner"><div class="below-grid"><div class="pointer" id="serverless-pointer"></div><ol class="lines" id="serverless-lines"></ol></div></div>
+        </section>
+      </div>
     </div>
-    <section class="below below-caas" aria-live="polite">
-      <div class="below-inner"><div class="below-grid"><div class="pointer" id="caas-pointer"></div><ol class="lines" id="caas-lines"></ol></div></div>
-    </section>
-    <hr class="layer-rule">
-    <div class="layer">
+
+    <div class="vpc-row" id="row-caas">
+      <p class="layer-label eyebrow">CaaS</p>
+      <div class="vpc-row-body">
+        <section class="band caas" id="caas" aria-label="Containers as a Service"></section>
+        <section class="below below-caas" aria-live="polite">
+          <div class="below-inner"><div class="below-grid"><div class="pointer" id="caas-pointer"></div><ol class="lines" id="caas-lines"></ol></div></div>
+        </section>
+      </div>
+    </div>
+
+    <div class="vpc-row" id="row-vpc-iaas">
       <p class="layer-label eyebrow">IaaS</p>
-      <div class="pillars" id="pillars"></div>
+      <div class="vpc-row-body">
+        <section class="band vpc-iaas" id="vpc-iaas" aria-label="VPC Native IaaS"></section>
+      </div>
+    </div>
+
+    <div class="outside-iaas">
+      <section class="band pillars" id="pillars" aria-label="IaaS outside Virtual Private Cloud"></section>
     </div>
   </div>
 
@@ -673,7 +776,7 @@ const PILLARS = [
     ],
   },
   {
-    id: "vpc", icon: "i-vpc", eyebrow: "IBM Cloud VPC", title: "Virtual Private Cloud",
+    id: "vpc", icon: "i-vpc", eyebrow: "IBM Cloud VPC", title: "VPC Native IaaS",
     lines: [
       {
         title: "Networking",
@@ -994,7 +1097,7 @@ const PILLARS = [
     ],
   },
   {
-    id: "ocpv", icon: "i-ocpv", eyebrow: "Red Hat OpenShift", title: "OpenShift Virtualization",
+    id: "ocpv", icon: "i-ocpv", eyebrow: "ROVS", title: "OpenShift Virtualization",
     lines: [
       {
         title: "Networking",
@@ -1200,7 +1303,7 @@ function linesHTML(lines) {
 
 function pillarHTML(p) {
   const ready = (p.lines || []).length > 0;
-  const controls = p.band === "caas" ? "caas-lines" : "below-lines";
+  const controls = p.band === "caas" ? "caas-lines" : p.band === "serverless" ? "serverless-lines" : "below-lines";
   return `
   <article class="tile" data-id="${p.id}">
     <button class="tile-head" type="button" ${ready ? `aria-expanded="false" aria-controls="${controls}"` : `aria-disabled="true"`}>
@@ -1235,15 +1338,17 @@ function boxHTML(item) {
   </article>`;
 }
 
-// CaaS tiles above the four IaaS columns. A tile with lines opens like an IaaS
-// pillar; the others stay boxes. i-roks is Carbon's container-services icon:
-// there is no general ROKS mark in the IBM Cloud set, and logo--openshift is a
-// third-party logo.
+// CaaS tiles inside the Virtual Private Cloud frame, between Serverless and
+// VPC Native IaaS. A tile with lines opens like an IaaS pillar; the others stay
+// boxes. i-roks is Carbon's container-services icon: there is no general ROKS
+// mark in the IBM Cloud set, and logo--openshift is a third-party logo.
 //
 // IKS is written for VPC clusters. Classic clusters still exist (VLAN workers,
 // classic block and file). Where the two differ, the card follows VPC and the
 // row note says so. Calico uses i-network: Carbon has no Calico mark.
 // Portworx uses i-storage: it is a third-party product, so no logo.
+// OpenShift Virtualization (ROVS) is drawn with these tiles. Its lines stay on
+// the ocpv entry in PILLARS.
 const CAAS = [
   {
     id: "iks", icon: "i-iks", eyebrow: "IKS", title: "IBM Kubernetes Service",
@@ -1589,11 +1694,16 @@ const CAAS = [
       },
     ],
   },
-  { id: "code-engine", icon: "i-code-engine", eyebrow: "IBM Cloud", title: "Code Engine", lines: [] },
+];
+
+// Function deployment on VPC. Sits in the Serverless row of the Virtual Private
+// Cloud frame. An empty lines list stays a closed box until it is filled in.
+const SERVERLESS = [
+  { id: "code-engine", icon: "i-code-engine", eyebrow: "Functions", title: "Code Engine", lines: [] },
 ];
 
 function caasHTML(item) {
-  if ((item.lines || []).length) return pillarHTML({ ...item, band: "caas" });
+  if ((item.lines || []).length) return pillarHTML({ ...item, band: item.band || "caas" });
   // Still a box. Same tile class so it fades with the rest of the row.
   return `
   <article class="tile">
@@ -1606,16 +1716,38 @@ function caasHTML(item) {
 }
 
 // --- render ----------------------------------------------------------------
+// Virtual Private Cloud holds the services that deploy on VPC, stacked
+// Serverless → CaaS → IaaS. Classic and PowerVS stay on the IaaS layer
+// outside that frame. PaaS stays above both.
+const caasItems = [...CAAS, PILLARS.find((p) => p.id === "ocpv")];
+const vpcIaaSItems = [PILLARS.find((p) => p.id === "vpc")];
+const outsideItems = PILLARS.filter((p) => p.id === "classic" || p.id === "powervs");
+
 const wrap = document.getElementById("wrap");
-const belowLines = document.getElementById("below-lines");
-const caasLines = document.getElementById("caas-lines");
 document.getElementById("paas").innerHTML = PAAS.map(boxHTML).join("");
-document.getElementById("caas").innerHTML = CAAS.map(caasHTML).join("");
-document.getElementById("pillars").innerHTML = PILLARS.map(pillarHTML).join("");
-const BY_ID = Object.fromEntries([...CAAS, ...PILLARS].filter((p) => p.id).map((p) => [p.id, p]));
+document.getElementById("serverless").innerHTML = SERVERLESS.map((item) => caasHTML({ ...item, band: "serverless" })).join("");
+document.getElementById("caas").innerHTML = caasItems.map((item) => caasHTML({ ...item, band: "caas" })).join("");
+document.getElementById("vpc-iaas").innerHTML = vpcIaaSItems.map((item) => pillarHTML({ ...item, band: "iaas" })).join("");
+document.getElementById("pillars").innerHTML = outsideItems.map((item) => pillarHTML({ ...item, band: "iaas" })).join("");
+const BY_ID = Object.fromEntries([...SERVERLESS, ...caasItems, ...vpcIaaSItems, ...outsideItems].map((p) => [p.id, p]));
 
 function bandOf(id) {
-  return CAAS.some((p) => p.id === id) ? "caas" : "iaas";
+  if (SERVERLESS.some((p) => p.id === id)) return "serverless";
+  if (caasItems.some((p) => p.id === id)) return "caas";
+  return "iaas";
+}
+
+// The IaaS panel is shared. Measure the open tile so the tab sits under it
+// whether it is inside the VPC frame or beside it.
+function placeIaaSPointer() {
+  const pointer = document.getElementById("below-pointer");
+  const tile = document.querySelector(`.tile[data-id="${selected}"]`);
+  if (!pointer || !tile) return;
+  const grid = pointer.parentElement;
+  const tileBox = tile.getBoundingClientRect();
+  const gridBox = grid.getBoundingClientRect();
+  pointer.style.width = `${tileBox.width}px`;
+  pointer.style.marginLeft = `${Math.max(0, tileBox.left - gridBox.left)}px`;
 }
 
 // --- state: which service is open (null = nothing open) --------------------
@@ -1645,16 +1777,17 @@ function select(id) {
 
   const html = selected ? linesHTML(BY_ID[selected].lines) : "";
   // wide screens: one panel under the open row (re-rendered so the drop replays)
-  caasLines.innerHTML = band === "caas" ? html : "";
-  belowLines.innerHTML = band === "iaas" ? html : "";
+  document.getElementById("serverless-lines").innerHTML = band === "serverless" ? html : "";
+  document.getElementById("caas-lines").innerHTML = band === "caas" ? html : "";
+  document.getElementById("below-lines").innerHTML = band === "iaas" ? html : "";
+  if (band === "serverless") {
+    document.getElementById("serverless-pointer").style.gridColumn = "1";
+  }
   if (band === "caas") {
-    const col = CAAS.findIndex((p) => p.id === selected) + 1;
+    const col = caasItems.findIndex((p) => p.id === selected) + 1;
     if (col > 0) document.getElementById("caas-pointer").style.gridColumn = String(col);
   }
-  if (band === "iaas") {
-    const col = PILLARS.findIndex((p) => p.id === selected) + 1;
-    if (col > 0) document.getElementById("below-pointer").style.gridColumn = String(col);
-  }
+  if (band === "iaas") placeIaaSPointer();
 }
 
 document.addEventListener("click", (e) => {
@@ -1701,7 +1834,16 @@ modeBtn.addEventListener("click", () => {
   try { localStorage.setItem(MODE_KEY, next); } catch (e) { /* not saved; still switches */ }
 });
 
-// Deep link: #vpc opens VPC, #iks opens Kubernetes Service
+window.addEventListener("resize", () => {
+  if (selected && bandOf(selected) === "iaas") placeIaaSPointer();
+});
+if (document.fonts && document.fonts.ready) {
+  document.fonts.ready.then(() => {
+    if (selected && bandOf(selected) === "iaas") placeIaaSPointer();
+  });
+}
+
+// Deep link: #vpc opens VPC Native IaaS, #iks opens Kubernetes Service, #ocpv opens ROVS
 const fromHash = location.hash.slice(1);
 if (BY_ID[fromHash] && (BY_ID[fromHash].lines || []).length) select(fromHash);
 </script>
