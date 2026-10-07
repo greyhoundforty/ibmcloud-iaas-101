@@ -297,10 +297,16 @@ button { font: inherit; color: inherit; }
   margin: var(--gap) 0;
   background: var(--line);
 }
-/* ---------- CaaS row (same tiles as the IaaS columns) ---------- */
+/* ---------- PaaS and CaaS rows (same tiles as the IaaS columns) ---------- */
+.paas { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--gap); align-items: stretch; min-width: 0; }
+.paas .tile { display: flex; }
+.paas .tile-head { flex: 1; }
 .caas { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gap); align-items: start; min-width: 0; }
+.paas .tile-head:not(button),
 .caas .tile-head:not(button) { cursor: default; }
+.paas .tile-head:not(button):hover,
 .caas .tile-head:not(button):hover { background: var(--layer); }
+.paas .tile-head:not(button) .tile-title,
 .caas .tile-head:not(button) .tile-title { padding-right: 0; }
 
 /* ---------- Foundation bar ---------- */
@@ -330,12 +336,12 @@ kbd { font-family: var(--font-mono); font-size: 0.8125rem; padding: 1px 6px; bac
   .pillars { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   /* the open tile takes the full row so its lines have room */
   .tile.is-active { grid-column: 1 / -1; }
-  .caas { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .paas, .caas { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 599px) {
   .wrap { padding-block: 32px 48px; }
   .pillars { grid-template-columns: minmax(0, 1fr); }
-  .caas { grid-template-columns: minmax(0, 1fr); }
+  .paas, .caas { grid-template-columns: minmax(0, 1fr); }
   .foundation { grid-template-columns: minmax(0, 1fr); justify-items: center; }
   .services.side-start,
   .services.side-end { justify-content: center; }
@@ -431,6 +437,10 @@ kbd { font-family: var(--font-mono); font-size: 0.8125rem; padding: 1px 6px; bac
   <symbol id="i-k8s-cp" viewBox="0 0 32 32"><path d="M22.951 20h-2.1843c-.4141-1.1611-1.5137-2-2.8157-2s-2.4016.8389-2.8157 2H8.951v2h6.1843c.4141 1.1611 1.5137 2 2.8157 2s2.4016-.8389 2.8157-2h2.1843v-2Zm-5 2c-.5515 0-1-.4487-1-1s.4485-1 1-1 1 .4487 1 1-.4485 1-1 1Zm5-10h-6.1843c-.4141-1.1611-1.5137-2-2.8157-2s-2.4016.8389-2.8157 2H8.951v2h2.1843c.4141 1.1611 1.5137 2 2.8157 2s2.4016-.8389 2.8157-2h6.1843v-2Zm-9 2c-.5515 0-1-.4487-1-1s.4485-1 1-1 1 .4487 1 1-.4485 1-1 1Z"/><path d="m29.8993 18.9897-2.593-11.1865a2 2 0 0 0-1.124-1.3711l-9.407-4.2544C16.5133 2.059 16.2321 2 15.9511 2s-.5623.0591-.8242.1777L5.7197 6.4321a2 2 0 0 0-1.124 1.3711l-2.593 11.1865a2.0008 2.0008 0 0 0 .3899 1.7056l6.886 8.5586A2.0001 2.0001 0 0 0 10.8367 30h10.2286a2.0001 2.0001 0 0 0 1.5581-.7461l6.886-8.5586a2.0008 2.0008 0 0 0 .3899-1.7056ZM21.0653 28H10.837l-6.886-8.5586 2.593-11.187L15.951 4l9.407 4.2549 2.593 11.1865L21.0652 28Z"/><path fill="none" d="M0 0h32v32H0z"/></symbol>
   <symbol id="i-k8s-worker" viewBox="0 0 32 32"><path d="M23 18v-2h-2.1c-.1-.6-.4-1.2-.7-1.8l1.5-1.5-1.4-1.4-1.5 1.5c-.5-.3-1.1-.6-1.8-.7V10h-2v2.1c-.6.1-1.2.4-1.8.7l-1.5-1.5-1.4 1.4 1.5 1.5c-.3.5-.6 1.1-.7 1.8H9v2h2.1c.1.6.4 1.2.7 1.8l-1.5 1.5 1.4 1.4 1.5-1.5c.5.3 1.1.6 1.8.7V24h2v-2.1c.6-.1 1.2-.4 1.8-.7l1.5 1.5 1.4-1.4-1.5-1.5c.3-.5.6-1.1.7-1.8H23Zm-7 2c-1.7 0-3-1.3-3-3s1.3-3 3-3 3 1.3 3 3-1.3 3-3 3Z"/><path d="m29.9483 18.9897-2.593-11.1865a2 2 0 0 0-1.124-1.3711l-9.407-4.2544C16.5623 2.059 16.2811 2 16.0001 2s-.5623.0591-.8242.1777L5.7687 6.4321a2 2 0 0 0-1.124 1.3711l-2.593 11.1865a2.0008 2.0008 0 0 0 .3899 1.7056l6.886 8.5586A2.0001 2.0001 0 0 0 10.8857 30h10.2286a2.0001 2.0001 0 0 0 1.5581-.7461l6.886-8.5586a2.0008 2.0008 0 0 0 .3899-1.7056ZM21.1143 28H10.886L4 19.4414l2.593-11.187L16 4l9.407 4.2549L28 19.4414 21.1142 28Z"/><path fill="none" d="M0 0h32v32H0z"/></symbol>
   <symbol id="i-registry" viewBox="0 0 32 32"><path d="M17,13V6H8V22H24V13ZM10,8h5v5H10Zm0,7h5v5H10Zm12,5H17V15h5Z"/><path d="M28,11H19V2h9ZM21,9h5V4H21Z"/><path d="M28,20H26v2h2v6H4V22H6V20H4a2.0024,2.0024,0,0,0-2,2v6a2.0024,2.0024,0,0,0,2,2H28a2.0024,2.0024,0,0,0,2-2V22A2.0024,2.0024,0,0,0,28,20Z"/><circle cx="7" cy="25" r="1"/></symbol>
+  <symbol id="i-icd" viewBox="0 0 32 32"><path d="M21,3h-10c-1.1,0-2,.9-2,2v22c0,1.1.9,2,2,2h10c1.1,0,2-.9,2-2V5c0-1.1-.9-2-2-2ZM11,5h10v6h-10v-6ZM11,13h10v6h-10v-6ZM11,27v-6h10v6h-10ZM2,10v16c0,1.1.9,2,2,2h3v-2h-3v-4h3v-2h-3v-4h3v-2h-3v-4h3v-2h-3c-1.1,0-2,.9-2,2ZM28,8h-3v2h3v4h-3v2h3v4h-3v2h3v4h-3v2h3c1.1,0,2-.9,2-2V10c0-1.1-.9-2-2-2ZM14,9c-.55,0-1-.45-1-1s.45-1,1-1,1,.45,1,1-.45,1-1,1ZM14,17c-.55,0-1-.45-1-1s.45-1,1-1,1,.45,1,1-.45,1-1,1ZM14,25c-.55,0-1-.45-1-1s.45-1,1-1,1,.45,1,1-.45,1-1,1Z"/></symbol>
+  <symbol id="i-platform-automation" viewBox="0 0 32 32"><path d="M5,25V15.8281l-3.5859,3.586L0,18l6-6,6,6-1.4141,1.4141L7,15.8281V25H19v2H7A2.0024,2.0024,0,0,1,5,25Z"/><path d="M24,22h4a2.002,2.002,0,0,1,2,2v4a2.002,2.002,0,0,1-2,2H24a2.002,2.002,0,0,1-2-2V24A2.002,2.002,0,0,1,24,22Zm4,6V24H23.9985L24,28Z"/><path d="M27,6v9.1719l3.5859-3.586L32,13l-6,6-6-6,1.4141-1.4141L25,15.1719V6H13V4H25A2.0024,2.0024,0,0,1,27,6Z"/><path d="M2 6H8V8H2z"/><path d="M2 2H10V4H2z"/></symbol>
+  <symbol id="i-observability" viewBox="0 0 32 32"><path d="M26,15h5v2h-5v-2ZM26,23h5v2h-5v-2ZM18,17.18l-2.59-2.59-1.41,1.41,4,4,6-6-1.41-1.41-4.59,4.59ZM18,25.18l-2.59-2.59-1.41,1.41,4,4,6-6-1.41-1.41-4.59,4.59ZM11,25h-2.5c-3.0327,0-5.5-2.4678-5.5-5.5,0-2.8779,2.25-5.2852,5.1231-5.4795l.8769-.0205.0493-.8701c.4395-4.0645,3.8579-7.1299,7.9507-7.1299,3.0596,0,5.8066,1.7031,7.169,4.4448l1.791-.8906c-1.7031-3.4258-5.1358-5.5542-8.96-5.5542-4.8477,0-8.938,3.4399-9.8218,8.124-3.5234.6294-6.1782,3.7246-6.1782,7.376,0,4.1357,3.3643,7.5,7.5,7.5h2.5v-2Z"/></symbol>
+  <symbol id="i-ai" viewBox="0 0 32 32"><path stroke-width="0" d="m29.312,22.9189c1.1042-2.1201,1.688-4.5127,1.688-6.9189C31,7.729,24.271,1,16,1c-3.3738,0-6.5815,1.1191-9.2046,3.1665-.2441-.106-.5125-.1665-.7954-.1665-1.1045,0-2,.8955-2,2s.8955,2,2,2,2-.8955,2-2c0-.0762-.0142-.1489-.0225-.2227,2.2812-1.7964,5.0793-2.7773,8.0225-2.7773.9727,0,1.9172.1157,2.8293.3193-3.3938.9258-5.8994,4.0273-5.8994,7.7109,0,.7891.1167,1.5503.332,2.27-.6985-.2021-1.4285-.3306-2.1919-.3306-3.7039,0-6.8191,2.5342-7.7256,5.957-.218-.9424-.3445-1.9189-.3445-2.9268,0-2.1162.4919-4.1328,1.4619-5.9951l-1.7739-.9238c-1.1042,2.1201-1.688,4.5127-1.688,6.9189,0,8.271,6.729,15,15,15,3.3738,0,6.5815-1.1191,9.2046-3.1665.2441.106.5125.1665.7954.1665,1.1045,0,2-.8955,2-2s-.8955-2-2-2-2,.8955-2,2c0,.0762.0142.1489.0225.2231-1.0796.8496-2.2776,1.5098-3.5493,1.9771.3315-.6641.5269-1.4072.5269-2.2002,0-1.6304-.7959-3.0669-2.0068-3.9805.0457-.3472.0769-.6978.0769-1.0498,0-.7856-.1257-1.54-.3381-2.2573.6995.2012,1.4346.3179,2.198.3179,3.7039,0,6.8191-2.5342,7.7256-5.957.218.9424.3445,1.9189.3445,2.9268,0,2.1162-.4919,4.1328-1.4619,5.9951l1.7739.9238Zm-17.7935,5.2646c-1.8389-.6807-3.49-1.7529-4.8325-3.1338-1.0366-1.1143-1.616-2.5527-1.616-4.0801,0-3.3081,2.6917-6,6-6s6,2.6919,6,6c0,.0498-.0125.0977-.0134.1475-.3413-.0737-.6936-.1172-1.0566-.1172-2.7571,0-5,2.2432-5,5,0,.7861.1924,1.5234.5186,2.1836Zm7.4814-2.1836c0,1.6543-1.3457,3-3,3s-3-1.3457-3-3,1.3457-3,3-3,3,1.3457,3,3Zm1.9299-8.9697c-3.3083,0-6-2.6919-6-6s2.6917-6,6-6c1.4294,0,2.7422.5039,3.7742,1.3418.3027.2739.5918.561.8677.8618.8479,1.0352,1.3582,2.3569,1.3582,3.7964,0,3.3081-2.6917,6-6,6Z"/></symbol>
   <symbol id="i-chevron" viewBox="0 0 32 32"><path d="M16 22 6 12 7.4 10.6 16 19.2 24.6 10.6 26 12z"/></symbol>
 </svg>
 
@@ -447,6 +457,11 @@ kbd { font-family: var(--font-mono); font-size: 0.8125rem; padding: 1px 6px; bac
   </header>
 
   <div class="layers">
+    <div class="layer">
+      <p class="layer-label eyebrow">PaaS</p>
+      <section class="paas" id="paas" aria-label="Platform as a Service"></section>
+    </div>
+    <hr class="layer-rule">
     <div class="layer">
       <p class="layer-label eyebrow">CaaS</p>
       <section class="caas" id="caas" aria-label="Containers as a Service"></section>
@@ -1199,6 +1214,27 @@ function pillarHTML(p) {
   </article>`;
 }
 
+// PaaS shelf preview. Static boxes only: no lines, so nothing opens.
+// Catalog hubs that are not already the CaaS or IaaS shelves, plus AI.
+const PAAS = [
+  { icon: "i-icd", eyebrow: "IBM Cloud", title: "Databases" },
+  { icon: "i-platform-automation", eyebrow: "IBM Cloud", title: "Platform Automation" },
+  { icon: "i-observability", eyebrow: "IBM Cloud", title: "Observability" },
+  { icon: "i-security", eyebrow: "IBM Cloud", title: "Security" },
+  { icon: "i-ai", eyebrow: "IBM Cloud", title: "AI" },
+];
+
+function boxHTML(item) {
+  return `
+  <article class="tile">
+    <div class="tile-head">
+      ${icon(item.icon)}
+      <span class="eyebrow">${esc(item.eyebrow)}</span>
+      <span class="tile-title">${esc(item.title)}</span>
+    </div>
+  </article>`;
+}
+
 // CaaS tiles above the four IaaS columns. A tile with lines opens like an IaaS
 // pillar; the others stay boxes. i-roks is Carbon's container-services icon:
 // there is no general ROKS mark in the IBM Cloud set, and logo--openshift is a
@@ -1573,6 +1609,7 @@ function caasHTML(item) {
 const wrap = document.getElementById("wrap");
 const belowLines = document.getElementById("below-lines");
 const caasLines = document.getElementById("caas-lines");
+document.getElementById("paas").innerHTML = PAAS.map(boxHTML).join("");
 document.getElementById("caas").innerHTML = CAAS.map(caasHTML).join("");
 document.getElementById("pillars").innerHTML = PILLARS.map(pillarHTML).join("");
 const BY_ID = Object.fromEntries([...CAAS, ...PILLARS].filter((p) => p.id).map((p) => [p.id, p]));
