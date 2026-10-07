@@ -354,8 +354,27 @@ button { font: inherit; color: inherit; }
 .vpc-row .layer-label { margin-top: 28px; }
 #row-serverless { grid-area: serverless; }
 #row-caas { grid-area: caas; border-top: 1px solid var(--line); }
-#row-vpc-iaas { grid-area: vpciaas; border-top: 1px solid var(--line); }
-.outside-iaas { grid-area: outside; align-self: center; }
+#row-vpc-iaas {
+  grid-area: vpciaas;
+  border-top: 1px solid var(--line);
+  align-items: stretch;
+  padding-bottom: 0; /* tile meets the frame edge so the IaaS pointer can touch it */
+}
+#row-vpc-iaas .layer-label { align-self: start; }
+#row-vpc-iaas .vpc-row-body,
+#row-vpc-iaas .band,
+.outside-iaas .band { height: 100%; grid-template-rows: 1fr; }
+/* Classic and PowerVS share the IaaS row, outside the frame, at the same height */
+.outside-iaas {
+  grid-area: outside;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  /* Match the IaaS row's 1px top border so these tiles share its top edge */
+  border-top: 1px solid transparent;
+  padding-top: 16px;
+}
+.outside-iaas .band { flex: 1; }
 .band { display: grid; gap: var(--gap); align-items: stretch; min-width: 0; }
 .band .tile { display: flex; flex-direction: column; }
 .band .tile-head { flex: 1; }
