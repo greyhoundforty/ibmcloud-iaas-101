@@ -5,3 +5,23 @@ build/
 .env*
 .env*.local
 node_modules/
+
+# Local IBM Cloud doc copies used while writing the layers
+docs/
+
+# Python cache and local environments
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.egg-info/
+
+# macOS
+.DS_Store
