@@ -84,6 +84,9 @@ button { font: inherit; color: inherit; }
 .intro { display: flex; flex-direction: column; gap: 12px; padding-bottom: 24px; }
 .intro h1 { margin: 0; font-size: clamp(2.25rem, 5vw, 3.75rem); font-weight: 300; line-height: 1.1; text-wrap: balance; }
 .topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.top-actions { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.home-link { font-size: 0.875rem; color: var(--label); text-underline-offset: 3px; }
+.home-link:hover { text-decoration: none; }
 
 /* Theme switch, styled as a Carbon ghost button with an icon */
 .mode-toggle {
@@ -439,10 +442,13 @@ kbd { font-family: var(--font-mono); font-size: 0.8125rem; padding: 1px 6px; bac
   <header class="intro">
     <div class="topbar">
       <span class="eyebrow">IBM Cloud 101</span>
-      <button class="mode-toggle" id="mode-toggle" type="button" aria-pressed="false">
-        <svg aria-hidden="true" fill="currentColor"><use id="mode-icon" href="#i-asleep"/></svg>
-        <span id="mode-label">Dark mode</span>
-      </button>
+      <div class="top-actions">
+        <a class="home-link" href="index.html">All views</a>
+        <button class="mode-toggle" id="mode-toggle" type="button" aria-pressed="false">
+          <svg aria-hidden="true" fill="currentColor"><use id="mode-icon" href="#i-asleep"/></svg>
+          <span id="mode-label">Dark mode</span>
+        </button>
+      </div>
     </div>
     <h1>The Layers of IBM Cloud</h1>
   </header>

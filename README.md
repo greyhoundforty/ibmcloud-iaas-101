@@ -4,14 +4,15 @@ Seller-facing material that explains IBM Cloud IaaS as one foundation with four 
 **Classic Infrastructure**, **VPC**, **Power Virtual Server** and **OpenShift Virtualization**.
 Everything uses the IBM Carbon Design System: its colors, IBM Plex type and official Carbon icons.
 
-`site/index.html` is the landing page at the site root. It links to the three explorer pages.
+`site/index.html` is the landing page at the site root. It links to the explorer pages, and each page links back.
 
-There are four pieces, from broadest to deepest:
+There are five pieces, from broadest to deepest:
 
 - **Slide deck**: Click-through presentation: highlight a pillar, reveal 4 lines, reset. Items are in `deck/project/` (**WIP**)
 - **Seller focus**: High-level seller discovery, the true 101, and the basis for the PowerPoint. current version is at `site/iaas-101-seller-focus.html`
 - **Sales complexity**: One glance at why a cloud infrastructure opportunity is engineered before it is priced. Current version is at `site/sales-complexity.html`
 - **Tech focus**: Tech overview of the cloud services in each IaaS offering. Current version is at `site/iaas-101-tech-focus.html`
+- **Layer studies**: Three other ways to show the same services, focused on how the layers sit and connect. `site/iaas-101-layer-studies.html`
 
 **Service-level edits happen on the tech-focus page.** The seller-focus page is the 101 narrative and the source for the deck. The rest of this README is mostly about the tech-focus page.
 

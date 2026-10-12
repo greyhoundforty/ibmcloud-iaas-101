@@ -82,6 +82,9 @@ button { font: inherit; color: inherit; }
   text-transform: uppercase;
   color: var(--label);
 }
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.home-link { font-size: 0.875rem; color: var(--label); text-underline-offset: 3px; }
+.home-link:hover { text-decoration: none; }
 h1 {
   margin: 8px 0 0;
   font-size: clamp(2rem, 3.4vw, 2.75rem);
@@ -274,7 +277,10 @@ h1 {
 
 <main class="wrap">
   <header>
-    <p class="eyebrow" id="eyebrow"></p>
+    <div class="topbar">
+      <p class="eyebrow" id="eyebrow"></p>
+      <a class="home-link" href="index.html">All views</a>
+    </div>
     <h1 id="title"></h1>
     <p class="lede" id="lede"></p>
   </header>

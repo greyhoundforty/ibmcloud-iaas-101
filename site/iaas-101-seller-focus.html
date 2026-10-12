@@ -61,6 +61,16 @@ body {
   text-transform: uppercase;
   color: var(--label);
 }
+.home-link {
+  grid-area: 1 / 1;
+  justify-self: end;
+  align-self: start;
+  z-index: 1;
+  font-size: 0.875rem;
+  color: var(--label);
+  text-underline-offset: 3px;
+}
+.home-link:hover { text-decoration: none; }
 button { font: inherit; color: inherit; }
 :focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
 
@@ -214,7 +224,8 @@ kbd { font-family: var(--font-mono); font-size: 0.8125rem; padding: 1px 6px; bac
 
 /* ---------- Narrower screens: lines move inside the expanded tile ---------- */
 @media (max-width: 1023px) {
-  .stage { min-height: 0; }
+  .stage { display: flex; flex-direction: column; min-height: 0; }
+  .home-link { align-self: flex-end; margin-bottom: 12px; }
   .stage-lines { display: none; }
   .wrap[data-selected] .intro { opacity: 1; transform: none; }
   .panel-lines { display: flex; }
@@ -250,6 +261,7 @@ kbd { font-family: var(--font-mono); font-size: 0.8125rem; padding: 1px 6px; bac
 
 <main class="wrap" id="wrap">
   <section class="stage" aria-live="polite">
+    <a class="home-link" href="index.html">All views</a>
     <div class="intro">
       <span class="eyebrow">IBM Cloud</span>
       <h1>Infrastructure as a Service</h1>
