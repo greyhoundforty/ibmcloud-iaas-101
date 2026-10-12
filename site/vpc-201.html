@@ -1,0 +1,802 @@
+<title>IBM Cloud VPC 101</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&family=IBM+Plex+Sans:wght@300;400;600&display=swap">
+<style>
+/* VPC 101. Same interaction as the network map: lanes of practices, click one
+   to trace the practices it depends on, read the rule in the side panel.
+   Carbon White by default. Gray 100 when data-mode="dark", shared with the
+   other explorer pages. */
+:root {
+  color-scheme: light;
+  --bg: #ffffff;
+  --layer: #f4f4f4;
+  --hover: #e8e8e8;
+  --line: #c6c6c6;
+  --line-subtle: #e0e0e0;
+  --text: #161616;
+  --text-2: #525252;
+  --muted: #6f6f6f;
+  --label: #0f62fe;
+  --accent: #0f62fe;
+  --focus: #0f62fe;
+  --sidebar: #f4f4f4;
+  --sidebar-w: 400px;
+  --font-sans: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'IBM Plex Mono', Menlo, 'Courier New', monospace;
+  --ease: cubic-bezier(0.2, 0, 0.38, 0.9);
+  --blue: #0f62fe;   --blue-bg: #edf5ff;   --blue-edge: #a6c8ff;
+  --purple: #8a3ffc; --purple-bg: #f6f2ff; --purple-edge: #d4bbff;
+  --teal: #007d79;   --teal-bg: #d9fbfb;   --teal-edge: #3ddbd9;
+  --magenta: #d02670;--magenta-bg: #fff0f7;--magenta-edge: #ffafd2;
+  --cyan: #0072c3;   --cyan-bg: #e5f6ff;   --cyan-edge: #82cfff;
+}
+:root[data-mode="dark"] {
+  color-scheme: dark;
+  --bg: #161616;
+  --layer: #262626;
+  --hover: #333333;
+  --line: #525252;
+  --line-subtle: #393939;
+  --text: #f4f4f4;
+  --text-2: #c6c6c6;
+  --muted: #a8a8a8;
+  --label: #78a9ff;
+  --accent: #0f62fe;
+  --focus: #ffffff;
+  --sidebar: #262626;
+  --blue: #78a9ff;   --blue-bg: #001d6c;   --blue-edge: #0043ce;
+  --purple: #be95ff; --purple-bg: #31135e; --purple-edge: #6929c4;
+  --teal: #08bdba;   --teal-bg: #022b30;   --teal-edge: #007d79;
+  --magenta: #ff7eb6;--magenta-bg: #510224;--magenta-edge: #9f1853;
+  --cyan: #33b1ff;   --cyan-bg: #061727;   --cyan-edge: #00539a;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.5;
+}
+button, input { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.wrap {
+  max-width: 1440px;
+  margin-inline: auto;
+  padding: 48px 16px 80px;
+  transition: margin-right 240ms var(--ease);
+}
+body.is-open .wrap { margin-right: var(--sidebar-w); }
+
+.eyebrow {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--label);
+}
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.top-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.home-link { font-size: 0.875rem; color: var(--label); text-underline-offset: 3px; }
+.home-link:hover { text-decoration: none; }
+.mode-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 16px;
+  background: transparent;
+  border: 1px solid var(--line);
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+.mode-toggle:hover { background: var(--hover); }
+.mode-toggle svg { width: 16px; height: 16px; }
+h1 {
+  margin: 12px 0 0;
+  font-size: clamp(2.25rem, 5vw, 3.5rem);
+  font-weight: 300;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+.lede { margin: 16px 0 0; max-width: 42rem; color: var(--text-2); }
+
+.tools {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 32px;
+}
+.search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: min(100%, 280px);
+  height: 40px;
+  padding: 0 16px;
+  background: var(--layer);
+  border-bottom: 1px solid var(--text);
+}
+.search:focus-within { outline: 2px solid var(--focus); outline-offset: -2px; }
+.search svg { width: 16px; height: 16px; flex: 0 0 auto; color: var(--text-2); }
+.search input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  border: 0;
+  background: transparent;
+  outline: none;
+}
+.search input::placeholder { color: var(--muted); }
+.hint { margin: 0; max-width: 68ch; font-size: 0.875rem; color: var(--text-2); }
+
+.map { margin-top: 8px; }
+.row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px 0;
+}
+.row + .row { border-top: 1px solid var(--line-subtle); }
+.row-label {
+  width: 132px;
+  flex: 0 0 auto;
+  padding-top: 12px;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.row-cards { display: flex; flex-wrap: wrap; gap: 10px; flex: 1; min-width: 0; }
+
+.row[data-lane="workload"]   { --lane: var(--blue);    --lane-bg: var(--blue-bg);    --lane-edge: var(--blue-edge); }
+.row[data-lane="principles"] { --lane: var(--teal);    --lane-bg: var(--teal-bg);    --lane-edge: var(--teal-edge); }
+.row[data-lane="controls"]   { --lane: var(--purple);  --lane-bg: var(--purple-bg);  --lane-edge: var(--purple-edge); }
+.row[data-lane="features"]   { --lane: var(--cyan);    --lane-bg: var(--cyan-bg);    --lane-edge: var(--cyan-edge); }
+.row[data-lane="patterns"]   { --lane: var(--magenta); --lane-bg: var(--magenta-bg); --lane-edge: var(--magenta-edge); }
+
+.card {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 240px;
+  max-width: 100%;
+  margin: 0;
+  padding: 12px 14px;
+  text-align: left;
+  background: var(--layer);
+  border: 1px solid transparent;
+  border-left: 4px solid var(--lane);
+  cursor: pointer;
+  transition: background-color 120ms var(--ease), border-color 120ms var(--ease), opacity 160ms var(--ease);
+}
+.card:hover { background: var(--hover); }
+.card svg { width: 20px; height: 20px; flex: 0 0 auto; margin-top: 1px; color: var(--lane); }
+.card-name { display: block; font-size: 0.875rem; font-weight: 600; line-height: 1.3; }
+.card-sub { display: block; margin-top: 2px; font-size: 0.75rem; font-weight: 400; line-height: 1.35; color: var(--text-2); }
+.map.is-tracing .card.is-dimmed { opacity: 0.32; }
+.card.is-reachable {
+  background: var(--bg);
+  border-color: var(--lane-edge);
+  border-left-color: var(--lane);
+}
+.card.is-selected {
+  background: var(--lane-bg);
+  border-color: var(--lane);
+  border-left-width: 4px;
+}
+.row[data-lane="workload"] .card { width: 280px; }
+
+.stats {
+  margin: 8px 0 0 148px;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+.empty {
+  margin: 24px 0 0 148px;
+  color: var(--text-2);
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  width: var(--sidebar-w);
+  background: var(--sidebar);
+  border-left: 1px solid var(--line-subtle);
+  transform: translateX(100%);
+  transition: transform 240ms var(--ease);
+  overflow: auto;
+}
+body.is-open .sidebar { transform: translateX(0); }
+.sidebar-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+.sidebar-close:hover { background: var(--hover); }
+.sidebar-close svg { width: 20px; height: 20px; }
+.sidebar-body { padding: 56px 24px 40px; }
+.sb-lane {
+  display: inline-block;
+  margin: 0 0 12px;
+  padding: 2px 8px;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.sb-lane[data-lane="workload"]   { color: var(--blue);    background: var(--blue-bg); }
+.sb-lane[data-lane="principles"] { color: var(--teal);    background: var(--teal-bg); }
+.sb-lane[data-lane="controls"]   { color: var(--purple);  background: var(--purple-bg); }
+.sb-lane[data-lane="features"]   { color: var(--cyan);    background: var(--cyan-bg); }
+.sb-lane[data-lane="patterns"]   { color: var(--magenta); background: var(--magenta-bg); }
+.sidebar h2 { margin: 0; font-size: 1.75rem; font-weight: 400; line-height: 1.2; }
+.sidebar .rule { margin: 12px 0 0; color: var(--text-2); }
+.sidebar h3 { margin: 28px 0 8px; font-size: 0.875rem; font-weight: 600; }
+.sidebar ul { margin: 0; padding-left: 1.15rem; }
+.sidebar li { margin: 0 0 8px; }
+.sidebar li:last-child { margin-bottom: 0; }
+.traces { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.traces button {
+  margin: 0;
+  padding: 6px 12px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  cursor: pointer;
+  font-size: 0.8125rem;
+}
+.traces button:hover { background: var(--hover); }
+.docs {
+  display: inline-block;
+  margin-top: 28px;
+  color: var(--label);
+  text-underline-offset: 3px;
+}
+.docs:hover { text-decoration: none; }
+
+@media (max-width: 720px) {
+  .wrap { padding-block: 32px 56px; }
+  body.is-open .wrap { margin-right: 0; }
+  .row { flex-direction: column; gap: 8px; }
+  .row-label { width: auto; padding-top: 4px; }
+  .card { width: 100%; }
+  .row[data-lane="workload"] .card { width: 100%; }
+  .stats, .empty { margin-left: 0; }
+  .sidebar { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wrap, .sidebar, .card { transition: none; }
+}
+</style>
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <symbol id="i-light" viewBox="0 0 32 32"><path d="M15 2H17V7H15z"/><path d="M21.668 6.854H26.626V8.854H21.668z" transform="rotate(-45 24.147 7.853)"/><path d="M25 15H30V17H25z"/><path d="M23.147 21.668H25.147V26.626H23.147z" transform="rotate(-45 24.147 24.146)"/><path d="M15 25H17V30H15z"/><path d="M5.375 23.147H10.333V25.147H5.375z" transform="rotate(-45 7.853 24.146)"/><path d="M2 15H7V17H2z"/><path d="M6.854 5.375H8.854V10.333H6.854z" transform="rotate(-45 7.854 7.853)"/><path d="M16,12a4,4,0,1,1-4,4,4.0045,4.0045,0,0,1,4-4m0-2a6,6,0,1,0,6,6,6,6,0,0,0-6-6Z"/></symbol>
+  <symbol id="i-asleep" viewBox="0 0 32 32"><path d="M13.5025,5.4136A15.0755,15.0755,0,0,0,25.096,23.6082a11.1134,11.1134,0,0,1-7.9749,3.3893c-.1385,0-.2782.0051-.4178,0A11.0944,11.0944,0,0,1,13.5025,5.4136M14.98,3a1.0024,1.0024,0,0,0-.1746.0156A13.0959,13.0959,0,0,0,16.63,28.9973c.1641.006.3282,0,.4909,0a13.0724,13.0724,0,0,0,10.702-5.5556,1.0094,1.0094,0,0,0-.7833-1.5644A13.08,13.08,0,0,1,15.8892,4.38,1.0149,1.0149,0,0,0,14.98,3Z"/></symbol>
+  <symbol id="i-close" viewBox="0 0 32 32"><path d="M17.4141 16 24 9.4141 22.5859 8 16 14.5859 9.4143 8 8 9.4141 14.5859 16 8 22.5859 9.4143 24 16 17.4141 22.5859 24 24 22.5859 17.4141 16z"/></symbol>
+  <symbol id="i-search" viewBox="0 0 32 32"><path d="M29,27.5859l-7.5521-7.5521a11.0177,11.0177,0,1,0-1.4141,1.4141L27.5859,29ZM4,13a9,9,0,1,1,9,9A9.01,9.01,0,0,1,4,13Z"/></symbol>
+  <symbol id="i-ha" viewBox="0 0 32 32"><path d="m24,24v6h6v-6h-6Zm4,4h-2v-2h2v2Z"/><path d="m2,30h6v-6H2v6Zm2-4h2v2h-2v-2Z"/><path d="m26,15h-9v-6.1631c1.4407-.4336,2.5-1.7571,2.5-3.3369,0-1.9297-1.5703-3.5-3.5-3.5s-3.5,1.5703-3.5,3.5c0,1.5798,1.0593,2.9033,2.5,3.3369v6.1631H6c-1.1025,0-2,.8972-2,2v5h2v-5h9v7h-2v6h6v-6h-2v-7h9v5h2v-5c0-1.1028-.8975-2-2-2ZM14.5,5.5c0-.8271.6729-1.5,1.5-1.5s1.5.6729,1.5,1.5-.6729,1.5-1.5,1.5-1.5-.6729-1.5-1.5Zm2.5,22.5h-2v-2h2v2Z"/><path d="m26.5,9c1.9297,0,3.5-1.5703,3.5-3.5s-1.5703-3.5-3.5-3.5-3.5,1.5703-3.5,3.5,1.5703,3.5,3.5,3.5Zm0-5c.8271,0,1.5.6729,1.5,1.5s-.6729,1.5-1.5,1.5-1.5-.6729-1.5-1.5.6729-1.5,1.5-1.5Z"/><path d="m5.5,9c1.9297,0,3.5-1.5703,3.5-3.5s-1.5703-3.5-3.5-3.5-3.5,1.5703-3.5,3.5,1.5703,3.5,3.5,3.5Zm0-5c.8271,0,1.5.6729,1.5,1.5s-.6729,1.5-1.5,1.5-1.5-.6729-1.5-1.5.6729-1.5,1.5-1.5Z"/></symbol>
+  <symbol id="i-vpc" viewBox="0 0 32 32"><path d="M20,20V17a4,4,0,0,0-8,0v3a2.0025,2.0025,0,0,0-2,2v6a2.0025,2.0025,0,0,0,2,2h8a2.0025,2.0025,0,0,0,2-2V22A2.0025,2.0025,0,0,0,20,20Zm-6-3a2,2,0,0,1,4,0v3H14ZM12,28V22h8l.0012,6Z"/><path d="M25.8288,10.1152A10.0067,10.0067,0,0,0,17.89,2.1816,10.0025,10.0025,0,0,0,6.17,10.1152,7.502,7.502,0,0,0,7.4912,25H8V23H7.4953a5.5019,5.5019,0,0,1-.9694-10.9165l1.3488-.2441.2591-1.3457a8.0109,8.0109,0,0,1,15.7312,0l.259,1.3457,1.3489.2441A5.5019,5.5019,0,0,1,24.5076,23H24v2h.5076a7.502,7.502,0,0,0,1.3212-14.8848Z"/></symbol>
+  <symbol id="i-least" viewBox="0 0 32 32"><path d="M28,22v-3c0-2.2-1.8-4-4-4s-4,1.8-4,4v3c-1.1,0-2,0.9-2,2v5c0,1.1,0.9,2,2,2h8c1.1,0,2-0.9,2-2v-5C30,22.9,29.1,22,28,22z M22,19c0-1.1,0.9-2,2-2s2,0.9,2,2v3h-4V19z M20,29v-5h8v5H20z"/><path d="M8 16H14V18H8z"/><path d="M8 10H20V12H8z"/><path d="M26,4c0-1.1-0.9-2-2-2H4C2.9,2,2,2.9,2,4v13c0,4.1,2.2,7.8,5.8,9.7l5.2,2.8v-2.3l-4.2-2.3C5.8,23.4,4,20.3,4,17V4h20v8h2V4z"/></symbol>
+  <symbol id="i-depth" viewBox="0 0 32 32"><path d="M16,24a.9967.9967,0,0,1-.4741-.12l-13-7L3.4741,15.12,16,21.8643,28.5259,15.12l.9482,1.7607-13,7A.9967.9967,0,0,1,16,24Z"/><path d="M16,30a.9967.9967,0,0,1-.4741-.12l-13-7L3.4741,21.12,16,27.8643,28.5259,21.12l.9482,1.7607-13,7A.9967.9967,0,0,1,16,30Z"/><path d="M16,18a.9967.9967,0,0,1-.4741-.12l-13-7a1,1,0,0,1,0-1.7607l13-7a.9982.9982,0,0,1,.9482,0l13,7a1,1,0,0,1,0,1.7607l-13,7A.9967.9967,0,0,1,16,18ZM5.1094,10,16,15.8643,26.8906,10,16,4.1358Z"/></symbol>
+  <symbol id="i-isolate" viewBox="0 0 32 32"><path d="M23.4141,22,10,8.5859V2H2v8H8.5859L22,23.4141V30h8V22ZM8,8H4V4H8ZM28,28H24V24h4Z"/><path d="M30,6a3.9915,3.9915,0,0,0-7.8579-1H13V7h9.1421A3.9945,3.9945,0,0,0,25,9.8579V19h2V9.8579A3.9962,3.9962,0,0,0,30,6ZM26,8a2,2,0,1,1,2-2A2.0023,2.0023,0,0,1,26,8Z"/><path d="M19,25H9.8579A3.9945,3.9945,0,0,0,7,22.1421V13H5v9.1421A3.9915,3.9915,0,1,0,9.8579,27H19ZM6,28a2,2,0,1,1,2-2A2.0023,2.0023,0,0,1,6,28Z"/></symbol>
+  <symbol id="i-visible" viewBox="0 0 32 32"><path d="M30.94,15.66A16.69,16.69,0,0,0,16,5,16.69,16.69,0,0,0,1.06,15.66a1,1,0,0,0,0,.68A16.69,16.69,0,0,0,16,27,16.69,16.69,0,0,0,30.94,16.34,1,1,0,0,0,30.94,15.66ZM16,25c-5.3,0-10.9-3.93-12.93-9C5.1,10.93,10.7,7,16,7s10.9,3.93,12.93,9C26.9,21.07,21.3,25,16,25Z"/><path d="M16,10a6,6,0,1,0,6,6A6,6,0,0,0,16,10Zm0,10a4,4,0,1,1,4-4A4,4,0,0,1,16,20Z"/></symbol>
+  <symbol id="i-sg" viewBox="0 0 32 32"><path d="M22.86,25.86c-.72.75-1.54,1.42-2.46,1.94l-5.4,3.2-5.5-3.2c-3.4-2-5.5-5.6-5.5-9.5V4c0-1.1.9-2,2-2h18c1.1,0,2,.9,2,2v5h-2v-5H6v14.3c0,3.2,1.7,6.2,4.5,7.8l4.5,2.7,4.5-2.7c.73-.47,1.41-.99,2-1.6,0,0,1.36,1.36,1.36,1.36ZM28,12h-10v2h10v-2ZM28,20h-10v2h10v-2ZM30,16h-10v2h10v-2Z"/></symbol>
+  <symbol id="i-acl" viewBox="0 0 32 32"><path d="M18 14H30V16H18z"/><path d="M18 19H26V21H18z"/><path d="M18 9H30V11H18z"/><path d="M22,24v4H6V16h8V14H10V8a4.0008,4.0008,0,0,1,7.6675-1.6L19.5005,5.6A6.001,6.001,0,0,0,8,8v6H6a2.0023,2.0023,0,0,0-2,2V28a2.0023,2.0023,0,0,0,2,2H22a2.0023,2.0023,0,0,0,2-2V24Z"/></symbol>
+  <symbol id="i-subnets" viewBox="0 0 32 32"><path d="M26,22a3.6069,3.6069,0,0,0-2,.6L19.4143,18,18,19.4141,22.6,24a4.1755,4.1755,0,0,0-.4,1H9.8583A3.5525,3.5525,0,0,0,9.4,24L24,9.4a3.6069,3.6069,0,0,0,2,.6,4,4,0,1,0-3.8569-5H9.9A4.0785,4.0785,0,0,0,6,2a4,4,0,0,0,0,8,3.6066,3.6066,0,0,0,2-.6L12.5858,14,14,12.5859,9.4,8a4.175,4.175,0,0,0,.4-1H22.1418A3.5553,3.5553,0,0,0,22.6,8L8,22.6A3.6066,3.6066,0,0,0,6,22a4,4,0,1,0,3.8569,5H22.1A4.0118,4.0118,0,1,0,26,22ZM26,4a2,2,0,1,1-2,2A2.0058,2.0058,0,0,1,26,4ZM6,8A2,2,0,1,1,8,6,2.0058,2.0058,0,0,1,6,8ZM6,28a2,2,0,1,1,2-2A2.0058,2.0058,0,0,1,6,28Zm20,0a2,2,0,1,1,2-2A2.0058,2.0058,0,0,1,26,28Z"/></symbol>
+  <symbol id="i-routes" viewBox="0 0 32 32"><path d="M21 7 16 2 11 7 12.409 8.419 15 5.847 15 13 17 13 17 5.794 19.591 8.419 21 7z"/><path d="M21 25 16 30 11 25 12.409 23.581 15 26.153 15 19 17 19 17 26.206 19.591 23.581 21 25z"/><path d="M24 11 19 16 24 21 25.419 19.591 22.847 17 30 17 30 15 22.794 15 25.419 12.409 24 11z"/><path d="M8 11 13 16 8 21 6.581 19.591 9.153 17 2 17 2 15 9.206 15 6.581 12.409 8 11z"/></symbol>
+  <symbol id="i-vpe" viewBox="0 0 32 32"><path d="M20,27H7a2.0059,2.0059,0,0,1-2-2V12H7V25H20Z"/><path d="M23.4,22l-4-4a3.6057,3.6057,0,0,0,.6-2,4.0118,4.0118,0,0,0-4-4,3.6057,3.6057,0,0,0-2,.6l-4-4V2H2v8H8.6l4,4a3.6057,3.6057,0,0,0-.6,2,4.0118,4.0118,0,0,0,4,4,3.6057,3.6057,0,0,0,2-.6l4,4V30h8V22ZM8,8H4V4H8Zm8,10a2,2,0,1,1,2-2A2.0059,2.0059,0,0,1,16,18ZM28,28H24V24h4Z"/><path d="M25,20h2V7a2.0059,2.0059,0,0,0-2-2H12V7H25Z"/></symbol>
+  <symbol id="i-flow" viewBox="0 0 32 32"><path d="M18 19H30V21H18z"/><path d="M18 23H30V25H18z"/><path d="M18 27H26V29H18z"/><path d="M24,4a3.9962,3.9962,0,0,0-3.8579,3H12V4H4v8h8V9h8.1421a3.94,3.94,0,0,0,.4248,1.019L10.019,20.5669A3.9521,3.9521,0,0,0,8,20a4,4,0,1,0,3.8579,5H16V23H11.8579a3.94,3.94,0,0,0-.4248-1.019L21.981,11.4331A3.9521,3.9521,0,0,0,24,12a4,4,0,0,0,0-8ZM10,10H6V6h4ZM8,26a2,2,0,1,1,2-2A2.0023,2.0023,0,0,1,8,26ZM24,10a2,2,0,1,1,2-2A2.0023,2.0023,0,0,1,24,10Z"/></symbol>
+  <symbol id="i-dns" viewBox="0 0 32 32"><path d="M20 20H30V22H20z"/><path d="M20 24H26V26H20z"/><path d="M30,17V16A13.9871,13.9871,0,1,0,19.23,29.625l-.46-1.9463A12.0419,12.0419,0,0,1,16,28c-.19,0-.375-.0186-.563-.0273A20.3044,20.3044,0,0,1,12.0259,17Zm-2.0415-2H21.9751A24.2838,24.2838,0,0,0,19.2014,4.4414,12.0228,12.0228,0,0,1,27.9585,15ZM16.563,4.0273A20.3044,20.3044,0,0,1,19.9741,15H12.0259A20.3044,20.3044,0,0,1,15.437,4.0273C15.625,4.0186,15.81,4,16,4S16.375,4.0186,16.563,4.0273Zm-3.7644.4141A24.2838,24.2838,0,0,0,10.0249,15H4.0415A12.0228,12.0228,0,0,1,12.7986,4.4414Zm0,23.1172A12.0228,12.0228,0,0,1,4.0415,17h5.9834A24.2838,24.2838,0,0,0,12.7986,27.5586Z"/></symbol>
+  <symbol id="i-at" viewBox="0 0 32 32"><path d="M12,29a1,1,0,0,1-.92-.62L6.33,17H2V15H7a1,1,0,0,1,.92.62L12,25.28,20.06,3.65A1,1,0,0,1,21,3a1,1,0,0,1,.93.68L25.72,15H30v2H25a1,1,0,0,1-.95-.68L21,7,12.94,28.35A1,1,0,0,1,12,29Z"/></symbol>
+  <symbol id="i-pag" viewBox="0 0 32 32"><path d="M32 23 27 28 25.6 26.6 28.2 24 20 24 20 22 28.2 22 25.6 19.4 27 18z"/><path d="M25.5,2.7C25.1,2.3,24.6,2,24,2h-2.7c-0.6,0-1.1,0.3-1.3,0.8L19.4,4H18V3.5C18,2.7,17.3,2,16.5,2h-5C10.7,2,10,2.7,10,3.5V4	H8.6L8,2.8C7.8,2.3,7.3,2,6.7,2H4C3.4,2,2.9,2.3,2.5,2.7C2.1,3.2,1.9,3.8,2,4.4l0.7,4.1C3,9.9,4.2,11,5.7,11H6v12c-1.7,0-3,1.3-3,3	v4h19v-2h-5v-7c0-1.7-1.3-3-3-3s-3,1.3-3,3v7H5v-2c0-0.6,0.4-1,1-1h2V11h12v7h2v-7h0.3c1.5,0,2.7-1.1,3-2.5L26,4.4	C26.1,3.8,25.9,3.2,25.5,2.7z M13,21c0-0.6,0.4-1,1-1s1,0.4,1,1v7h-2V21z M23.3,8.2c-0.1,0.5-0.5,0.8-1,0.8H5.7	c-0.5,0-0.9-0.4-1-0.8L4,4h2.4l1,2H12V4h4v2h4.6l1-2L24,4L23.3,8.2z"/></symbol>
+  <symbol id="i-hub" viewBox="0 0 32 32"><path d="M30,30H22V22h8Zm-6-2h4V24H24Z"/><path d="M20,27H8A6,6,0,0,1,8,15h2v2H8a4,4,0,0,0,0,8H20Z"/><path d="M20,20H12V12h8Zm-6-2h4V14H14Z"/><path d="M24,17H22V15h2a4,4,0,0,0,0-8H12V5H24a6,6,0,0,1,0,12Z"/><path d="M10,10H2V2h8ZM4,8H8V4H4Z"/></symbol>
+  <symbol id="i-tgw" viewBox="0 0 32 32"><path d="m12.5,7.5l-1.4-1.4,3.5-3.5c.8-.8,2.1-.8,2.8,0l3.5,3.5-1.4,1.4-3.5-3.5-3.5,3.5Z"/><path d="m19.5,24.5l1.4,1.4-3.5,3.5c-.8.8-2.1.8-2.8,0l-3.5-3.5,1.4-1.4,3.5,3.5,3.5-3.5Z"/><path d="m24.5,12.5l1.4-1.4,3.5,3.5c.8.8.8,2.1,0,2.8l-3.5,3.5-1.4-1.4,3.5-3.5-3.5-3.5Z"/><path d="m7.5,19.5l-1.4,1.4-3.5-3.5c-.8-.8-.8-2.1,0-2.8l3.5-3.5,1.4,1.4-3.5,3.5,3.5,3.5Z"/><path d="m26,24c-.2,0-.3,0-.5.1l-6.1-6.1c.8-1.2.8-2.8,0-4l6.1-6.1c.2.1.3.1.5.1,1.1,0,2-.9,2-2s-.9-2-2-2-2,.9-2,2c0,.2,0,.3.1.5l-6.1,6.1c-1.2-.8-2.8-.8-4,0l-6.1-6.1c.1-.2.1-.3.1-.5,0-1.1-.9-2-2-2s-2,.9-2,2,.9,2,2,2c.2,0,.3,0,.5-.1l6.1,6.1c-.8,1.2-.8,2.8,0,4l-6.1,6.1c-.2-.1-.3-.1-.5-.1-1.1,0-2,.9-2,2s.9,2,2,2,2-.9,2-2c0-.2,0-.3-.1-.5l6.1-6.1c1.2.8,2.8.8,4,0l6.1,6.1c0,.2-.1.3-.1.5,0,1.1.9,2,2,2s2-.9,2-2-.9-2-2-2Zm-10-6c-1.1,0-2-.9-2-2s.9-2,2-2,2,.9,2,2-.9,2-2,2Z"/></symbol>
+  <symbol id="i-edge" viewBox="0 0 32 32"><path d="M25,11a5.0083,5.0083,0,0,0-4.8989,4H11.8989a5,5,0,1,0,0,2h8.2022A5,5,0,1,0,25,11Zm0,8a3,3,0,1,1,3-3A3.0033,3.0033,0,0,1,25,19Z"/></symbol>
+  <symbol id="i-iac" viewBox="0 0 32 32"><path d="M27,19.001A4.0056,4.0056,0,0,0,22.9991,15H9.0011A2.0031,2.0031,0,0,1,7,12.9991V9.858A3.9949,3.9949,0,0,0,9.8581,7h12.284a4,4,0,1,0,0-2H9.8581A3.9916,3.9916,0,1,0,5,9.858v3.1411A4.0057,4.0057,0,0,0,9.0011,17h13.998A2.003,2.003,0,0,1,25,19.001V22H22v3H9.8581a4,4,0,1,0,0,2H22v3h8V22H27ZM26,4a2,2,0,1,1-2,2A2.0019,2.0019,0,0,1,26,4ZM4,6A2,2,0,1,1,6,8,2.0019,2.0019,0,0,1,4,6ZM6,28a2,2,0,1,1,2-2A2.002,2.002,0,0,1,6,28Zm22-4v4H24V24Z"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 32 32"><path d="M16 22 6 12 7.4 10.6 16 19.2 24.6 10.6 26 12z"/></symbol>
+</svg>
+
+<main class="wrap">
+  <header>
+    <div class="topbar">
+      <p class="eyebrow">IBM Cloud VPC</p>
+      <div class="top-actions">
+        <a class="home-link" href="index.html">All views</a>
+        <button class="mode-toggle" id="mode-toggle" type="button" aria-pressed="false">
+          <svg aria-hidden="true" fill="currentColor"><use id="mode-icon" href="#i-asleep"/></svg>
+          <span id="mode-label">Dark mode</span>
+        </button>
+      </div>
+    </div>
+    <h1>VPC 101</h1>
+    <p class="lede">Best practices for securing an IBM Cloud VPC. Click the VPC, then follow a principle into the control, the native feature, or the pattern that makes it real.</p>
+  </header>
+
+  <div class="tools">
+    <label class="search">
+      <svg aria-hidden="true" fill="currentColor"><use href="#i-search"/></svg>
+      <input id="search" type="search" placeholder="Search practices" autocomplete="off" aria-label="Search practices">
+    </label>
+    <p class="hint" id="hint" aria-live="polite">Click a practice to trace where it is applied.</p>
+  </div>
+
+  <div class="map" id="map"></div>
+  <p class="stats" id="stats"></p>
+  <p class="empty" id="empty" hidden>No practices match.</p>
+</main>
+
+<aside class="sidebar" id="sidebar" aria-hidden="true" inert>
+  <button class="sidebar-close" id="sidebar-close" type="button" aria-label="Close">
+    <svg aria-hidden="true" fill="currentColor"><use href="#i-close"/></svg>
+  </button>
+  <div class="sidebar-body" id="sidebar-body"></div>
+</aside>
+
+<script>
+const LANES = [
+  { id: "workload", label: "Workload" },
+  { id: "principles", label: "Principles" },
+  { id: "controls", label: "Controls" },
+  { id: "features", label: "Native features" },
+  { id: "patterns", label: "Patterns" }
+];
+
+const NODES = {
+  vpc: {
+    lane: "workload", icon: "i-vpc",
+    name: "IBM Cloud VPC",
+    sub: "The isolated network the rest of the design sits in",
+    practice: "A VPC is the outer isolation boundary. Put different use cases in different VPCs, and use subnets to create zones inside one. Security groups and network ACLs are scoped to the VPC that holds them.",
+    apply: [
+      "Separate production from non-production, and keep management components apart from the workload.",
+      "Plan non-overlapping address space before the first prefix. Hybrid routing gets painful after the fact.",
+      "A VPC in a multizone region has three zones. High availability uses at least two of them.",
+      "Shared endpoints, DNS, and inspection belong in a hub, so they are built once."
+    ],
+    docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-security-in-your-vpc",
+    docsLabel: "Security in your VPC"
+  },
+  least: {
+    lane: "principles", icon: "i-least",
+    name: "Least privilege",
+    sub: "Permit the port, protocol, and peer a flow needs",
+    practice: "A web tier talks to an application tier on one port. Name each security group for that job, and let a security group be the source of a rule so the peer is a tier, not a growing list of addresses.",
+    apply: [
+      "A new security group denies inbound traffic and allows all outbound traffic. Remove the default outbound allow and add the ports you mean to permit.",
+      "Security group rules are stateful, so you write the direction that starts the flow. Return traffic for an allowed connection is permitted with it.",
+      "An allow in any attached group permits the traffic. A second group widens access.",
+      "The same rule belongs on a virtual private endpoint. The NTP lab stays closed until the endpoint group allows UDP/123 from the workload group."
+    ]
+  },
+  depth: {
+    lane: "principles", icon: "i-depth",
+    name: "Defense in depth",
+    sub: "ACL at the subnet, security group at the interface, then the edge",
+    practice: "Each control has a job. The network ACL is the broad fence at the subnet, including deny rules. The security group is the fine rule on an interface, a load balancer, or an endpoint. Anything on the internet gets another layer in front.",
+    apply: [
+      "Use the ACL for subnet segmentation, such as denying a known-bad prefix at that boundary.",
+      "Use security groups for application tiers.",
+      "A public application load balancer is the front door when you want one name, specific rules, and TLS offload.",
+      "Cloud Internet Services adds a WAF for the OWASP Top 10 and DDoS protection. A third-party firewall belongs in the hub when the standard requires inspection."
+    ]
+  },
+  isolate: {
+    lane: "principles", icon: "i-isolate",
+    name: "Isolation",
+    sub: "Separate use cases by VPC, then by subnet",
+    practice: "The VPC is the boundary. Subnets are the zones inside it. Keep the workload VPC free of shared services, and reach IBM Cloud services on an address you allocated yourself.",
+    apply: [
+      "Use more than one VPC when the use cases differ. A single flat network makes every later rule harder.",
+      "A virtual private endpoint reserves an IP from your subnet, so the service sits in your address space.",
+      "Centralize those endpoints, custom DNS, and encryption keys in the hub account.",
+      "Use Privileged Access Gateway for administration. It records the session and removes the reason to publish SSH."
+    ]
+  },
+  visible: {
+    lane: "principles", icon: "i-visible",
+    name: "Visibility",
+    sub: "Flow logs for the packets, Activity Tracker for the change",
+    practice: "Flow logs show the traffic. Activity Tracker shows who changed the route, the group, or the gateway. Review both on a schedule, and send them to the SIEM. An audit that names the weakness is the useful one.",
+    apply: [
+      "Turn collectors and Activity Tracker on with the VPC, as part of the baseline.",
+      "Pair the two records. One shows the allowed or denied flow. The other shows the API call that opened it.",
+      "IBM Cloud Monitoring covers the live signal. The logs cover the investigation after it.",
+      "Deploy the collector with the same automation as the security groups, so a new VPC does not ship without it."
+    ]
+  },
+  sg: {
+    lane: "controls", icon: "i-sg",
+    name: "Security groups",
+    sub: "Stateful, on the interface, allow rules only",
+    practice: "A security group is the fine-grained firewall. It attaches to a virtual network interface, a load balancer, a VPN server, or an endpoint gateway. Rules are allow-only, order does not matter, and the least restrictive allow across attached groups wins.",
+    apply: [
+      "The source or destination can be an IP, a CIDR, or another security group in the same VPC.",
+      "Inbound and outbound are separate rule sets. Stateful means an allowed inbound flow may reply without a matching outbound rule.",
+      "Scope is the VPC. A group here does not protect a neighbor VPC.",
+      "In the NTP lab, the endpoint stays unreachable until its group allows the workload group."
+    ],
+    watch: "Attaching another security group adds its allows to the set. Use a second group to grant a second path, and keep each group specific so an old allow is easy to find.",
+    docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-using-security-groups",
+    docsLabel: "About security groups"
+  },
+  acl: {
+    lane: "controls", icon: "i-acl",
+    name: "Network ACLs",
+    sub: "Stateless, on the subnet, ordered permit and deny",
+    practice: "An ACL controls traffic to and from the subnet. Rules run in order and support permit and deny. Because the ACL is stateless, both directions of a flow need an explicit rule. A subnet has one ACL. One ACL can sit on many subnets.",
+    apply: [
+      "Write the ACL for the segment: which prefixes may enter the subnet, and which may leave.",
+      "Leave individual application ports to the security group.",
+      "Deny rules belong here. Security groups have no deny.",
+      "The lab starts from an allow-all ACL. Replace that before the subnet holds a workload."
+    ],
+    docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-using-acls",
+    docsLabel: "About network ACLs"
+  },
+  subnets: {
+    lane: "controls", icon: "i-subnets",
+    name: "Subnets",
+    sub: "A zone-scoped prefix, and the ACL that guards it",
+    practice: "A subnet is where the ACL, the instances, and a virtual private endpoint's reserved IP live. It belongs to one zone. Plan the prefix, then create the subnet. The NTP lab uses a /26 in zone 1 from a custom VPC prefix.",
+    apply: [
+      "Skip the automatic prefix-per-zone when the address plan is already decided.",
+      "Reserve the endpoint address on a subnet you control, in each zone that needs the service.",
+      "A route-mode network load balancer shares a subnet with the virtual network function it fronts.",
+      "Place application instances on subnets in at least two zones."
+    ]
+  },
+  routes: {
+    lane: "controls", icon: "i-routes",
+    name: "Custom routes",
+    sub: "Ingress and egress tables, ahead of the implicit table",
+    practice: "The system-implicit table is the fallback. Egress routes steer traffic that starts in a subnet, and they are evaluated before implicit routing. Ingress routes steer traffic that arrives from outside the zone: Direct Link, Transit Gateway, another zone, or the internet.",
+    apply: [
+      "Inspect-all designs put egress routes in the spokes. The next hop is the firewall interface in the hub.",
+      "North-south inspection does not need those spoke egress routes. The hub still uses ingress routes, with advertise flags, in both designs.",
+      "When the next hop is reachable in the implicit table, the SDN tunnels the packet to the firewall. That path works between VPCs.",
+      "The VPN lab adds routing tables in the hub so the simulated on-premises network can reach the endpoint."
+    ],
+    watch: "Draw the routes after you choose what the firewall is allowed to see. The route table is that decision, written down."
+  },
+  vpe: {
+    lane: "features", icon: "i-vpe",
+    name: "Virtual private endpoints",
+    sub: "An IBM Cloud service, on an IP from your subnet",
+    practice: "A virtual private endpoint gateway connects a VPC to a supported IBM Cloud service using an address you allocate. Traffic stays on the private backbone. The gateway is redundant across the zones of the VPC, and you create one per service or service instance.",
+    apply: [
+      "Bind a reserved IP from your subnet. Inside the VPC, the service hostname resolves to that address. Confirm the name before you debug the security group.",
+      "Security groups apply to the gateway. In the NTP lab, chronyd reaches the private address only after the endpoint group allows UDP/123 from the workload group.",
+      "Because the address is yours, an on-premises network can reach it once Transit Gateway and the hub routes are in place. That is the hybrid lab.",
+      "Put shared endpoints in the hub account. Private Path uses a consumer-side endpoint to reach a service you publish, including across overlapping address space, without crossing Transit Gateway."
+    ],
+    watch: "Flow logs do not collect on the endpoint gateway. Watch the workload interface that calls it. A cloud service endpoint is the older private path, and an ACL can still restrict it.",
+    docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-about-vpe",
+    docsLabel: "About virtual private endpoints"
+  },
+  flow: {
+    lane: "features", icon: "i-flow",
+    name: "Flow logs",
+    sub: "IP traffic on an interface, stored in Cloud Object Storage",
+    practice: "A flow log collector records IP traffic to and from network interfaces in the VPC and writes it to Cloud Object Storage. Collect at the width you can review: the whole VPC, one subnet, one instance, or one interface. When collectors overlap, the more specific target wins.",
+    apply: [
+      "Create the collector with the VPC. A log that starts after the incident has already missed the change.",
+      "Use a single-region bucket in the same region as the target, and authorize the flow logs service to write to it. Lock the bucket down with IAM and its own audit.",
+      "Read flow logs next to Activity Tracker and the firewall log. The three answer different questions.",
+      "Replacing the bucket means deleting the collector and creating it again."
+    ],
+    watch: "Collection covers VPC, subnet, instance, and virtual network interfaces, including load balancers and worker nodes. Bare metal interfaces and endpoint gateways are outside that set.",
+    docs: "https://cloud.ibm.com/docs/vpc?topic=vpc-flow-logs",
+    docsLabel: "About flow logs"
+  },
+  dns: {
+    lane: "features", icon: "i-dns",
+    name: "Private DNS",
+    sub: "The service name resolves to your reserved IP",
+    practice: "After the endpoint is stable, the service hostname resolves to the reserved IP inside the VPC. The NTP lab checks that resolution, then the port. A hub account holds the custom DNS when many VPCs share the same private names.",
+    apply: [
+      "Resolve the name first. A security group looks guilty when the name still points at the public service endpoint.",
+      "In the lab, chronyd uses the service endpoint address until the virtual private endpoint exists, then the private address.",
+      "Cloud service endpoints remain a private option. Restrict them with an ACL when you are not using a virtual private endpoint.",
+      "Keep the shared zone in the hub, next to the shared endpoints."
+    ]
+  },
+  at: {
+    lane: "features", icon: "i-at",
+    name: "Activity Tracker",
+    sub: "Who changed the network, and when",
+    practice: "Activity Tracker is the control-plane record. Flow logs show the traffic. Activity Tracker shows the identity that changed a route, a security group, or a gateway. Privileged Access Gateway session recordings belong in the same review.",
+    apply: [
+      "Enable it on the account before the first production change.",
+      "Use IBM Cloud Monitoring when you need the live signal, and Activity Tracker when you need the actor.",
+      "Review it on the same cycle as the flow logs.",
+      "A failed change is part of the record. Keep it."
+    ]
+  },
+  pag: {
+    lane: "features", icon: "i-pag",
+    name: "Privileged Access Gateway",
+    sub: "Recorded SSH, without a bastion or an open port",
+    practice: "Privileged Access Gateway provides controlled SSH to virtual servers and other SSH resources in the VPC, with session recording and an audit log. It is for administration. Site-to-site and client-to-site VPNs are what connect networks.",
+    apply: [
+      "Use it in place of a bastion and in place of SSH published on a floating IP.",
+      "Send the session record to the same review as Activity Tracker.",
+      "It shrinks the address space the isolation principle is protecting.",
+      "It does not route application traffic, and it is not a substitute for Transit Gateway."
+    ]
+  },
+  hub: {
+    lane: "patterns", icon: "i-hub",
+    name: "Hub and spoke",
+    sub: "Inspect in one VPC, run workloads in the spokes",
+    practice: "Choose the traffic the firewall will see before you draw the topology. All traffic, east-west and north-south, can pass the appliance in the hub. Or the appliance sees only north-south, and each platform firewalls its own east-west. Transit Gateway connects the spokes. Custom routes enforce the choice.",
+    apply: [
+      "All-traffic inspection needs egress routes in the spokes and ingress routes in the hub. The next hop is the firewall interface.",
+      "North-south inspection skips the spoke egress routes. Platforms on the gateway still need their own east-west controls.",
+      "Other IBM Cloud platforms join as spokes. GRE with BGP is how their routes are steered through the firewall.",
+      "The hub account also holds shared endpoints, key management, and custom DNS, so those are not duplicated per workload."
+    ],
+    watch: "A routing domain includes every connected spoke. Platforms in that domain can reach each other until a firewall or a route says otherwise."
+  },
+  tgw: {
+    lane: "patterns", icon: "i-tgw",
+    name: "Transit Gateway",
+    sub: "Private routing between VPCs, Classic, Power, and Direct Link",
+    practice: "Transit Gateway is the routing hub inside IBM Cloud. Traffic stays on the private network. It is highly available in a region without extra configuration. VPC, Power Virtual Server, and Classic connections are added across zones. GRE connections are point-to-point, so their redundancy is yours to design.",
+    apply: [
+      "Use it for private transfers and hybrid designs. It is not a firewall.",
+      "Two gateways are a common split: one for the platform spokes, one for Direct Link, so north-south can be forced through the hub.",
+      "Direct Link on a gateway prefers routes by shortest AS path. Diversity still means separate links and separate cross-connect routers.",
+      "The hybrid lab connects the hub VPC to the spoke that holds the endpoint, then relies on routing tables for the on-premises path."
+    ],
+    docs: "https://cloud.ibm.com/docs/transit-gateway?topic=transit-gateway-about",
+    docsLabel: "About Transit Gateway"
+  },
+  edge: {
+    lane: "patterns", icon: "i-edge",
+    name: "Public edge",
+    sub: "Floating IP, address range, gateway, or load balancer",
+    practice: "Match the public address to the job. A floating IP is a single address, usually one-to-one onto one interface. A public address range is a prefix bound to a VPC in one zone and routed to a virtual network function. A public gateway is outbound internet for a subnet. None of these replace the security group or the ACL.",
+    apply: [
+      "One server, inbound: floating IP. A firewall appliance, inbound: public address range.",
+      "Outbound from a subnet: public gateway.",
+      "A public application load balancer gives a hostname, subnets in more than one zone, and TLS offload.",
+      "Cloud Internet Services is the WAF and DDoS layer when the application itself is on the internet."
+    ]
+  },
+  ha: {
+    lane: "patterns", icon: "i-ha",
+    name: "Multizone placement",
+    sub: "Two zones for the application, a second region only for recovery",
+    practice: "High availability keeps the workload up inside the region. Place instances in at least two zones. Disaster recovery is a second region, and only when the requirement asks for it. Build for the bandwidth and the failure you actually have.",
+    apply: [
+      "An application load balancer can span zones and is reached by hostname. A network load balancer is the Layer 4 choice, including the zonal route-mode balancer that gives a virtual network function a stable next hop.",
+      "Pick the firewall failover the vendor supports: route-mode network load balancer, the SDN plugin, GRE with BGP, or a floating interface on bare metal.",
+      "Transit Gateway's own VPC, Power, and Classic connections are redundant. A GRE tunnel is not, until you add a second one.",
+      "Direct Link diversity is your BGP design: separate cross-connect routers, and a second point of presence when the objective requires it."
+    ]
+  },
+  iac: {
+    lane: "patterns", icon: "i-iac",
+    name: "Infrastructure as code",
+    sub: "Terraform and Schematics for the same baseline everywhere",
+    practice: "Deploy security groups, ACLs, routes, endpoints, and flow logs with Terraform and Schematics. A reviewed module is what keeps the next account from drifting off the pattern.",
+    apply: [
+      "A central admin account, with projects and trusted profiles, deploys into the workload accounts.",
+      "Publish the approved pattern in a central catalog.",
+      "Keep a production enterprise and a non-production enterprise apart.",
+      "The same automation carries failover routes and firewall pairs, so a rebuilt zone matches the one it replaced."
+    ]
+  }
+};
+
+const EDGES = [
+  ["vpc", "least"], ["vpc", "depth"], ["vpc", "isolate"], ["vpc", "visible"],
+  ["least", "sg"], ["least", "acl"], ["least", "vpe"], ["least", "iac"],
+  ["depth", "sg"], ["depth", "acl"], ["depth", "edge"], ["depth", "hub"],
+  ["isolate", "subnets"], ["isolate", "vpe"], ["isolate", "hub"], ["isolate", "pag"], ["isolate", "dns"],
+  ["visible", "flow"], ["visible", "at"], ["visible", "sg"],
+  ["sg", "acl"], ["sg", "vpe"], ["sg", "flow"],
+  ["acl", "subnets"],
+  ["subnets", "vpe"], ["subnets", "ha"],
+  ["routes", "hub"], ["routes", "tgw"], ["routes", "vpe"], ["routes", "ha"],
+  ["vpe", "dns"], ["vpe", "tgw"], ["vpe", "iac"],
+  ["flow", "at"], ["flow", "iac"],
+  ["at", "pag"],
+  ["dns", "hub"],
+  ["hub", "tgw"], ["hub", "edge"], ["hub", "iac"],
+  ["tgw", "ha"],
+  ["edge", "ha"]
+];
+
+const ADJ = {};
+Object.keys(NODES).forEach((id) => { ADJ[id] = []; });
+EDGES.forEach(([a, b]) => { ADJ[a].push(b); ADJ[b].push(a); });
+
+const LANE_LABEL = Object.fromEntries(LANES.map((lane) => [lane.id, lane.label]));
+const ORDER = [];
+LANES.forEach((lane) => {
+  Object.entries(NODES).forEach(([id, node]) => {
+    if (node.lane === lane.id) ORDER.push(id);
+  });
+});
+
+const mapEl = document.getElementById("map");
+const hintEl = document.getElementById("hint");
+const statsEl = document.getElementById("stats");
+const emptyEl = document.getElementById("empty");
+const sidebar = document.getElementById("sidebar");
+const sidebarBody = document.getElementById("sidebar-body");
+const searchEl = document.getElementById("search");
+
+let selected = null;
+let query = "";
+
+function esc(value) {
+  return String(value).replace(/[&<>"']/g, (ch) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  }[ch]));
+}
+
+function renderMap() {
+  mapEl.innerHTML = LANES.map((lane) => {
+    const cards = ORDER.filter((id) => NODES[id].lane === lane.id).map((id) => {
+      const node = NODES[id];
+      const search = [node.name, node.sub, node.practice, ...(node.apply || []), node.watch || ""].join(" ").toLowerCase();
+      return `<button class="card" type="button" data-id="${id}" data-search="${esc(search)}" aria-pressed="false">
+        <svg aria-hidden="true" fill="currentColor"><use href="#${node.icon}"/></svg>
+        <span><span class="card-name">${esc(node.name)}</span><span class="card-sub">${esc(node.sub)}</span></span>
+      </button>`;
+    }).join("");
+    return `<div class="row" data-lane="${lane.id}">
+      <p class="row-label">${esc(lane.label)}</p>
+      <div class="row-cards">${cards}</div>
+    </div>`;
+  }).join("");
+  mapEl.querySelectorAll(".card").forEach((card) => {
+    card.addEventListener("click", () => toggle(card.dataset.id));
+  });
+}
+
+function toggle(id) {
+  open(selected === id ? null : id);
+}
+
+function open(id) {
+  selected = id && NODES[id] ? id : null;
+  const next = selected ? "#" + selected : location.pathname + location.search;
+  if ((location.hash || "") !== (selected ? "#" + selected : "")) {
+    history.pushState({ id: selected }, "", next);
+  }
+  paint();
+}
+
+function paint() {
+  const q = query.trim().toLowerCase();
+  const tracing = Boolean(selected) && !q;
+  const near = new Set(selected ? [selected, ...ADJ[selected]] : []);
+  let shown = 0;
+  mapEl.classList.toggle("is-tracing", tracing);
+  mapEl.querySelectorAll(".row").forEach((row) => {
+    let rowShown = 0;
+    row.querySelectorAll(".card").forEach((card) => {
+      const id = card.dataset.id;
+      const match = !q || card.dataset.search.includes(q);
+      card.hidden = !match;
+      card.classList.toggle("is-selected", id === selected && match);
+      card.classList.toggle("is-reachable", tracing && id !== selected && near.has(id));
+      card.classList.toggle("is-dimmed", tracing && !near.has(id));
+      card.setAttribute("aria-pressed", String(id === selected));
+      if (match) rowShown += 1;
+    });
+    row.hidden = rowShown === 0;
+    shown += rowShown;
+  });
+  emptyEl.hidden = shown !== 0;
+  const count = Object.keys(NODES).length;
+  statsEl.textContent = selected
+    ? NODES[selected].name + " · " + ADJ[selected].length + " connections"
+    : count + " practices · " + EDGES.length + " connections";
+  if (q) {
+    hintEl.textContent = shown + (shown === 1 ? " practice matches." : " practices match.");
+  } else if (selected) {
+    const names = ADJ[selected].map((id) => NODES[id].name);
+    hintEl.textContent = NODES[selected].name + " traces to " + names.join(", ") + ".";
+  } else {
+    hintEl.textContent = "Click a practice to trace where it is applied.";
+  }
+  paintSidebar();
+}
+
+function paintSidebar() {
+  const openPanel = Boolean(selected);
+  document.body.classList.toggle("is-open", openPanel);
+  sidebar.setAttribute("aria-hidden", String(!openPanel));
+  sidebar.inert = !openPanel;
+  if (!openPanel) {
+    sidebarBody.innerHTML = "";
+    return;
+  }
+  const node = NODES[selected];
+  const lane = LANES.find((item) => item.id === node.lane);
+  const traces = ADJ[selected].map((id) =>
+    `<li><button type="button" data-go="${id}">${esc(NODES[id].name)}</button></li>`
+  ).join("");
+  const apply = node.apply.map((item) => `<li>${esc(item)}</li>`).join("");
+  const watch = node.watch ? `<h3>Watch</h3><p>${esc(node.watch)}</p>` : "";
+  const docs = node.docs
+    ? `<a class="docs" href="${esc(node.docs)}" target="_blank" rel="noopener noreferrer">${esc(node.docsLabel || "Docs")}</a>`
+    : "";
+  sidebarBody.innerHTML = `
+    <p class="sb-lane" data-lane="${esc(node.lane)}">${esc(lane.label)}</p>
+    <h2>${esc(node.name)}</h2>
+    <p class="rule">${esc(node.practice)}</p>
+    <h3>Apply it</h3>
+    <ul>${apply}</ul>
+    ${watch}
+    <h3>Traces to</h3>
+    <ul class="traces">${traces}</ul>
+    ${docs}`;
+  sidebarBody.querySelectorAll("[data-go]").forEach((button) => {
+    button.addEventListener("click", () => open(button.dataset.go));
+  });
+}
+
+searchEl.addEventListener("input", () => {
+  query = searchEl.value;
+  if (query.trim() && selected) {
+    selected = null;
+    if (location.hash) history.replaceState({ id: null }, "", location.pathname + location.search);
+  }
+  paint();
+});
+document.getElementById("sidebar-close").addEventListener("click", () => open(null));
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && selected) open(null);
+});
+window.addEventListener("popstate", () => {
+  const id = location.hash.slice(1);
+  selected = NODES[id] ? id : null;
+  paint();
+});
+
+renderMap();
+const initial = location.hash.slice(1);
+if (NODES[initial]) selected = initial;
+paint();
+
+const MODE_KEY = "iaas102-mode";
+const modeBtn = document.getElementById("mode-toggle");
+function applyMode(mode) {
+  const dark = mode === "dark";
+  if (dark) document.documentElement.dataset.mode = "dark";
+  else delete document.documentElement.dataset.mode;
+  modeBtn.setAttribute("aria-pressed", String(dark));
+  document.getElementById("mode-label").textContent = dark ? "Light mode" : "Dark mode";
+  document.getElementById("mode-icon").setAttribute("href", dark ? "#i-light" : "#i-asleep");
+}
+let savedMode = "light";
+try { savedMode = localStorage.getItem(MODE_KEY) || "light"; } catch (e) { /* stay light */ }
+applyMode(savedMode);
+modeBtn.addEventListener("click", () => {
+  const next = document.documentElement.dataset.mode === "dark" ? "light" : "dark";
+  try { localStorage.setItem(MODE_KEY, next); } catch (e) { /* ignore */ }
+  applyMode(next);
+});
+</script>
