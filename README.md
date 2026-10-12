@@ -9,6 +9,7 @@ There are three pieces, from broadest to deepest:
 - **Slide deck**: Click-through presentation: highlight a pillar, reveal 4 lines, reset. Items are in `deck/project/` (**WIP**)
 - **Seller focus**: High-level seller discovery, the true 101, and the basis for the PowerPoint. current version is at `site/iaas-101-seller-focus.html` 
 - **Tech focus**: Tech overview of the cloud services in each IaaS offering. Current version is at `site/iaas-101-tech-focus.html`
+- **Layer studies**: Three other ways to show the same services, focused on how the layers sit and connect. `site/iaas-101-layer-studies.html`
 
 **Service-level edits happen on the tech-focus page.** The seller-focus page is the 101 narrative and the source for the deck. The rest of this README is mostly about the tech-focus page.
 
@@ -35,27 +36,36 @@ locally so the browser doesn't fall back to quirks mode.
 
 ## Status of `site/iaas-101-tech-focus.html`
 
-Each pillar gets the same four **layers** (rows). Each row has its own Carbon color, used for the tint, the
+The page stacks the technology. The PaaS shelf (Databases, Platform Automation, Observability, Security, AI) is defined in `PAAS` and is not drawn.
+
+**Virtual Private Cloud** is the frame under the title. Inside it, top to bottom:
+
+- **Serverless** — Code Engine, the function-deployment layer
+- **CaaS** — IBM Kubernetes Service (IKS) and Red Hat OpenShift Service (ROKS)
+- **IaaS** — VPC Native IaaS (the former Virtual Private Cloud tile)
+
+**Classic Infrastructure**, **Power Virtual Server**, and **OpenShift Virtualization** sit outside that frame, on the same IaaS row as VPC Native IaaS. OpenShift Virtualization runs virtual machines, so it stays with the other IaaS tiles.
+
+The same services are drawn three other ways on `site/iaas-101-layer-studies.html`: a cross-section of where each layer sits, a workload path of which layers a deployment crosses, and a connection diagram for the VPC grouping, VPC workers, bare metal workers, and Transit Gateway. The PaaS hubs are drawn on that page. They stay off this one.
+
+Each opened service uses the same four **layers** (rows). Each row has its own Carbon color, used for the tint, the
 stripe, the number and the pill icons: **Networking = cyan, Compute = purple, Storage = teal,
 Integrations = magenta**.
 
-| Pillar | Networking | Compute | Storage | Integrations |
+| Service | Networking | Compute | Storage | Integrations |
 |---|---|---|---|---|
-| VPC | ✅ | ✅ | ✅ | ✅ |
+| VPC Native IaaS | ✅ | ✅ | ✅ | ✅ |
 | Power Virtual Server (IBM data centers only) | ✅ | ✅ | ✅ | ✅ |
 | Classic Infrastructure | ✅ | ✅ | ✅ | ✅ |
 | OpenShift Virtualization | ✅ | ✅ | ✅ | ✅ |
-
-The CaaS row above the pillars uses the same four layers. **IBM Kubernetes Service** and **Red Hat OpenShift Service** are filled in for VPC clusters (classic clusters still exist; the row notes say where this view stays on VPC).
-
-| Offering | Networking | Compute | Storage | Integrations |
-|---|---|---|---|---|
 | IBM Kubernetes Service | ✅ | ✅ | ✅ | ✅ |
 | Red Hat OpenShift Service | ✅ | ✅ | ✅ | ✅ |
 | Code Engine | ⬜ | ⬜ | ⬜ | ⬜ |
 
+IKS and ROKS are written for VPC clusters (classic clusters still exist; the row notes say where this view stays on VPC). Code Engine is the empty Serverless tile.
+
 An IaaS pillar with `lines: []` shows a "Coming soon" tag and can't be opened. It becomes clickable as soon as
-it has one line. An empty CaaS tile stays a box, with no tag, until it has a line.
+it has one line. An empty Serverless or CaaS tile stays a box, with no tag, until it has a line.
 
 ---
 
@@ -68,14 +78,14 @@ Everything lives in one file, `site/iaas-101-tech-focus.html`, in three parts:
    mode and 100/80/40 in dark (`--cyan-bg`, `--cyan-edge`, `--cyan-ink`, …).
 2. **The icon sprite**: a hidden `<svg>` with one `<symbol id="i-…">` per icon, copied from the official
    `@carbon/icons` package. Nothing loads from the network except Google Fonts (IBM Plex).
-3. **`<script>`**: the content (`PILLARS` for IaaS, `CAAS` for the row above) plus the rendering code. **Most edits only touch `PILLARS` or `CAAS`.** `CAAS` uses the same `lines` shape as a pillar.
+3. **`<script>`**: the content (`PILLARS` for the IaaS services, `CAAS` for IKS and ROKS, `SERVERLESS` for Code Engine, `PAAS` for the parked shelf) plus the rendering code. **Most edits only touch those lists.** Render places VPC Native IaaS inside the Virtual Private Cloud frame, and leaves Classic, PowerVS, and OpenShift Virtualization outside it. `PAAS` is not drawn. `CAAS` and `SERVERLESS` use the same `lines` shape as a pillar.
 
 ### The content model
 
 ```js
 const PILLARS = [
   {
-    id: "vpc", icon: "i-vpc", eyebrow: "IBM Cloud VPC", title: "Virtual Private Cloud",
+    id: "vpc", icon: "i-vpc", eyebrow: "IBM Cloud VPC", title: "VPC Native IaaS",
     lines: [                         // one entry per layer row, in order
       {
         title: "Networking",
@@ -114,11 +124,11 @@ keep the row order Networking → Compute → Storage → Integrations.
 
 ### Behavior worth knowing
 
-- **Clicking a pillar** opens its rows in a full-width panel below the four pillars. A blue tab links the
-  panel to the selected pillar. Clicking a CaaS offering opens the same kind of panel between the CaaS row
-  and the rule, with the tab under that tile. Opening one closes the other. Click it again, click outside,
-  or press Esc to close.
-- **Below 1024px** the rows open inside the tile instead, and the panels are hidden. Pillars stack 2-up, then 1-up below 600px.
+- **Clicking a service** opens its rows in a panel. A blue tab links the panel to the selected tile.
+  Serverless and CaaS panels open inside the Virtual Private Cloud frame, under that row. The IaaS panel
+  opens under the whole stage, so the tab can sit under VPC Native IaaS, Classic, or PowerVS. Opening one
+  closes the other. Click it again, click outside, or press Esc to close.
+- **Below 1024px** the rows open inside the tile instead, and the panels are hidden. The stage stacks, and Classic with PowerVS drop below the frame. Tiles go 1-up below 600px.
 - **Theme:** light by default for everyone. The toggle saves each viewer's choice in `localStorage`. The key
   is still `iaas102-mode` after the file rename, so a saved theme is not reset.
 - **Direct links:** `#vpc`, `#powervs`, `#classic`, `#ocpv`, `#iks`, and `#roks` open that service on load. A hash only opens a tile that has lines.
@@ -156,7 +166,7 @@ devices are not IAM-enabled, so that card uses classic infrastructure permission
 **OpenShift Virtualization** has all four layers, scoped to Red Hat OpenShift on IBM Cloud with bare metal
 workers and OpenShift Data Foundation.
 
-**Code Engine** is the remaining empty CaaS tile.
+**Code Engine** is the remaining empty Serverless tile inside Virtual Private Cloud.
 
 **Open questions noted along the way:**
 
