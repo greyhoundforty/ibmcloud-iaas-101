@@ -1,0 +1,158 @@
+<title>IBM Cloud IaaS Explorer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&family=IBM+Plex+Sans:wght@300;400&display=swap">
+<style>
+/* Landing page for the three explorer views. Carbon White in light, Gray 100 in dark. */
+:root {
+  color-scheme: light;
+  --bg: #ffffff;
+  --layer: #f4f4f4;
+  --line: #e0e0e0;
+  --muted: #6f6f6f;
+  --text: #161616;
+  --text-2: #525252;
+  --label: #0f62fe;
+  --accent: #0f62fe;
+  --focus: #0f62fe;
+  --font-sans: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'IBM Plex Mono', Menlo, 'Courier New', monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #161616;
+    --layer: #262626;
+    --line: #393939;
+    --muted: #a8a8a8;
+    --text: #f4f4f4;
+    --text-2: #c6c6c6;
+    --label: #78a9ff;
+    --accent: #78a9ff;
+    --focus: #ffffff;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #161616;
+  --layer: #262626;
+  --line: #393939;
+  --muted: #a8a8a8;
+  --text: #f4f4f4;
+  --text-2: #c6c6c6;
+  --label: #78a9ff;
+  --accent: #78a9ff;
+  --focus: #ffffff;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.45;
+}
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+.wrap {
+  max-width: 1312px;
+  margin-inline: auto;
+  padding: 64px 16px 80px;
+}
+.eyebrow {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--label);
+}
+h1 {
+  margin: 12px 0 0;
+  font-size: clamp(2.5rem, 6vw, 4.25rem);
+  font-weight: 300;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+.lede {
+  margin: 16px 0 0;
+  max-width: 38rem;
+  color: var(--text-2);
+  font-size: 1.125rem;
+}
+
+.pages {
+  margin-top: 56px;
+  border-top: 1px solid var(--line);
+}
+.pages a {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 32px;
+  row-gap: 6px;
+  align-items: baseline;
+  padding: 28px 12px;
+  margin-inline: -12px;
+  border-bottom: 1px solid var(--line);
+  color: inherit;
+  text-decoration: none;
+}
+.pages a:hover,
+.pages a:focus-visible { background: var(--layer); }
+.pages a:hover .name,
+.pages a:focus-visible .name { color: var(--accent); }
+.name {
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  font-weight: 300;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+}
+.file {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+.line {
+  grid-column: 1 / -1;
+  max-width: 62ch;
+  color: var(--text-2);
+}
+
+@media (max-width: 599px) {
+  .wrap { padding-block: 40px 56px; }
+  .pages { margin-top: 40px; }
+  .pages a {
+    grid-template-columns: minmax(0, 1fr);
+    padding-block: 22px;
+  }
+  .file { grid-row: 3; }
+}
+</style>
+
+<main class="wrap">
+  <header>
+    <p class="eyebrow">IBM Cloud</p>
+    <h1>IaaS Explorer</h1>
+    <p class="lede">Three views of the same infrastructure: the seller story, the path to a proposal, and the services underneath.</p>
+  </header>
+
+  <nav class="pages" aria-label="Explorer pages">
+    <a href="iaas-101-seller-focus.html">
+      <span class="name">Seller focus</span>
+      <span class="file">iaas-101-seller-focus.html</span>
+      <span class="line">One foundation, four ways to run a workload. The 101 for discovery, and the source for the deck.</span>
+    </a>
+    <a href="sales-complexity.html">
+      <span class="name">Sales complexity</span>
+      <span class="file">sales-complexity.html</span>
+      <span class="line">Engineered before it is priced. Architecture, commercial design, and risk before a proposal exists.</span>
+    </a>
+    <a href="iaas-101-tech-focus.html">
+      <span class="name">Tech focus</span>
+      <span class="file">iaas-101-tech-focus.html</span>
+      <span class="line">The layers of IBM Cloud. Networking, compute, storage, and integrations in each offering.</span>
+    </a>
+  </nav>
+</main>

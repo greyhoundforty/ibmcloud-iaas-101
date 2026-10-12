@@ -49,9 +49,8 @@ def main() -> None:
         out = BUILD / src.name
         out.write_text(wrap(src.read_text(encoding="utf-8")), encoding="utf-8")
         print(f"wrote {out.relative_to(ROOT)}")
-    # A tiny index so http://localhost:8000 lists the pages
-    links = "".join(f'<li><a href="{p.name}">{p.name}</a></li>' for p in pages)
-    (BUILD / "index.html").write_text(f"<!doctype html><ul>{links}</ul>", encoding="utf-8")
+    # site/index.html is the landing page. Wrapping it above is what
+    # http://localhost:8000 and the Vercel root URL serve.
 
 
 if __name__ == "__main__":

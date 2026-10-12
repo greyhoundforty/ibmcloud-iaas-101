@@ -1,0 +1,447 @@
+<title>Engineered before it is priced</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&family=IBM+Plex+Sans:wght@300;400;600&display=swap">
+<style>
+/* Executive one-glance. Bands share a 12-column grid so the software
+   path and the partner tracks stop on the same lines as the cloud phases.
+   Carbon White in light, Gray 100 in dark. Blue 60 is the only accent. */
+:root {
+  color-scheme: light;
+  --bg: #ffffff;
+  --layer: #f4f4f4;
+  --layer-2: #e0e0e0;
+  --hover: #e8e8e8;
+  --line: #c6c6c6;
+  --muted: #8d8d8d;
+  --text: #161616;
+  --text-2: #525252;
+  --label: #0f62fe;
+  --accent: #0f62fe;
+  --focus: #0f62fe;
+  --font-sans: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'IBM Plex Mono', Menlo, 'Courier New', monospace;
+  --ease: cubic-bezier(0.2, 0, 0.38, 0.9);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #161616;
+    --layer: #262626;
+    --layer-2: #393939;
+    --hover: #333333;
+    --line: #525252;
+    --muted: #a8a8a8;
+    --text: #f4f4f4;
+    --text-2: #c6c6c6;
+    --label: #78a9ff;
+    --accent: #0f62fe;
+    --focus: #0f62fe;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #161616;
+  --layer: #262626;
+  --layer-2: #393939;
+  --hover: #333333;
+  --line: #525252;
+  --muted: #a8a8a8;
+  --text: #f4f4f4;
+  --text-2: #c6c6c6;
+  --label: #78a9ff;
+  --accent: #0f62fe;
+  --focus: #0f62fe;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.45;
+}
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+.wrap {
+  max-width: 1312px;
+  margin-inline: auto;
+  padding: 24px 16px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.eyebrow {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--label);
+}
+h1 {
+  margin: 8px 0 0;
+  font-size: clamp(2rem, 3.4vw, 2.75rem);
+  font-weight: 300;
+  line-height: 1.1;
+  text-wrap: balance;
+}
+.lede {
+  margin: 8px 0 0;
+  max-width: 62ch;
+  color: var(--text-2);
+  font-size: 1.0625rem;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: 6.75rem repeat(12, minmax(0, 1fr));
+  column-gap: 0;
+  row-gap: 8px;
+  align-items: stretch;
+  animation: rise 360ms var(--ease) both;
+}
+.band-name {
+  margin: 0;
+  align-self: center;
+  padding-right: 12px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+.band-name.cloud { color: var(--label); }
+
+.band {
+  min-width: 0;
+  background: var(--bg);
+}
+.band.software {
+  grid-column: 2 / span 5;
+  grid-row: 1;
+  justify-self: start;
+  align-self: center;
+  width: max-content;
+  max-width: 100%;
+  padding: 8px 12px;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.band-name.software { grid-row: 1; }
+.software-items {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: baseline;
+  gap: 0 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--text-2);
+  font-size: 0.8125rem;
+  white-space: nowrap;
+}
+.sep { color: var(--muted); }
+
+.band.cloud,
+.band.partner {
+  grid-column: 2 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
+}
+.band-name.cloud,
+.band.cloud { grid-row: 2; }
+.band-name.partner,
+.band.partner { grid-row: 3; }
+.band.cloud { box-shadow: inset 0 0 0 2px var(--accent); }
+.band.partner { box-shadow: inset 0 0 0 1px var(--line); }
+
+.phase {
+  grid-column: span var(--span);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  padding: 10px 12px 12px;
+}
+.phase + .phase { box-shadow: inset 1px 0 0 var(--line); }
+.phase-name {
+  margin: 0 0 6px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--label);
+}
+.stations { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.station {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  width: 100%;
+  margin: 0;
+  padding: 3px 4px;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+.station:hover { background: var(--hover); }
+.num {
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--label);
+}
+.name { font-size: 0.875rem; text-wrap: pretty; }
+.decisions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 12px;
+}
+.pill {
+  padding: 2px 8px;
+  border: 1px solid var(--line);
+  font-size: 0.75rem;
+  line-height: 1.35;
+  color: var(--text-2);
+}
+
+.track {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: subgrid;
+  padding-top: 12px;
+}
+.track:last-of-type { padding-bottom: 4px; }
+.track-bar {
+  grid-column: span var(--span);
+  height: 10px;
+  margin: 4px 0 0 2px;
+}
+.track-bar[data-tone="muted"] { background: var(--muted); }
+.track-bar[data-tone="accent"] { background: var(--accent); }
+.track-copy {
+  grid-column: 1 / -1;
+  margin: 6px 12px 0;
+  font-size: 0.875rem;
+  color: var(--text-2);
+}
+.track-name { color: var(--text); font-weight: 600; }
+.caption {
+  grid-column: 1 / -1;
+  margin: 4px 12px 12px;
+  font-size: 0.875rem;
+  color: var(--text);
+}
+
+.tray {
+  min-height: 5.75rem;
+  padding: 12px 20px;
+  background: var(--layer-2);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  animation: rise 360ms var(--ease) 80ms both;
+}
+.tray p { margin: 0; max-width: 78ch; }
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+@media (max-width: 1023px) {
+  .board { display: flex; flex-direction: column; gap: 8px; }
+  .band-name { align-self: start; padding: 12px 0 0; }
+  .band.software { width: max-content; max-width: 100%; }
+  .band.cloud,
+  .band.partner { width: 100%; max-width: none; }
+  .band.cloud,
+  .band.partner,
+  .track { display: flex; flex-direction: column; }
+  .phase + .phase { box-shadow: inset 0 1px 0 var(--line); }
+  .track-bar { width: 100%; margin-left: 12px; margin-right: 12px; }
+}
+</style>
+
+<main class="wrap">
+  <header>
+    <p class="eyebrow" id="eyebrow"></p>
+    <h1 id="title"></h1>
+    <p class="lede" id="lede"></p>
+  </header>
+
+  <section class="board" id="board" aria-label="Software path, cloud path, and partner effort"></section>
+
+  <div class="tray" id="tray" aria-live="polite">
+    <p class="eyebrow" id="tray-kicker"></p>
+    <p id="tray-sentence"></p>
+  </div>
+</main>
+
+<script>
+const JOURNEY = {
+  header: {
+    eyebrow: "IBM Cloud",
+    title: "Engineered before it is priced.",
+    subtitle: "A cloud infrastructure opportunity is architecture, commercial design, and risk mitigation before a proposal exists.",
+  },
+  software: {
+    label: "Software",
+    items: ["How many users?", "Which edition?", "Which consumption model?"],
+  },
+  phases: [
+    {
+      id: "discover", name: "Discover", span: 2,
+      stations: [
+        { name: "Discovery", note: "Name the applications, the environments, and the business outcome the workload has to deliver." },
+        { name: "Technical qualification", note: "Confirm performance, growth, HA/DR, security, and regulatory constraints before a design starts." },
+      ],
+    },
+    {
+      id: "design", name: "Design", span: 3,
+      decisions: ["VPC or Classic", "Public or private", "Network", "Storage tiers", "Backup", "Security", "Data locality", "Migration approach"],
+      stations: [
+        { name: "Architecture development", note: "Choose the deployment shape: VPC or Classic, public or private, network, security, and how the workload moves." },
+        { name: "Sizing", note: "Set capacity from the workload's performance, growth, and recovery targets." },
+        { name: "BOM/Config creation", note: "Turn the design into the configuration a price can be built on." },
+      ],
+    },
+    {
+      id: "validate", name: "Validate", span: 5,
+      stations: [
+        { name: "Pricing", note: "Price the validated configuration, including incentives, financing, and the consumption model." },
+        { name: "Reviews", note: "Check the proposal for technical fit and commercial sense before it goes to the client." },
+        { name: "BP alignment", note: "Confirm whether the partner or BTS carries design, configuration, and the proposal." },
+        { name: "Competitive positioning", note: "Show why this design wins for the workload, the recovery target, and the migration path." },
+        { name: "Risk mitigation", note: "Close the gaps that produce an undersized system, a failed migration, or a missed availability commitment." },
+      ],
+    },
+    {
+      id: "commit", name: "Commit", span: 2,
+      stations: [
+        { name: "Client validation", note: "The client confirms this is the design they will run." },
+        { name: "Procurement review", note: "The approved design moves through the client's buying process." },
+      ],
+    },
+  ],
+  partner: {
+    label: "Partner",
+    caption: "Both still appear as the same opportunity.",
+    tracks: [
+      { name: "Autonomous partner", copy: "The partner carries design, configuration, and the proposal. IBM effort stays light.", span: 5, tone: "muted" },
+      { name: "Non-autonomous partner", copy: "BTS stays through discovery, architecture, sizing, reviews, competitive positioning, and risk.", span: 10, tone: "accent" },
+    ],
+  },
+  tray: {
+    eyebrow: "Before signature",
+    sentence: "The proposal has to be technically correct, commercially viable, and deployable before the customer signs.",
+  },
+};
+
+const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+const notes = new Map();
+let n = 0;
+for (const phase of JOURNEY.phases) {
+  for (const station of phase.stations) {
+    n += 1;
+    station.num = String(n).padStart(2, "0");
+    station.id = "s" + station.num;
+    notes.set(station.id, station);
+  }
+}
+
+function softwareHTML() {
+  const items = JOURNEY.software.items.map((item, i) => {
+    const dot = i < JOURNEY.software.items.length - 1 ? ' <span class="sep" aria-hidden="true">·</span>' : "";
+    return `<li>${esc(item)}${dot}</li>`;
+  }).join("");
+  return `
+    <p class="band-name software">${esc(JOURNEY.software.label)}</p>
+    <div class="band software"><ul class="software-items">${items}</ul></div>`;
+}
+
+function phaseHTML(phase) {
+  const stations = phase.stations.map((s) => `
+    <li><button type="button" class="station" data-id="${s.id}">
+      <span class="num">${s.num}</span><span class="name">${esc(s.name)}</span>
+    </button></li>`).join("");
+  const pills = phase.decisions
+    ? `<div class="decisions">${phase.decisions.map((d) => `<span class="pill">${esc(d)}</span>`).join("")}</div>`
+    : "";
+  return `
+    <div class="phase" style="--span:${phase.span}">
+      <h2 class="phase-name">${esc(phase.name)}</h2>
+      <ul class="stations">${stations}</ul>
+      ${pills}
+    </div>`;
+}
+
+function partnerHTML() {
+  const tracks = JOURNEY.partner.tracks.map((t) => `
+    <div class="track">
+      <div class="track-bar" data-tone="${t.tone}" style="--span:${t.span}"></div>
+      <p class="track-copy"><span class="track-name">${esc(t.name)}.</span> ${esc(t.copy)}</p>
+    </div>`).join("");
+  return `
+    <p class="band-name partner">${esc(JOURNEY.partner.label)}</p>
+    <div class="band partner">
+      ${tracks}
+      <p class="caption">${esc(JOURNEY.partner.caption)}</p>
+    </div>`;
+}
+
+document.getElementById("eyebrow").textContent = JOURNEY.header.eyebrow;
+document.getElementById("title").textContent = JOURNEY.header.title;
+document.getElementById("lede").textContent = JOURNEY.header.subtitle;
+document.getElementById("board").innerHTML = softwareHTML() + `
+  <p class="band-name cloud">Cloud</p>
+  <div class="band cloud">${JOURNEY.phases.map(phaseHTML).join("")}</div>
+` + partnerHTML();
+
+const kicker = document.getElementById("tray-kicker");
+const sentence = document.getElementById("tray-sentence");
+
+function showResting() {
+  kicker.textContent = JOURNEY.tray.eyebrow;
+  sentence.textContent = JOURNEY.tray.sentence;
+}
+function show(id) {
+  const station = notes.get(id);
+  if (!station) return;
+  kicker.textContent = station.name;
+  sentence.textContent = station.note;
+}
+showResting();
+
+const board = document.getElementById("board");
+const stationFrom = (node) => (node && node.closest ? node.closest(".station") : null);
+
+board.addEventListener("pointerover", (e) => {
+  const btn = stationFrom(e.target);
+  if (btn) show(btn.dataset.id);
+});
+board.addEventListener("pointerout", (e) => {
+  if (stationFrom(e.relatedTarget)) return;
+  const focused = stationFrom(document.activeElement);
+  if (focused) show(focused.dataset.id);
+  else showResting();
+});
+board.addEventListener("focusin", (e) => {
+  const btn = stationFrom(e.target);
+  if (btn) show(btn.dataset.id);
+});
+board.addEventListener("focusout", (e) => {
+  if (stationFrom(e.relatedTarget)) return;
+  showResting();
+});
+</script>
