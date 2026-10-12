@@ -61,6 +61,9 @@ body {
   text-transform: uppercase;
   color: var(--label);
 }
+.topbar { display: flex; justify-content: flex-end; }
+.home-link { font-size: 0.875rem; color: var(--label); text-underline-offset: 3px; }
+.home-link:hover { text-decoration: none; }
 button { font: inherit; color: inherit; }
 :focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
 
@@ -249,6 +252,9 @@ kbd { font-family: var(--font-mono); font-size: 0.8125rem; padding: 1px 6px; bac
 </svg>
 
 <main class="wrap" id="wrap">
+  <div class="topbar">
+    <a class="home-link" href="index.html">All views</a>
+  </div>
   <section class="stage" aria-live="polite">
     <div class="intro">
       <span class="eyebrow">IBM Cloud</span>
